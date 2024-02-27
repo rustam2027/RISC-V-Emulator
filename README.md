@@ -2,27 +2,27 @@
 Emulator for RISC V assembler
 
 ## Plan
-  1. Support all commands used in the assembly language course
+  1. Support all commands used in the assembly language course:
 
-    * Basic system calls
-    * Simple commands:
-      * mv
-      * li
-      * Math operations
-      * addi
-      * Logical operations
-    * Labels
-    * Comments
-    * NSS commands:
-      * j
-      * bgt, beq, bez, etc...
-    * Macro
-    * Stack functions:
-      * lw
-      * sw
-    * Functions:
-      * call
-      * ret
+>* Basic system calls
+>* Simple commands:
+>	  * mv
+ >   * li
+ >   * Math operations
+ >   * addi
+ >   * Logical operations
+ >  * Labels
+ >  * Comments
+ >  * NSS commands:
+ >    * j
+ >    * bgt, beq, bez, etc...
+ >  * Macro
+ >  * Stack functions:
+ >    * lw
+ >    * sw
+ >  * Functions:
+ >    * call
+ >    * ret
 
   2. Debug
 
@@ -39,3 +39,5 @@ Emulator for RISC V assembler
   2. Interpreter 
   3. Debuger
   4. View?  
+
+### Check ASCII_ART.txt!
