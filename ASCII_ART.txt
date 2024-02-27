@@ -1,0 +1,24 @@
+                  ===============     
+    File.asm --->| PreProccessor |
+                  ===============                                                    
+                        |
+                        |
+                        V
+                  - Delete commets 
+                  - Inline Macros 
+                  - CreateLable Dict --->{ name : ptr_on_line }
+                        |
+                        |
+                        V
+                  ==============
+                  |   Parser    |   < ------------- 
+                  ==============                  |
+                        |                         |
+                        | List[Func]              |
+                        |                         |
+                        V                         |
+                  ==============                  |
+                  | Interpreter | ---> interpert on:
+                  ==============              - State
+                                              - Registers
+                                              - Stack 
