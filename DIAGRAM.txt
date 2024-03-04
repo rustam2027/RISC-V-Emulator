@@ -1,0 +1,12 @@
+Gann chart
+
+                         | Mar 03, 2024  | Mar 10, 2024  | Mar 17, 2024  | Mar 24, 2024  |
+          Task           | M T W T F S S | M T W T F S S | M T W T F S S | M T W T F S S |
+-------------------------|---------------|---------------|---------------|---------------|
+      Architecture       | ==============|==┐            |               |               |
+     Simple commands     |               |  └>===========|=┐             |               |
+    Basic system calls   |               |         ======|=┤             |               |
+      Jump commands      |               |               | ├>=======┐    |               |
+     Stack functions     |               |               | └>=======┤    |               |
+   Functions(Optional)   |               |               |          └────|>=========     |
+Macro, comments(Optional)|               |               |        =======|==========     |

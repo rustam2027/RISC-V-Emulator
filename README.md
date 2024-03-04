@@ -11,18 +11,17 @@ Emulator for RISC V assembler
  >   * Math operations
  >   * addi
  >   * Logical operations
- >  * Labels
- >  * Comments
  >  * NSS commands:
  >    * j
  >    * bgt, beq, bez, etc...
- >  * Macro
+ >    * labels
  >  * Stack functions:
  >    * lw
  >    * sw
- >  * Functions:
+ >  * Functions (*Optional*):
  >    * call
  >    * ret
+ >  * Macro, Comments (*Optional*)
 
   2. Debug
 
@@ -41,3 +40,11 @@ Emulator for RISC V assembler
   4. View?  
 
 ### Check ASCII_ART.txt!
+
+## Milestones
+
+  1. Good basic part
+  2. Debug
+  3. Visual (*OPTIONAL*)
+
+## Check our DIAGRAM.txt
