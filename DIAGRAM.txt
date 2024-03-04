@@ -1,12 +1,15 @@
-Gann chart
+                                            Gantt chart
 
-                         | Mar 03, 2024  | Mar 10, 2024  | Mar 17, 2024  | Mar 24, 2024  |
-          Task           | M T W T F S S | M T W T F S S | M T W T F S S | M T W T F S S |
--------------------------|---------------|---------------|---------------|---------------|
-      Architecture       | ==============|==┐            |               |               |
-     Simple commands     |               |  └>===========|=┐             |               |
-    Basic system calls   |               |         ======|=┤             |               |
-      Jump commands      |               |               | ├>=======┐    |               |
-     Stack functions     |               |               | └>=======┤    |               |
-   Functions(Optional)   |               |               |          └────|>=========     |
-Macro, comments(Optional)|               |               |        =======|==========     |
+                         ║ Mar 04, 2024  ║ Mar 11, 2024  ║ Mar 18, 2024  ║ Mar 25, 2024  ║
+          Task           ║ M T W T F S S ║ M T W T F S S ║ M T W T F S S ║ M T W T F S S ║
+─────────────────────────╫───────────────╫───────────────╫───────────────╫───────────────╫
+      Architecture       ║ ======all=====║==┐            ║               ║               ║
+     Simple commands     ║               ║  └>=all===R=L=║=┐             ║               ║
+    Basic system calls   ║               ║         ===A==║=┤             ║               ║
+      Jump commands      ║               ║               ║ ├>==R=L==┐    ║               ║
+     Stack functions     ║               ║               ║ └>===A===┤    ║               ║
+   Functions(Optional)   ║               ║               ║          └────║>===all===     ║
+Macro, comments(Optional)║               ║               ║        =======║==========     ║
+
+       TIMELINE            ^
+
