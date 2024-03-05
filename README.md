@@ -48,3 +48,8 @@ Emulator for RISC V assembler
   3. Visual (*OPTIONAL*)
 
 ## Check our DIAGRAM.txt
+
+### Good basic part
+
+  1. Read from file and simple parse
+  2. 
