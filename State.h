@@ -9,6 +9,6 @@ struct State {
   }
 
   ~State(){
-    delete registers;
+    delete[] registers;
   }
 };
