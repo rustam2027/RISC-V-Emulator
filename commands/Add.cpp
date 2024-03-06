@@ -1,7 +1,7 @@
 #include "../Register.h"
 #include "Command.h"
 
-class Add : virtual Command {
+struct Add : virtual Command {
   Register dist;
   Register source1;
   Register source2;
