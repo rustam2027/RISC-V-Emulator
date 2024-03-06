@@ -2,7 +2,7 @@
 #include "../Register.h"
 
 
-struct Li: virtual Command {
+struct Li: public Command {
   Register dist;
   int immediate;
 

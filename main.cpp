@@ -26,13 +26,14 @@ int main(int argc, char *argv[]){
   State st = State();
   Li f1 = Li{a1, 8};
 
-  vector<Command> command_vector(3);
+  vector<Command> command_vector;
 
   command_vector.push_back(f1);
   command_vector.push_back(Li{a2, 8});
   command_vector.push_back(Add{a3, a1, a2});
 
   while (!command_vector.empty()) {
+    printf("LOL\n");
     command_vector.back().exec(st);
     command_vector.pop_back();
   }
