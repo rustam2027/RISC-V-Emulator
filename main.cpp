@@ -1,5 +1,5 @@
-#include "State.h"
-#include "Register.h"
+
+#include "tests/simple_commands_test.h"
 #include "parser/Parser.h"
 #include "commands/Command.h"
 #include "commands/commands.h"
@@ -7,7 +7,6 @@
 #include <iostream>
 #include <vector>
 
-using namespace std;
 
 int main(int argc, char *argv[]){
   string file;
@@ -33,6 +32,7 @@ int main(int argc, char *argv[]){
     printf("LOL\n");
     command->exec(st);
   }
+  test_all();
   printf("%d\n", st.registers[a1]);
   printf("%d\n", st.registers[a2]);
   printf("%d\n", st.registers[a3]);
