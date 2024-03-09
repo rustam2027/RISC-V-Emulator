@@ -9,6 +9,9 @@ struct Mv: public Command {
   Mv(Register dist, Register source): dist(dist), source(source) {}
 
   void exec(State& state) {
+    if (dist == zero) {
+      return;
+    }
     state.registers[dist] = state.registers[source];
   }
 };

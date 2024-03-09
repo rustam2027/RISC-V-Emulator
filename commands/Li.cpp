@@ -9,6 +9,9 @@ struct Li: public Command {
   Li(Register dist, int immediate): dist(dist), immediate(immediate) {}
   
   void exec(State& state) {
+    if (dist == zero) {
+      return;  // Может быть чтото посерьезнее
+    }
     state.registers[dist] = immediate;
   }
 };
