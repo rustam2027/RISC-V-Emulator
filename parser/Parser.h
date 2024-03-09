@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include "../commands/Command.h"
 
 using namespace std;

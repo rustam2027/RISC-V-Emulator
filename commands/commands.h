@@ -1,3 +1,4 @@
+#pragma once
 #include "Command.h"
 
 struct Add : public Command {
