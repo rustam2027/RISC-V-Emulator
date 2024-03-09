@@ -1,12 +1,13 @@
-#include <vector>
+#include "Parser.h"
 
-#include "Command.h"
+Parser::Parser(string file): file(file) {}
 
-class Parser {
- private: 
-  // file object
- public:
-  std::vector<Command> get_next() {
-  // Read next command
-  }
-};
+vector<Command*> Parser::get_next() {
+    ifstream in(file);
+    if (in.is_open()) {
+        while (getline(in, line)){ 
+          cout << line << endl;
+        }
+    }
+    in.close();
+}
