@@ -10,4 +10,7 @@ vector<Command*> Parser::get_next() {
         }
     }
     in.close();
+    
+    vector<Command*> command_vector;
+    return command_vector;
 }
