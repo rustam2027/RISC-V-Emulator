@@ -1,1 +1,3 @@
-li a2, 6
+li a1, 10
+li a2, 10
+add a3, a1, a2

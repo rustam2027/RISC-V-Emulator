@@ -1,12 +1,11 @@
 #include "State.h"
 #include "Register.h"
-#include "commands/Add.cpp"
-#include "commands/Li.cpp"
+#include "parser/Parser.h"
+#include "commands/Command.h"
+#include "commands/commands.h"
 
-#include <stdio.h>
 #include <iostream>
-#include <fstream>
-#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -21,19 +20,26 @@ int main(int argc, char *argv[]){
 
   State st = State();
   Li f1 = Li{a1, 8};
-  f1.exec(st);
+  Li f2 = Li{a2, 8};
+  Add a = Add{a3, a1, a2};
 
+  vector<Command*> command_vector;
 
-  string line;
-  ifstream in(file);
-  if (in.is_open()) {
-    while (getline(in, line)){ 
-      cout << line << endl;
-    }
+  command_vector.push_back(&f1);
+  command_vector.push_back(&f2);
+  command_vector.push_back(&a);
+
+  for (Command* command : command_vector) {
+    printf("LOL\n");
+    command->exec(st);
   }
-  in.close();
+  printf("%d\n", st.registers[a1]);
+  printf("%d\n", st.registers[a2]);
+  printf("%d\n", st.registers[a3]);
 
-  printf("%d %d\n", st.registers[a1], a1);
+  Parser parser = Parser(file);
+  
+  vector<Command*> command = parser.get_next();
 
   return 0;
 }

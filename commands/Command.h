@@ -3,5 +3,5 @@
 
 
 struct Command {
-  void exec(State& state);
+  virtual void exec(State& state) = 0;
 };

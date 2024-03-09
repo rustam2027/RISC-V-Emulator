@@ -1,3 +1,2 @@
 #pragma once
-
-int AMOUNT_REGISTERS = 33;
+static const int AMOUNT_REGISTERS = 33;
