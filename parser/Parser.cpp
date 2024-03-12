@@ -3,7 +3,7 @@
 Parser::Parser(string file): file(file) {}
 
 
-vector<string> split (const string &s, char del) {
+vector<string> Parser::split(const string &s, char del) {
     vector<string> result;
     stringstream input(s);
     string item;
@@ -18,10 +18,18 @@ vector<string> split (const string &s, char del) {
     return result;
 }
 
+
+Register Parser::get_register(string str) {
+    if (registers_names.find(str) != registers_names.end()) {
+        return registers_names[str];
+    }
+    throw 77; // not optional<Register>, it's not a normal situation
+}
+
 vector<Command*> Parser::get_next() {
     ifstream in(file);
     if (in.is_open()) {
-        while (getline(in, line)){ 
+        while (getline(in, line)) { 
           vector<string> buf = split(line, ' ');
         //   for (string s: buf) {
         //     cout << s << endl;
@@ -33,3 +41,4 @@ vector<Command*> Parser::get_next() {
     vector<Command*> command_vector;
     return command_vector;
 }
+
