@@ -270,6 +270,85 @@ void test_sll_1() {
 
 }
 
+void test_sll_2() {
+  State state;
+  Li f1 = Li{a1, 0b10101010};
+  Li f2 = Li{a2, 2};
+
+  f1.exec(state);
+  f2.exec(state);
+
+  SLL f = SLL{zero, a1, a2};
+  f.exec(state);
+
+  assert(state.registers[zero] == 0);
+  printf("Test sll_2 passed!\n");
+
+}
+
+void test_srl_1() {
+  State state;
+  Li f1 = Li{a1, 24};
+  Li f2 = Li{a2, 1};
+
+  f1.exec(state);
+  f2.exec(state);
+
+  SRL f = SRL{a3, a1, a2};
+  f.exec(state);
+
+  assert(state.registers[a3] == 12);
+  printf("Test srl_1 passed!\n");
+
+}
+
+void test_srl_2() {
+  State state;
+  Li f1 = Li{a1, 24};
+  Li f2 = Li{a2, 1};
+
+  f1.exec(state);
+  f2.exec(state);
+
+  SRL f = SRL{zero, a1, a2};
+  f.exec(state);
+
+  assert(state.registers[zero] == 0);
+  printf("Test srl_2 passed!\n");
+
+}
+
+void test_xor_1() {
+  State state;
+  Li f1 = Li{a1, 24};
+  Li f2 = Li{a2, 2};
+
+  f1.exec(state);
+  f2.exec(state);
+
+  Xor f = Xor{a3, a1, a2};
+  f.exec(state);
+
+  assert(state.registers[a3] == 26);
+  printf("Test xor_1 passed!\n");
+
+}
+
+void test_xor_2() {
+  State state;
+  Li f1 = Li{a1, 24};
+  Li f2 = Li{a2, 2};
+
+  f1.exec(state);
+  f2.exec(state);
+
+  Xor f = Xor{zero, a1, a2};
+  f.exec(state);
+
+  assert(state.registers[zero] == 0);
+  printf("Test xor_2 passed!\n");
+}
+
 void test_all() {
   test_li_1();
   test_li_2();
@@ -297,6 +376,13 @@ void test_all() {
   test_sub_3();
 
   test_sll_1();
+  test_sll_2();
+
+  test_srl_1();
+  test_srl_2();
+
+  test_xor_1();
+  test_xor_2();
 
   printf("All tests passed!\n");
 }
