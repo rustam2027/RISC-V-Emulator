@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cstdio>
 #include <stdio.h>
+#include <iostream>
 
 #include "../State.h"
 #include "../commands/commands.h"
@@ -349,6 +350,66 @@ void test_xor_2() {
   printf("Test xor_2 passed!\n");
 }
 
+void test_ecall_print_int() {
+  State state;
+  Li f1 = Li{a0, 15};
+  Li f2 = Li{a7, 1};
+
+  f1.exec(state);
+  f2.exec(state);
+
+  Ecall f = Ecall();
+  f.exec(state);
+  
+}
+
+void test_ecall_read_int() {
+  State state;
+  Li f1 = Li{a7, 5};
+
+  f1.exec(state);
+
+  Ecall f = Ecall();
+  f.exec(state);
+  printf("%d", state.registers[a0]);
+}
+
+void test_ecall_exit_0() {
+  State state;
+  Li f1 = Li{a7, 10};
+
+  f1.exec(state);
+
+  Ecall f = Ecall();
+  f.exec(state);
+}
+
+void test_ecall_exit() {
+  State state;
+  Li f1 = Li{a7, 93};
+  Li f2 = Li{a0, 15};
+
+  f1.exec(state);
+  f2.exec(state);
+
+  Ecall f = Ecall();
+  f.exec(state);
+}
+
+void test_ecall_print_char() {
+  State state;
+  Li f1 = Li{a0, 65};
+  Li f2 = Li{a7, 11};
+
+  f1.exec(state);
+  f2.exec(state);
+
+  Ecall f = Ecall();
+  f.exec(state);
+  
+}
+
+
 void test_all() {
   test_li_1();
   test_li_2();
@@ -384,6 +445,11 @@ void test_all() {
   test_xor_1();
   test_xor_2();
 
+  // test_ecall_print_int();
+  // test_ecall_read_int();
+  // test_ecall_exit_0();
+  // test_ecall_exit();
+  // test_ecall_print_char();
   printf("All tests passed!\n");
 }
 

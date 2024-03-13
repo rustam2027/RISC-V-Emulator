@@ -71,3 +71,6 @@ void Xor::exec(State &state) {
     }
     state.registers[dist] = state.registers[source1] ^ state.registers[source2];
 }
+void Ecall::exec(State &state) {
+  functions[state.registers[a7]](state);
+}

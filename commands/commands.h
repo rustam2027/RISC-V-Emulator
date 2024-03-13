@@ -1,6 +1,10 @@
 #pragma once
 #include "Command.h"
+#include <map>
+#include <functional>
+#include "../consts.h"
 
+using namespace std;
 struct Add : Command {
   Register dist;
   Register source1;
@@ -86,6 +90,23 @@ struct Xor : Command {
   Register source2;
 
   Xor(Register dist, Register source1, Register source2): dist(dist), source1(source1), source2(source2) {}
+
+  void exec(State &state);
+};
+
+struct Ecall : Command {
+  map<int, function<void(State&)>> functions = {
+    {PRINT_INT, [](State& state) { printf("%d", state.registers[a0]); }},
+    {READ_INT, [](State& state) { scanf("%d", &state.registers[a0]); }},
+    {EXIT_0, [](State& state){ exit(0); }},
+    {EXIT, [](State& state) { exit(state.registers[a0]); }},
+    {PRINT_CHAR, [](State& state) { printf("%c", state.registers[a0]); }},
+    {READ_CHAR, [](State& state) { scanf("%c", &state.registers[a0]); }},
+    {SBRK, [](State& state) {}}, // ?
+    {PRINT_STRING, [](State& state) { printf("%s", state.stack[state.registers[a0]]); }} // скорее всего полная хуйня
+
+  };
+  Ecall() {}
 
   void exec(State &state);
 };
