@@ -13,33 +13,27 @@ int main(int argc, char *argv[]){
   if (argc > 1) {
     file = argv[1];
   } else {
-    cout << "NO incoming file" << endl;
+    cout << "NO incoming file" << endl; 
+    // throw file exception
     file = "in.txt";
   }
 
-  State st = State();
-  Li f1 = Li{a1, 8};
-  Li f2 = Li{a2, 8};
-  Add a = Add{a3, a1, a2};
-
-  vector<Command*> command_vector;
-
-  command_vector.push_back(&f1);
-  command_vector.push_back(&f2);
-  command_vector.push_back(&a);
-
-  for (Command* command : command_vector) {
-    printf("LOL\n");
-    command->exec(st);
-  }
-  test_all();
-  printf("%d\n", st.registers[a1]);
-  printf("%d\n", st.registers[a2]);
-  printf("%d\n", st.registers[a3]);
-
   Parser parser = Parser(file);
-  
-  vector<Command*> command = parser.get_next();
+  State st = State();
 
+
+  try {
+    vector<Command*> commands = parser.get_next();
+    for (Command* command : commands) {
+      command->exec(st);
+    }
+    printf("%d\n", st.registers[a1]);
+    printf("%d\n", st.registers[a2]);
+    printf("%d\n", st.registers[a3]);
+  } catch (const int error_num) {
+    cout << error_num << endl;
+  }
+
+  // delete commands at the end --- LEAK MEMORY ---
   return 0;
 }

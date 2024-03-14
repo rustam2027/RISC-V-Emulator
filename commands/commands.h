@@ -1,112 +1,107 @@
 #pragma once
 #include "Command.h"
 #include <map>
+#include <cstdio>
+#include <cstdlib>
 #include <functional>
 #include "../consts.h"
 
 using namespace std;
 struct Add : Command {
-  Register dist;
-  Register source1;
-  Register source2;
+  Register dist, source1, source2;
 
-  Add(Register dist, Register source1, Register source2): dist(dist), source1(source1), source2(source2) {}
+  Add() {}
   void exec(State &state);
+  void fill_args(vector<std::string> args);
 };
 
 struct Addi : Command {
-  Register dist;
-  Register source;
+  Register dist, source;
   int immediate;
 
-  Addi(Register dist, Register source, int immediate): dist(dist), source(source), immediate(immediate) {}
+  Addi() {}
   void exec(State &state);
+  void fill_args(vector<std::string> args);
 };
 
 struct And : Command {
-  Register dist;
-  Register source1;
-  Register source2;
+  Register dist, source1, source2;
 
-  And(Register dist, Register source1, Register source2): dist(dist), source1(source1), source2(source2) {}
+  And() {}
   void exec(State &state);
+  void fill_args(vector<std::string> args);
 };
 
 struct Li : Command {
   Register dist;
   int immediate;
 
-  Li(Register dist, int immediate): dist(dist), immediate(immediate) {}
+  Li() {}
   void exec(State& state);
+  void fill_args(vector<std::string> args);
 };
 
 struct Mv : Command {
-  Register dist;
-  Register source;
+  Register dist, source;
 
-  Mv(Register dist, Register source): dist(dist), source(source) {}
+  Mv() {}
   void exec(State& state);
+  void fill_args(vector<std::string> args);
 };
 
 struct Or : Command {
-  Register dist;
-  Register source1;
-  Register source2;
+  Register dist, source1, source2;
 
-  Or(Register dist, Register source1, Register source2): dist(dist), source1(source1), source2(source2) {}
+  Or() {}
   void exec(State &state);
+  void fill_args(vector<std::string> args);
 };
 
 struct SLL : Command {
-  Register dist;
-  Register source1;
-  Register source2;
+  Register dist, source1, source2;
 
-  SLL(Register dist, Register source1, Register source2): dist(dist), source1(source1), source2(source2) {}
+  SLL() {}
   void exec(State &state);
+  void fill_args(vector<std::string> args);
 };
 
 struct SRL : Command {
-  Register dist;
-  Register source1;
-  Register source2;
+  Register dist, source1, source2;
 
-  SRL(Register dist, Register source1, Register source2): dist(dist), source1(source1), source2(source2) {}
+  SRL() {}
   void exec(State &state);
+  void fill_args(vector<std::string> args);
 };
 
 struct Sub : Command {
-  Register dist;
-  Register source1;
-  Register source2;
+  Register dist, source1, source2;
 
-  Sub(Register dist, Register source1, Register source2): dist(dist), source1(source1), source2(source2) {}
+  Sub() {}
   void exec(State &state);
+  void fill_args(vector<std::string> args);
 };
 
 struct Xor : Command {
-  Register dist;
-  Register source1;
-  Register source2;
+  Register dist, source1, source2;
 
-  Xor(Register dist, Register source1, Register source2): dist(dist), source1(source1), source2(source2) {}
-
+  Xor() {}
   void exec(State &state);
+  void fill_args(vector<std::string> args);
 };
 
-struct Ecall : Command {
-  map<int, function<void(State&)>> functions = {
-    {PRINT_INT, [](State& state) { printf("%d", state.registers[a0]); }},
-    {READ_INT, [](State& state) { scanf("%d", &state.registers[a0]); }},
-    {EXIT_0, [](State& state){ exit(0); }},
-    {EXIT, [](State& state) { exit(state.registers[a0]); }},
-    {PRINT_CHAR, [](State& state) { printf("%c", state.registers[a0]); }},
-    {READ_CHAR, [](State& state) { scanf("%c", &state.registers[a0]); }},
-    {SBRK, [](State& state) {}}, // ?
-    {PRINT_STRING, [](State& state) { printf("%s", state.stack[state.registers[a0]]); }} // скорее всего полная хуйня
+// struct Ecall : Command {
+//   map<int, function<void(State&)>> functions = {
+//     {PRINT_INT, [](State& state) { printf("%d", state.registers[a0]); }},
+//     {READ_INT, [](State& state) { scanf("%d", &state.registers[a0]); }},
+//     {EXIT_0, [](State& state){ exit(0); }},
+//     {EXIT, [](State& state) { exit(state.registers[a0]); }},
+//     {PRINT_CHAR, [](State& state) { printf("%c", state.registers[a0]); }},
+//     {READ_CHAR, [](State& state) { scanf("%c", &state.registers[a0]); }},
+//     {SBRK, [](State& state) {}}, // ?
+//     {PRINT_STRING, [](State& state) { printf("%s", state.stack[state.registers[a0]]); }} // скорее всего полная хуйня
 
-  };
-  Ecall() {}
+//   };
+//   Ecall() {}
 
-  void exec(State &state);
-};
+//   void exec(State &state);
+// };
