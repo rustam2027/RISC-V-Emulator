@@ -5,7 +5,6 @@
 #include "commands/commands.h"
 
 #include <iostream>
-#include <vector>
 
 
 int main(int argc, char *argv[]){
@@ -30,6 +29,10 @@ int main(int argc, char *argv[]){
     printf("%d\n", st.registers[a1]);
     printf("%d\n", st.registers[a2]);
     printf("%d\n", st.registers[a3]);
+    for (Command* command: commands) {
+      delete command;
+    }
+
   } catch (const int error_num) {
     cout << error_num << endl;
   }
