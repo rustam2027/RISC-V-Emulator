@@ -1,8 +1,8 @@
 
-#include "tests/simple_commands_test.h"
-#include "parser/Parser.h"
-#include "commands/Command.h"
-#include "commands/commands.h"
+#include "tests/simple_commands_test.hpp"
+#include "parser/Parser.hpp"
+#include "commands/Command.hpp"
+#include "commands/commands.hpp"
 
 #include <iostream>
 

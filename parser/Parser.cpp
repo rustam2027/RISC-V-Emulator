@@ -1,4 +1,4 @@
-#include "Parser.h"
+#include "Parser.hpp"
 
 Parser::Parser(string file): file(file) {}
 
@@ -41,7 +41,7 @@ Register Parser::get_register(const string &str) {
     throw 77; // not optional<Register>, it's not a normal situation
 }
 
-vector<Command*> Parser::get_next() {
+vector<Command*> Parser::get_commands() {
     vector<Command*> command_vector;
     ifstream in(file);
     if (in.is_open()) {

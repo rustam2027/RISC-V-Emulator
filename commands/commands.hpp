@@ -1,10 +1,10 @@
 #pragma once
-#include "Command.h"
+#include "Command.hpp"
 #include <map>
 #include <cstdio>
 #include <cstdlib>
 #include <functional>
-#include "../consts.h"
+#include "../consts.hpp"
 
 using namespace std;
 struct Add : Command {

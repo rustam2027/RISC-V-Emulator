@@ -3,8 +3,8 @@
 #include <stdio.h>
 #include <iostream>
 
-#include "../State.h"
-#include "../commands/commands.h"
+#include "../State.hpp"
+#include "../commands/commands.hpp"
 
 
 void test_li_1() {

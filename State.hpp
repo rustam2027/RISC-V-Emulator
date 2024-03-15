@@ -1,6 +1,6 @@
 #pragma once
-#include "consts.h"
-#include "Register.h"
+#include "consts.hpp"
+#include "Register.hpp"
 
 
 struct State {

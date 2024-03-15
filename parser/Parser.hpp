@@ -7,8 +7,8 @@
 #include <map>
 #include <optional>
 #include <functional>
-#include "../commands/Command.h"
-#include "../commands/commands.h"
+#include "../commands/Command.hpp"
+#include "../commands/commands.hpp"
 
 using namespace std;
 
@@ -34,6 +34,6 @@ class Parser {
     vector<string> split (const string &s, char del);
   public:
     Parser(string file);
-    vector<Command*> get_next();
+    vector<Command*> get_commands();
     static Register get_register(const string &str);
 };

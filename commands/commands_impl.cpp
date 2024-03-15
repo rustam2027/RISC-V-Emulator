@@ -1,5 +1,5 @@
-#include "commands.h"
-#include "../parser/Parser.h"
+#include "commands.hpp"
+#include "../parser/Parser.hpp"
 
 //TODO: convert 77 to normal exception
 
