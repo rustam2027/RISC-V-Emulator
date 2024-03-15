@@ -1,3 +1,6 @@
+;zhopa
 li a1, 6
 li a2, 6
 add a3, a1, a2
+label:
+li a6, 1

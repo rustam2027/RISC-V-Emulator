@@ -15,6 +15,7 @@ using namespace std;
 class Parser {
   private: 
     static map<string, Register> registers_names;
+    map<std::string, int> labels;
     
     map <string, function<Command*()>> func = {
       {"add", []() { return new Add();}},
@@ -32,6 +33,7 @@ class Parser {
     string file;
     string line;
     vector<string> split (const string &s, char del);
+    void preprocess();
   public:
     Parser(string file);
     vector<Command*> get_commands();

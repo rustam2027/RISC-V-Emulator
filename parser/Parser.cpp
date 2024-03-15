@@ -1,6 +1,12 @@
 #include "Parser.hpp"
+#include <cstddef>
+#include <fstream>
+#include <iostream>
+#include <map>
 
-Parser::Parser(string file): file(file) {}
+Parser::Parser(string file): file(file) {
+    preprocess();
+}
 
 map<string, Register> Parser::registers_names = {
       {"zero", zero}, {"ra", ra}, {"sp", sp},
@@ -19,6 +25,7 @@ map<string, Register> Parser::registers_names = {
 
 vector<string> Parser::split(const string &s, char del) {
     //TODO: check syntax errors, throw exception
+    //TODO: delete comments after ;)
     vector<string> result;
     stringstream input(s);
     string item;
@@ -43,7 +50,7 @@ Register Parser::get_register(const string &str) {
 
 vector<Command*> Parser::get_commands() {
     vector<Command*> command_vector;
-    ifstream in(file);
+    ifstream in("_in.parse");
     if (in.is_open()) {
         while (getline(in, line)) { 
           vector<string> buf = split(line, ' ');
@@ -56,5 +63,38 @@ vector<Command*> Parser::get_commands() {
     }
     in.close();
     return command_vector;
+}
+
+void Parser::preprocess() {
+    ifstream in(file);
+    std::ofstream out;
+    out.open("_in.parse"); 
+    int counter = 0;
+    if (in.is_open()) {
+        std::string current_line;
+        while (getline(in, current_line)) { 
+            if (current_line[0] == ';') {
+                continue;
+            }
+            std::vector<std::string> buf = split(current_line, ' ');
+            std::string first = buf.front();
+            int last = first.size() - 1;
+            if (buf.front()[last] == ':') {
+                if (buf.size() == 1) {
+                    first.erase(last, 1);
+                    labels[first] = counter;
+                    continue; 
+                }
+            }
+            counter++;
+            out << current_line << endl;             
+        }
+    }
+    out.close();
+    in.close();
+    for (auto const& key : labels) {
+       cout << key.first << key.second << endl;
+    } 
+            
 }
 

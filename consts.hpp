@@ -16,4 +16,5 @@
 #define WRITE 64
 #define EXIT 93
 
-static const int AMOUNT_REGISTERS = 33;
+#define AMOUNT_REGISTERS 33
+#define AMOUNT_STACK 10000
