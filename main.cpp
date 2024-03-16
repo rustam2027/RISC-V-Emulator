@@ -3,6 +3,7 @@
 #include "parser/Parser.hpp"
 #include "commands/Command.hpp"
 #include "commands/commands.hpp"
+#include "interpreter/Interpreter.hpp"
 
 #include <iostream>
 
@@ -18,25 +19,13 @@ int main(int argc, char *argv[]){
   }
 
   Parser parser = Parser(file);
-  State st = State();
-
+  Interpreter interpreter(parser.get_commands());
 
   try {
-    vector<Command*> commands = parser.get_next();
-    for (Command* command : commands) {
-      command->exec(st);
-    }
-    printf("%d\n", st.registers[a1]);
-    printf("%d\n", st.registers[a2]);
-    printf("%d\n", st.registers[a3]);
-    for (Command* command: commands) {
-      delete command;
-    }
-
+    interpreter.interpret();
   } catch (const int error_num) {
     cout << error_num << endl;
   }
 
-  // delete commands at the end --- LEAK MEMORY ---
   return 0;
 }

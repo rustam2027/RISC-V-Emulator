@@ -10,6 +10,7 @@ struct State {
     registers = new int[AMOUNT_REGISTERS];
     stack = new int[AMOUNT_STACK];
     registers[zero] = 0;
+    registers[pc] = 0;
   }
 
   ~State(){

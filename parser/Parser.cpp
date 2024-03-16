@@ -92,9 +92,5 @@ void Parser::preprocess() {
     }
     out.close();
     in.close();
-    for (auto const& key : labels) {
-       cout << key.first << key.second << endl;
-    } 
-            
 }
 
