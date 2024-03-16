@@ -1,8 +1,6 @@
 #include "commands.hpp"
 #include "../parser/Parser.hpp"
 
-//TODO: convert 77 to normal exception
-
 void Add::exec(State &state) {
     if (dist == zero) {
       return;
@@ -11,10 +9,10 @@ void Add::exec(State &state) {
 }
 
 void Add::fill_args(vector<string> args) {
-  // args amount: 3
   // converted to types: Register, Register, Register 
-  if (args.size() != 3) {
-    throw 77;
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException(Parser::exception_message("add", args_amount, args.size()));
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
@@ -29,10 +27,10 @@ void Addi::exec(State &state) {
 }
 
 void Addi::fill_args(vector<string> args) {
-  // args amount: 3
   // converted to types: Register, Register, int 
-  if (args.size() != 3) {
-    throw 77;
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException(Parser::exception_message("addi", args_amount, args.size()));
   }
   dist = Parser::get_register(args[0]);
   source = Parser::get_register(args[1]);
@@ -47,10 +45,10 @@ void And::exec(State &state) {
 }
 
 void And::fill_args(vector<string> args) {
-  // args amount: 3
   // converted to types: Register, Register, Register 
-  if (args.size() != 3) {
-    throw 77;
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException(Parser::exception_message("and", args_amount, args.size()));
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
@@ -65,10 +63,10 @@ void Li::exec(State& state) {
 }
 
 void Li::fill_args(vector<string> args) {
-  // args amount: 2
   // converted to types: Register, int 
-  if (args.size() != 2) {
-    throw 77;
+  int args_amount = 2;
+  if (args.size() != args_amount) {
+    throw ParserException(Parser::exception_message("li", args_amount, args.size()));
   }
   dist = Parser::get_register(args[0]);
   immediate = stoi(args[1]);
@@ -82,10 +80,10 @@ void Mv::exec(State& state) {
 }
 
 void Mv::fill_args(vector<string> args) {
-  // args amount: 2
   // converted to types: Register, Register
-  if (args.size() != 2) {
-    throw 77;
+  int args_amount = 2;
+  if (args.size() != args_amount) {
+    throw ParserException(Parser::exception_message("mv", args_amount, args.size()));
   }
   dist = Parser::get_register(args[0]);
   source = Parser::get_register(args[1]);
@@ -99,10 +97,10 @@ void Or::exec(State &state) {
 }
 
 void Or::fill_args(vector<string> args) {
-  // args amount: 3
   // converted to types: Register, Register, Register 
-  if (args.size() != 3) {
-    throw 77;
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException(Parser::exception_message("or", args_amount, args.size()));
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
@@ -118,10 +116,10 @@ void SLL::exec(State &state) {
 }
 
 void SLL::fill_args(vector<string> args) {
-  // args amount: 3
   // converted to types: Register, Register, Register 
-  if (args.size() != 3) {
-    throw 77;
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException(Parser::exception_message("sll", args_amount, args.size()));
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
@@ -137,10 +135,10 @@ void SRL::exec(State &state) {
 }
 
 void SRL::fill_args(vector<string> args) {
-  // args amount: 3
   // converted to types: Register, Register, Register 
-  if (args.size() != 3) {
-    throw 77;
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException(Parser::exception_message("srl", args_amount, args.size()));
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
@@ -155,10 +153,10 @@ void Sub::exec(State &state) {
 }
 
 void Sub::fill_args(vector<string> args) {
-  // args amount: 3
   // converted to types: Register, Register, Register 
-  if (args.size() != 3) {
-    throw 77;
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException(Parser::exception_message("sub", args_amount, args.size()));
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
@@ -173,10 +171,10 @@ void Xor::exec(State &state) {
 }
 
 void Xor::fill_args(vector<string> args) {
-  // args amount: 3
   // converted to types: Register, Register, Register 
-  if (args.size() != 3) {
-    throw 77;
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException(Parser::exception_message("xor", args_amount, args.size()));
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
@@ -188,4 +186,10 @@ void Ecall::exec(State &state) {
   functions[state.registers[a7]](state);
 }
 
-void Ecall::fill_args(vector<string> args) {} // args amount: 0
+void Ecall::fill_args(vector<string> args) {
+  // args amount: 0
+  if (!args.empty()) {
+    throw ParserException(Parser::exception_message("ecall", 0, args.size()));
+  }
+
+} 

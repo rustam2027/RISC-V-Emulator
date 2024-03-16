@@ -5,10 +5,14 @@
 #include <fstream>
 #include <sstream>
 #include <map>
-#include <optional>
 #include <functional>
+#include <cstddef>
+#include <numeric>
+#include <cassert>
+
 #include "../commands/Command.hpp"
 #include "../commands/commands.hpp"
+#include "../exceptions/ParserException.hpp"
 
 using namespace std;
 
@@ -33,11 +37,15 @@ class Parser {
 
     string file;
     string line;
-    vector<string> split(const string &s, char del, bool remove_comma);
-    string concat(const string &sep, const vector<string> &strs);
+    vector<string> split(const string& s, char del, bool remove_comma);
+    string concat(const string& sep, const vector<string>& strs);
     void preprocess();
   public:
     Parser(string file);
     vector<Command*> get_commands();
     static Register get_register(const string &str);
+    static string exception_message(const string& command, int required, int provided) {
+      return string("invalid amount of args in " + command + ": required " + to_string(required) + ", provided " + to_string(provided));
+    }
+
 };

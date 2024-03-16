@@ -1,10 +1,5 @@
 #include "Parser.hpp"
-#include <cstddef>
-#include <fstream>
-#include <iostream>
-#include <map>
-#include <numeric>
-#include <cassert>
+
 
 Parser::Parser(string file): file(file) {
     preprocess();
@@ -59,7 +54,7 @@ Register Parser::get_register(const string &str) {
     if (registers_names.find(str) != registers_names.end()) {
         return registers_names[str];
     }
-    throw 77; // not optional<Register>, it's not a normal situation
+    throw ParserException("invalid register " + str);
 }
 
 vector<Command*> Parser::get_commands() {

@@ -13,19 +13,26 @@ int main(int argc, char *argv[]){
   if (argc > 1) {
     file = argv[1];
   } else {
-    cout << "NO incoming file" << endl; 
-    // throw file exception
-    file = "in.txt";
+    cout << "No incoming file" << endl; 
+    exit(1);
   }
 
   Parser parser = Parser(file);
-  Interpreter interpreter(parser.get_commands());
+  vector<Command*> commands;
+  try {
+    commands = parser.get_commands();
+  } catch (ParserException e) {
+    cout << e.get_message() << endl;
+    exit(1);
+  }
+
+  Interpreter interpreter(commands);
 
   try {
     interpreter.interpret();
-  } catch (const int error_num) {
+  } catch (const int error_num) {  // catch custom interpreter exception
     cout << error_num << endl;
-  }
+  } 
 
   return 0;
 }

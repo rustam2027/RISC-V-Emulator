@@ -1,8 +1,9 @@
+#pragma once
 #include <string>
 
 class EmulatorException {
 public:
-  EmulatorException(std::string message): message(message){};
+  EmulatorException(const std::string& message): message(message){};
   std::string get_message() const {return message;};
 
 private:
