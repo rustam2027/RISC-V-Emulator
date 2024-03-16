@@ -33,7 +33,8 @@ class Parser {
 
     string file;
     string line;
-    vector<string> split (const string &s, char del);
+    vector<string> split(const string &s, char del, bool remove_comma);
+    string concat(const string &sep, const vector<string> &strs);
     void preprocess();
   public:
     Parser(string file);

@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <numeric>
+#include <cassert>
 
 Parser::Parser(string file): file(file) {
     preprocess();
@@ -23,21 +25,33 @@ map<string, Register> Parser::registers_names = {
 };
 
 
-vector<string> Parser::split(const string &s, char del) {
+vector<string> Parser::split(const string &s, char del, bool remove_comma) {
     //TODO: check syntax errors, throw exception
-    //TODO: delete comments after ;)
     vector<string> result;
     stringstream input(s);
     string item;
 
     while (getline (input, item, del)) {
-        int last = item.size() - 1;
-        if (item[last] == ',') {
-            item.erase(last, 1);
+        if (item.empty()) { continue; }  // unused space
+        if (item[0] == ';') { return result; } //comment start
+        if (remove_comma) {
+            int last = item.size() - 1;
+            if (item[last] == ',') {
+                item.erase(last, 1);
+            }
         }
         result.push_back(item);
     }
     return result;
+}
+
+
+string Parser::concat(const string &sep, const vector<string> &strs) {
+    assert(!strs.empty());
+
+    return std::accumulate(std::next(strs.cbegin()), strs.cend(), *strs.cbegin(),
+        [&sep](string c, const string& s)
+            { return std::move(c) + sep + s; });
 }
 
 
@@ -53,12 +67,12 @@ vector<Command*> Parser::get_commands() {
     ifstream in("_in.parse");
     if (in.is_open()) {
         while (getline(in, line)) { 
-          vector<string> buf = split(line, ' ');
-          string start = buf.front();
-          Command* command = func[start]();
-          buf.erase(buf.begin());
-          command->fill_args(buf);
-          command_vector.push_back(command);
+            vector<string> buf = split(line, ' ', true);
+            string start = buf.front();
+            Command* command = func[start]();
+            buf.erase(buf.begin());
+            command->fill_args(buf);
+            command_vector.push_back(command);
         }
     }
     in.close();
@@ -73,11 +87,11 @@ void Parser::preprocess() {
     if (in.is_open()) {
         std::string current_line;
         while (getline(in, current_line)) { 
-            if (current_line[0] == ';') {
+            if (current_line.empty() || current_line[0] == ';') {
                 continue;
             }
-            std::vector<std::string> buf = split(current_line, ' ');
-            std::string first = buf.front();
+            vector<string> buf = split(current_line, ' ', false);
+            string first = buf.front();
             int last = first.size() - 1;
             if (buf.front()[last] == ':') {
                 if (buf.size() == 1) {
@@ -85,8 +99,10 @@ void Parser::preprocess() {
                     labels[first] = counter;
                     continue; 
                 }
+                // len != 1 -> error 
             }
             counter++;
+            current_line = concat(" ", buf);
             out << current_line << endl;             
         }
     }

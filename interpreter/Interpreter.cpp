@@ -13,7 +13,7 @@ void Interpreter::interpret() {
     global_state.registers[pc]++;
   }
   printf("%d\n", global_state.registers[a3]);
-  printf("%c\n", global_state.registers[a0]);
+  // printf("%c\n", global_state.registers[a0]);  // check ecall
 }
 
 Interpreter::~Interpreter() {

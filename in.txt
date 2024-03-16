@@ -1,7 +1,9 @@
 ;zhopa
-li a1, 6
-li a2, 6
-add a3, a1, a2
+li a1,   6
+li    a2, 6 
+
+
+   add a3, a1, a2  ;zhopa popa
 label:
-li a7, 12
-ecall
+
+
