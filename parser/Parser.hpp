@@ -28,6 +28,7 @@ class Parser {
       {"srl", []() { return new SRL();}},
       {"sub", []() { return new Sub();}},
       {"xor", []() { return new Xor();}},
+      {"ecall", []() { return new Ecall();}}
     };
 
     string file;

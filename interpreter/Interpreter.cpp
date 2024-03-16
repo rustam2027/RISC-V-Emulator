@@ -12,7 +12,8 @@ void Interpreter::interpret() {
     commands[global_state.registers[pc]]->exec(global_state);
     global_state.registers[pc]++;
   }
-  printf("%d", global_state.registers[a3]);
+  printf("%d\n", global_state.registers[a3]);
+  printf("%c\n", global_state.registers[a0]);
 }
 
 Interpreter::~Interpreter() {

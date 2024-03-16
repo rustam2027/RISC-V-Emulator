@@ -89,19 +89,20 @@ struct Xor : Command {
   void fill_args(vector<std::string> args);
 };
 
-// struct Ecall : Command {
-//   map<int, function<void(State&)>> functions = {
-//     {PRINT_INT, [](State& state) { printf("%d", state.registers[a0]); }},
-//     {READ_INT, [](State& state) { scanf("%d", &state.registers[a0]); }},
-//     {EXIT_0, [](State& state){ exit(0); }},
-//     {EXIT, [](State& state) { exit(state.registers[a0]); }},
-//     {PRINT_CHAR, [](State& state) { printf("%c", state.registers[a0]); }},
-//     {READ_CHAR, [](State& state) { scanf("%c", &state.registers[a0]); }},
-//     {SBRK, [](State& state) {}}, // ?
-//     {PRINT_STRING, [](State& state) { printf("%s", state.stack[state.registers[a0]]); }} // скорее всего полная хуйня
+struct Ecall : Command {
+  map<int, function<void(State&)>> functions = {
+    {PRINT_INT, [](State& state) { printf("%d", state.registers[a0]); }},
+    {READ_INT, [](State& state) { scanf("%d", &state.registers[a0]); }},
+    {EXIT_0, [](State& state){ exit(0); }},
+    {EXIT, [](State& state) { exit(state.registers[a0]); }},
+    {PRINT_CHAR, [](State& state) { printf("%c", state.registers[a0]); }},
+    {READ_CHAR, [](State& state) { char c;
+                                  scanf("%c", &c); 
+                                  state.registers[a0] = (int) c; }}
+  };
+  Ecall() {}
 
-//   };
-//   Ecall() {}
+  void exec(State &state);
+  void fill_args(std::vector<std::string> args);
 
-//   void exec(State &state);
-// };
+};

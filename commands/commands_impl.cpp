@@ -184,6 +184,8 @@ void Xor::fill_args(vector<string> args) {
 }
 
 
-// void Ecall::exec(State &state) {
-//   functions[state.registers[a7]](state);
-// }
+void Ecall::exec(State &state) {
+  functions[state.registers[a7]](state);
+}
+
+void Ecall::fill_args(vector<string> args) {} // args amount: 0
