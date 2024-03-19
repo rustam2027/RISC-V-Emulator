@@ -66,7 +66,15 @@ vector<Command*> Parser::get_commands() {
             string start = buf.front();
             Command* command = func[start]();
             buf.erase(buf.begin());
-            command->fill_args(buf);
+            try {
+                command->fill_args(buf);
+            } catch (ParserException e) {
+                for (Command* in_command : command_vector) {
+                    delete in_command;
+                }
+                delete command;
+                throw;
+            } 
             command_vector.push_back(command);
         }
     }
