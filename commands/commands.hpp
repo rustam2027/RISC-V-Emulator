@@ -104,5 +104,10 @@ struct Ecall : Command {
 
   void exec(State &state);
   void fill_args(std::vector<std::string> args);
+};
 
+struct Jump : Command {
+  std::string label;
+  void exec(State &state);
+  void fill_args(vector<std::string> args);
 };

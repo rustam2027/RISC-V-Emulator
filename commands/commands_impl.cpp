@@ -1,5 +1,6 @@
 #include "commands.hpp"
 #include "../parser/Parser.hpp"
+#include <vector>
 
 void Add::exec(State &state) {
     if (dist == zero) {
@@ -193,3 +194,15 @@ void Ecall::fill_args(vector<string> args) {
   }
 
 } 
+
+void Jump::exec(State& state) {
+  state.registers[pc] = state.labels[label] - 1;
+}
+
+void Jump::fill_args(vector<string> args) {
+  int args_amount = 1;
+  if (args.size() != args_amount) {
+    throw ParserException(Parser::exception_message("jump", args_amount, args.size()));
+  }
+  label = args[0];
+}

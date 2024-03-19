@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
     exit(1);
   }
 
-  Interpreter interpreter(commands);
+  Interpreter interpreter(commands, parser.get_labels());
 
   try {
     interpreter.interpret();

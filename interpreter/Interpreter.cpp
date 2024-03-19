@@ -1,23 +1,28 @@
 #include "Interpreter.hpp"
+#include <algorithm>
 #include <cstdio>
-#include <vector>
 #include <stdio.h>
+#include <vector>
+#include <iostream>
 
-Interpreter::Interpreter(std::vector<Command*> commands) {
+using namespace std;
+
+Interpreter::Interpreter(std::vector<Command *> commands,
+                         std::map<std::string, int> labels) {
   this->commands = commands;
+  global_state = new State(labels);
 }
 
 void Interpreter::interpret() {
-  while (global_state.registers[pc] < commands.size()) {
-    commands[global_state.registers[pc]]->exec(global_state);
-    global_state.registers[pc]++;
+  while (global_state->registers[pc] < commands.size()) {
+    commands[global_state->registers[pc]]->exec(*global_state);
+    global_state->registers[pc]++;
   }
-  printf("%d\n", global_state.registers[a3]);
-  // printf("%c\n", global_state.registers[a0]);  // check ecall
 }
 
 Interpreter::~Interpreter() {
-  for (Command* command : commands) {
+  for (Command *command : commands) {
     delete command;
   }
+  delete global_state;
 }

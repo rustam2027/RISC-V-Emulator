@@ -1,9 +1,12 @@
 ;zhopa
+jmp label
 li a1,   6
 li    a2, 6 
-
+jmp end
 
    add a3, a1, a2  ;zhopa popa
 label:
+   li a2, 23
+end:
 
 
