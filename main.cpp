@@ -20,6 +20,7 @@ int main(int argc, char *argv[]){
   Parser parser = Parser(file);
   vector<Command*> commands;
   try {
+    parser.preprocess();
     commands = parser.get_commands();
   } catch (ParserException e) {
     cout << e.get_message() << endl;

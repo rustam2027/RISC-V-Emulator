@@ -35,15 +35,16 @@ private:
                                              {"jmp", []() {return new Jump(); }}};
 
   string file;
-  string line;
   vector<string> split(const string &s, char del, bool remove_comma);
   string concat(const string &sep, const vector<string> &strs);
-  void preprocess();
+  void delete_commands(vector<Command*> commands);
 
 public:
   Parser(string file);
+  void preprocess();
   vector<Command *> get_commands();
   static Register get_register(const string &str);
+  Command* get_command(const string &str);
   map<std::string, int> get_labels() { return labels; }
 
   static string exception_message(const string &command, int required,

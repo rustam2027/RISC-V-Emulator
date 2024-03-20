@@ -1,9 +1,7 @@
 #include "Parser.hpp"
 
 
-Parser::Parser(string file): file(file) {
-    preprocess();
-}
+Parser::Parser(string file): file(file) {}
 
 map<string, Register> Parser::registers_names = {
       {"zero", zero}, {"ra", ra}, {"sp", sp},
@@ -54,25 +52,43 @@ Register Parser::get_register(const string &str) {
     if (registers_names.find(str) != registers_names.end()) {
         return registers_names[str];
     }
-    throw ParserException("invalid register " + str);
+    throw ParserException("invalid register: " + str);
+}
+
+Command* Parser::get_command(const string &str) {
+    if (func.find(str) != func.end()) {
+        return func[str]();
+    }
+    throw CommandCreationException("invalid command: " + str);
+}
+
+void Parser::delete_commands(vector<Command*> commands) {
+    for (Command* command : commands) {
+        delete command;
+    }
 }
 
 vector<Command*> Parser::get_commands() {
     vector<Command*> command_vector;
     ifstream in("_in.parse");
     if (in.is_open()) {
+        string line;
         while (getline(in, line)) { 
             vector<string> buf = split(line, ' ', true);
             string start = buf.front();
-            Command* command = func[start]();
             buf.erase(buf.begin());
+            Command* command;
             try {
+                command = get_command(start);
                 command->fill_args(buf);
+            } catch (CommandCreationException e) {
+                delete_commands(command_vector);
+                in.close();
+                throw;
             } catch (ParserException e) {
-                for (Command* in_command : command_vector) {
-                    delete in_command;
-                }
+                delete_commands(command_vector);
                 delete command;
+                in.close();
                 throw;
             } 
             command_vector.push_back(command);
@@ -102,7 +118,9 @@ void Parser::preprocess() {
                     labels[first] = counter;
                     continue; 
                 }
-                // len != 1 -> error 
+                out.close();
+                in.close();
+                throw ParserException("invalid label name: " + concat(" ", buf));
             }
             counter++;
             current_line = concat(" ", buf);
