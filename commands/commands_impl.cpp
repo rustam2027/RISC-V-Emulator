@@ -1,5 +1,7 @@
 #include "../parser/Parser.hpp"
+#include "../exceptions/RuntimeException.hpp"
 #include "commands.hpp"
+#include <string>
 #include <vector>
 
 void Add::exec(State &state) {
@@ -196,7 +198,12 @@ void Xor::fill_args(vector<string> args) {
   source2 = Parser::get_register(args[1]);
 }
 
-void Ecall::exec(State &state) { functions[state.registers[a7]](state); }
+void Ecall::exec(State &state) { 
+  if (functions.count(state.registers[a7]) == 0) {
+    throw EcallException("Wrong index of ecall " + std::to_string(state.registers[a7]));
+  }
+  functions[state.registers[a7]](state);
+}
 
 void Ecall::fill_args(vector<string> args) {
   // args amount: 0
