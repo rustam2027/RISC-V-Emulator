@@ -9,7 +9,7 @@ def find_test_folders():
     os.chdir("tests")
     test_folders = [folder for folder in os.listdir() if os.path.isdir(
         folder) and folder.startswith('test_')]
-    return test_folders
+    return sorted(test_folders)
 
 
 def run_executable(executable_path, input_file, output_file):
