@@ -8,14 +8,14 @@
 
 struct State {
   int *registers;
-  int *stack;
+  std::byte *stack;
   std::map<std::string, int> labels;
 
   State() = default;
 
   State(std::map<std::string, int> labels) {
     registers = new int[AMOUNT_REGISTERS];
-    stack = new int[AMOUNT_STACK];
+    stack = new std::byte[AMOUNT_STACK];
     registers[zero] = 0;
     registers[pc] = 0;
     this->labels = labels;
