@@ -111,3 +111,10 @@ struct Jump : Command {
   void exec(State &state);
   void fill_args(vector<std::string> args);
 };
+
+struct JumpAndLink : Command {
+  Register return_register;
+  std::string label;
+  void exec(State &state);
+  void fill_args(vector<std::string> args);
+};

@@ -40,11 +40,11 @@ if __name__ == "__main__":
 
             if compare_output(temp_output_file, out_file):
                 print(f"[{folder}]: {Fore.GREEN}PASSED")
+                os.remove(temp_output_file)
+
             else:
                 print(f"[{folder}]: {Fore.RED}FAILED")
 
-            # Удаление промежуточного файла после сравнения
-            os.remove(temp_output_file)
         else:
             print(
                 f"Для теста в папке {folder} отсутствует файл in.txt или out.txt")
