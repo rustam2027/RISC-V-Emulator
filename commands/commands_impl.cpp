@@ -275,7 +275,7 @@ void BranchNotEqual::fill_args(vector<string> args) {
   int args_amount = 3;
   if (args.size() != args_amount) {
     throw ParserException(
-        Parser::exception_message("branch equal", args_amount, args.size()));
+        Parser::exception_message("branch not equal", args_amount, args.size()));
   }
   first = Parser::get_register(args[0]);
   second = Parser::get_register(args[1]);
@@ -293,7 +293,7 @@ void BranchLessThen::fill_args(vector<string> args) {
   int args_amount = 3;
   if (args.size() != args_amount) {
     throw ParserException(
-        Parser::exception_message("branch equal", args_amount, args.size()));
+        Parser::exception_message("branch less then", args_amount, args.size()));
   }
   first = Parser::get_register(args[0]);
   second = Parser::get_register(args[1]);
@@ -311,9 +311,20 @@ void BranchGreaterEqual::fill_args(vector<string> args) {
   int args_amount = 3;
   if (args.size() != args_amount) {
     throw ParserException(
-        Parser::exception_message("branch equal", args_amount, args.size()));
+        Parser::exception_message("branch greater equal", args_amount, args.size()));
   }
   first = Parser::get_register(args[0]);
   second = Parser::get_register(args[1]);
   label = args[2];
 }
+
+void Return::exec(State &state) { state.registers[pc] = state.registers[ra]; }
+
+void Return::fill_args(vector<string> args) {
+  int args_amount = 0;
+  if (args.size() != args_amount) {
+    throw ParserException(
+        Parser::exception_message("return", args_amount, args.size()));
+  }
+}
+

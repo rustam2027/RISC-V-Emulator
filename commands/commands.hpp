@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <functional>
+#include <string>
 #include "../consts.hpp"
 
 using namespace std;
@@ -151,3 +152,7 @@ struct BranchGreaterEqual: Command {
   void fill_args(vector<std::string> args);
 };
 
+struct Return: Command {
+  void exec(State &state);
+  void fill_args(vector<std::string> args);
+};

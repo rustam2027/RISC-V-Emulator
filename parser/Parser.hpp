@@ -38,7 +38,8 @@ private:
       {"beq", []() { return new BranchEqual(); }},
       {"bne", []() { return new BranchNotEqual(); }},
       {"blt", []() { return new BranchLessThen(); }},
-      {"bge", []() { return new BranchGreaterEqual(); }}};
+      {"bge", []() { return new BranchGreaterEqual(); }},
+      {"ret", []() { return new Return(); }}};
 
   string file;
   vector<string> split(const string &s, char del, bool remove_comma);
