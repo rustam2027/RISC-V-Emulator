@@ -38,6 +38,20 @@ vector<string> Parser::split(const string &s, char del, bool remove_comma) {
     return result;
 }
 
+vector<string> Parser::get_offset(const vector<string> &args) {
+    vector<string> result;
+    int offset = 0;
+    result.push_back(args[0]);
+    vector<string> tmp = split(args[1], '(', true);
+    if (is_number(tmp[0])) {
+        result.push_back(tmp[0]);
+    } else {
+        throw ParserException("Offset is not int");
+    }
+    result.push_back(tmp[1].erase(tmp[1].size() - 1, 1));
+    return result;
+}
+
 
 string Parser::concat(const string &sep, const vector<string> &strs) {
     assert(!strs.empty());

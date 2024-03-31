@@ -1,0 +1,6 @@
+j label
+li a1, 6
+li a2, 6
+j end
+add a3, a1, a2
+li a2, 23
