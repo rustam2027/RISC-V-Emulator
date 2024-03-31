@@ -179,4 +179,28 @@ struct Sw : Command {
   void exec(State &state);
   void fill_args(vector<std::string> args);
 };
+
+struct Lw : Command {
+  Register src;
+  Register dst;
+  int offset;
+  void exec(State &state);
+  void fill_args(vector<std::string> args);
+};
+
+struct Lh : Command {
+  Register src;
+  Register dst;
+  int offset;
+  void exec(State &state);
+  void fill_args(vector<std::string> args);
+};
+
+struct Lb : Command {
+  Register src;
+  Register dst;
+  int offset;
+  void exec(State &state);
+  void fill_args(vector<std::string> args);
+};
  

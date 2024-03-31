@@ -384,3 +384,58 @@ void Sw::fill_args(vector<string> args) {
   dst = Parser::get_register(new_args[2]);
   offset = stoi(new_args[1]);
 }
+
+void Lw::exec(State &state) {
+  std::byte fourth = state.stack[src + offset];
+  std::byte third = state.stack[src + offset - 1];
+  std::byte second = state.stack[src + offset - 2];
+  std::byte first = state.stack[src + offset - 3];
+  state.registers[dst] = (int) ((first << 24) | (second << 16) | (third << 8) | fourth);
+}
+
+void Lw::fill_args(vector<string> args) {
+  int args_amount = 3;
+  vector<string> new_args = Parser::get_offset(args);
+  if (new_args.size() != args_amount) {
+    throw ParserException(
+      Parser::exception_message("Load word", args_amount, new_args.size()));
+  }
+  dst = Parser::get_register(new_args[0]);
+  src = Parser::get_register(new_args[2]);
+  offset = stoi(new_args[1]);
+}
+
+void Lh::exec(State &state) {
+  std::byte second = state.stack[src + offset];
+  std::byte first = state.stack[src + offset - 1];
+  state.registers[dst] = (int) ((first << 8) | (second));
+}
+
+void Lh::fill_args(vector<string> args) {
+  int args_amount = 3;
+  vector<string> new_args = Parser::get_offset(args);
+  if (new_args.size() != args_amount) {
+    throw ParserException(
+      Parser::exception_message("Load half-word", args_amount, new_args.size()));
+  }
+  dst = Parser::get_register(new_args[0]);
+  src = Parser::get_register(new_args[2]);
+  offset = stoi(new_args[1]);
+}
+
+void Lb::exec(State &state) {
+  std::byte first = state.stack[src + offset];
+  state.registers[dst] = (int) (first);
+}
+
+void Lb::fill_args(vector<string> args) {
+  int args_amount = 3;
+  vector<string> new_args = Parser::get_offset(args);
+  if (new_args.size() != args_amount) {
+    throw ParserException(
+      Parser::exception_message("Load byte", args_amount, new_args.size()));
+  }
+  dst = Parser::get_register(new_args[0]);
+  src = Parser::get_register(new_args[2]);
+  offset = stoi(new_args[1]);
+}
