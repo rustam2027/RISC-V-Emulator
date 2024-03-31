@@ -127,3 +127,27 @@ struct BranchEqual: Command {
   void fill_args(vector<std::string> args);
 };
 
+struct BranchNotEqual: Command {
+  Register first;
+  Register second;
+  std::string label;
+  void exec(State &state);
+  void fill_args(vector<std::string> args);
+};
+
+struct BranchLessThen: Command {
+  Register first;
+  Register second;
+  std::string label;
+  void exec(State &state);
+  void fill_args(vector<std::string> args);
+};
+
+struct BranchGreaterEqual: Command {
+  Register first;
+  Register second;
+  std::string label;
+  void exec(State &state);
+  void fill_args(vector<std::string> args);
+};
+

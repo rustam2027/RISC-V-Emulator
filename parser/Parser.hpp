@@ -33,9 +33,12 @@ private:
       {"sub", []() { return new Sub(); }},
       {"xor", []() { return new Xor(); }},
       {"ecall", []() { return new Ecall(); }},
-      {"jmp", []() { return new Jump(); }},
+      {"j", []() { return new Jump(); }},
       {"jal", []() { return new JumpAndLink(); }},
-      {"beq", []() { return new BranchEqual(); }}};
+      {"beq", []() { return new BranchEqual(); }},
+      {"bne", []() { return new BranchNotEqual(); }},
+      {"blt", []() { return new BranchLessThen(); }},
+      {"bge", []() { return new BranchGreaterEqual(); }}};
 
   string file;
   vector<string> split(const string &s, char del, bool remove_comma);
