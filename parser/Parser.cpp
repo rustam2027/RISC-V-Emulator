@@ -48,6 +48,17 @@ string Parser::concat(const string &sep, const vector<string> &strs) {
 }
 
 
+bool Parser::is_number(const string& str) {
+    if (str.empty()) return false;
+    auto iter { str.begin() };
+    if (str.front() == '-') {
+      if (str.size() > 1) ++iter; // neg number
+      else return false;          // only -
+    }
+    return all_of(iter, str.end(), ::isdigit);
+  }
+
+
 Register Parser::get_register(const string &str) {
     if (registers_names.find(str) != registers_names.end()) {
         return registers_names[str];

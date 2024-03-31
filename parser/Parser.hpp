@@ -46,6 +46,7 @@ public:
   void preprocess();
   vector<Command *> get_commands();
   static Register get_register(const string &str);
+  static bool is_number(const string& str);
   Command *get_command(const string &str);
   map<std::string, int> get_labels() { return labels; }
 

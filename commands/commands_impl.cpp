@@ -39,7 +39,11 @@ void Addi::fill_args(vector<string> args) {
   }
   dist = Parser::get_register(args[0]);
   source = Parser::get_register(args[1]);
-  immediate = stoi(args[2]);
+  if (Parser::is_number(args[2])) {
+      immediate = stoi(args[2]);
+  } else {
+    throw ParserException("invalid immediate in addi: " + args[2]);
+  }
 }
 
 void And::exec(State &state) {
@@ -76,7 +80,11 @@ void Li::fill_args(vector<string> args) {
         Parser::exception_message("li", args_amount, args.size()));
   }
   dist = Parser::get_register(args[0]);
-  immediate = stoi(args[1]);
+  if (Parser::is_number(args[1])) {
+      immediate = stoi(args[1]);
+  } else {
+    throw ParserException("invalid immediate in li: " + args[1]);
+  }
 }
 
 void Mv::exec(State &state) {
@@ -227,7 +235,7 @@ void JumpAndLink::exec(State &state) {
   state.registers[return_register] = state.registers[pc]; // May be plus 1
   state.registers[pc] = state.labels[label] - 1;
 }
-
+ 
 void JumpAndLink::fill_args(vector<string> args) {
   int args_amount = 2;
   if (args.size() != args_amount) {
