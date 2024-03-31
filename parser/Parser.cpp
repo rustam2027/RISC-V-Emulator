@@ -25,7 +25,7 @@ vector<string> Parser::split(const string &s, char del, bool remove_comma) {
     string item;
 
     while (getline (input, item, del)) {
-        if (item.empty()) { continue; }  // unused space
+        if (item.empty() || item[0] == '\t') { continue; }  // unused space
         if (item[0] == ';') { return result; } //comment start
         if (remove_comma) {
             int last = item.size() - 1;
