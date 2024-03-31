@@ -118,3 +118,12 @@ struct JumpAndLink : Command {
   void exec(State &state);
   void fill_args(vector<std::string> args);
 };
+
+struct BranchEqual: Command {
+  Register first;
+  Register second;
+  std::string label;
+  void exec(State &state);
+  void fill_args(vector<std::string> args);
+};
+

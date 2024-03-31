@@ -34,7 +34,8 @@ private:
       {"xor", []() { return new Xor(); }},
       {"ecall", []() { return new Ecall(); }},
       {"jmp", []() { return new Jump(); }},
-      {"jal", []() { return new JumpAndLink(); }}};
+      {"jal", []() { return new JumpAndLink(); }},
+      {"beq", []() { return new BranchEqual(); }}};
 
   string file;
   vector<string> split(const string &s, char del, bool remove_comma);
@@ -46,7 +47,7 @@ public:
   void preprocess();
   vector<Command *> get_commands();
   static Register get_register(const string &str);
-  static bool is_number(const string& str);
+  static bool is_number(const string &str);
   Command *get_command(const string &str);
   map<std::string, int> get_labels() { return labels; }
 

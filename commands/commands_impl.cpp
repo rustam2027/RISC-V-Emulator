@@ -245,3 +245,22 @@ void JumpAndLink::fill_args(vector<string> args) {
   return_register = Parser::get_register(args[0]);
   label = args[1];
 }
+
+void BranchEqual::exec(State &state) {
+  if (state.registers[first] == state.registers[second]) {
+    state.registers[ra] = state.registers[pc];
+    state.registers[pc] = state.labels[label] - 1;
+  }
+}
+ 
+void BranchEqual::fill_args(vector<string> args) {
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException(
+        Parser::exception_message("branch equal", args_amount, args.size()));
+  }
+  first = Parser::get_register(args[0]);
+  second = Parser::get_register(args[1]);
+  label = args[2];
+}
+
