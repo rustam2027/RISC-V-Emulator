@@ -318,6 +318,7 @@ void BranchGreaterEqual::fill_args(vector<string> args) {
   label = args[2];
 }
 
+
 void Return::exec(State &state) { state.registers[pc] = state.registers[ra]; }
 
 void Return::fill_args(vector<string> args) {
@@ -328,3 +329,113 @@ void Return::fill_args(vector<string> args) {
   }
 }
 
+
+void Sb::exec(State &state) {
+  state.stack[dst + offset] = (std::byte) (state.registers[src] & 0xFF);
+  //  SB instructions store 8-bit values from the low bits of register rs2 to memory.
+}
+
+void Sb::fill_args(vector<string> args) {
+  int args_amount = 3;
+  vector<string> new_args = Parser::get_offset(args);
+  if (new_args.size() != args_amount) {
+    throw ParserException(
+      Parser::exception_message("store byte", args_amount, new_args.size()));
+  }
+  src = Parser::get_register(new_args[0]);
+  dst = Parser::get_register(new_args[2]);
+  offset = stoi(new_args[1]);
+}
+void Sh::exec(State & state) {
+  state.stack[dst + offset + 1] = (std::byte) (state.registers[src] & 0xFF);
+  state.stack[dst + offset] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
+  // The SH store 16-bit value from the low bits of register rs2 to memory.
+
+}
+void Sh::fill_args(vector<string> args) {
+  int args_amount = 3;
+  vector<string> new_args = Parser::get_offset(args);
+  if (new_args.size() != args_amount) {
+    throw ParserException(
+      Parser::exception_message("store half-word", args_amount, new_args.size()));
+  }
+  src = Parser::get_register(new_args[0]);
+  dst = Parser::get_register(new_args[2]);
+  offset = stoi(new_args[1]);
+}
+
+void Sw::exec(State &state) {
+  state.stack[dst + offset + 3] = (std::byte) (state.registers[src] & 0xFF);
+  state.stack[dst + offset + 2] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
+  state.stack[dst + offset + 1] = (std::byte) ((state.registers[src] >> 16) & 0xFF);
+  state.stack[dst + offset] = (std::byte) ((state.registers[src] >> 24) & 0xFF);
+  // The SW, SH, and SB instructions store 32-bit, 16-bit, and 8-bit values from the low bits of register rs2 to memory.
+
+}
+
+void Sw::fill_args(vector<string> args) {
+  int args_amount = 3;
+  vector<string> new_args = Parser::get_offset(args);
+  if (new_args.size() != args_amount) {
+    throw ParserException(
+      Parser::exception_message("store word", args_amount, new_args.size()));
+  }
+  src = Parser::get_register(new_args[0]);
+  dst = Parser::get_register(new_args[2]);
+  offset = stoi(new_args[1]);
+}
+
+void Lw::exec(State &state) {
+  std::byte fourth = state.stack[src + offset];
+  std::byte third = state.stack[src + offset - 1];
+  std::byte second = state.stack[src + offset - 2];
+  std::byte first = state.stack[src + offset - 3];
+  state.registers[dst] = (int) ((first << 24) | (second << 16) | (third << 8) | fourth);
+}
+
+void Lw::fill_args(vector<string> args) {
+  int args_amount = 3;
+  vector<string> new_args = Parser::get_offset(args);
+  if (new_args.size() != args_amount) {
+    throw ParserException(
+      Parser::exception_message("Load word", args_amount, new_args.size()));
+  }
+  dst = Parser::get_register(new_args[0]);
+  src = Parser::get_register(new_args[2]);
+  offset = stoi(new_args[1]);
+}
+
+void Lh::exec(State &state) {
+  std::byte second = state.stack[src + offset];
+  std::byte first = state.stack[src + offset - 1];
+  state.registers[dst] = (int) ((first << 8) | (second));
+}
+
+void Lh::fill_args(vector<string> args) {
+  int args_amount = 3;
+  vector<string> new_args = Parser::get_offset(args);
+  if (new_args.size() != args_amount) {
+    throw ParserException(
+      Parser::exception_message("Load half-word", args_amount, new_args.size()));
+  }
+  dst = Parser::get_register(new_args[0]);
+  src = Parser::get_register(new_args[2]);
+  offset = stoi(new_args[1]);
+}
+
+void Lb::exec(State &state) {
+  std::byte first = state.stack[src + offset];
+  state.registers[dst] = (int) (first);
+}
+
+void Lb::fill_args(vector<string> args) {
+  int args_amount = 3;
+  vector<string> new_args = Parser::get_offset(args);
+  if (new_args.size() != args_amount) {
+    throw ParserException(
+      Parser::exception_message("Load byte", args_amount, new_args.size()));
+  }
+  dst = Parser::get_register(new_args[0]);
+  src = Parser::get_register(new_args[2]);
+  offset = stoi(new_args[1]);
+}

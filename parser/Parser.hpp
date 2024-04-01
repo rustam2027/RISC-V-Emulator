@@ -42,15 +42,16 @@ private:
       {"ret", []() { return new Return(); }}};
 
   string file;
-  vector<string> split(const string &s, char del, bool remove_comma);
   string concat(const string &sep, const vector<string> &strs);
   void delete_commands(vector<Command *> commands);
+  static vector<string> split(const string &s, char del, bool remove_comma);
 
 public:
   Parser(string file);
   void preprocess();
   vector<Command *> get_commands();
   static Register get_register(const string &str);
+  static vector<string> get_offset(const vector<string> &args);
   static bool is_number(const string &str);
   Command *get_command(const string &str);
   map<std::string, int> get_labels() { return labels; }
