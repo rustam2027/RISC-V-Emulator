@@ -18,7 +18,7 @@ map<string, Register> Parser::registers_names = {
 };
 
 
-vector<string> Parser::split(const string &s, char del, bool remove_comma) {
+vector<string> Parser::split(const string& s, char del, bool remove_comma) {
     vector<string> result;
     stringstream input(s);
     string item;
@@ -37,7 +37,7 @@ vector<string> Parser::split(const string &s, char del, bool remove_comma) {
     return result;
 }
 
-vector<string> Parser::get_offset(const vector<string> &args) {
+vector<string> Parser::get_offset(const vector<string>& args) {
     vector<string> result;
     int offset = 0;
     result.push_back(args[0]);
@@ -52,12 +52,21 @@ vector<string> Parser::get_offset(const vector<string> &args) {
 }
 
 
-string Parser::concat(const string &sep, const vector<string> &strs) {
+string Parser::concat(const string& sep, const vector<string>& strs) {
     assert(!strs.empty());
 
     return std::accumulate(std::next(strs.cbegin()), strs.cend(), *strs.cbegin(),
         [&sep](string c, const string& s)
             { return std::move(c) + sep + s; });
+}
+
+
+void Parser::string_replace(string& input, const string& src, const string& dst) {
+    size_t pos = input.find(src);
+    while(pos != string::npos) {
+        input.replace(pos, src.size(), dst);
+        pos = input.find(src, pos);
+    }
 }
 
 
@@ -123,7 +132,6 @@ vector<Command*> Parser::get_commands() {
 }
 
 void Parser::preprocess() {
-    // COUNTER INC when inline macro
     ifstream in(file);
     std::ofstream out;
     out.open("_in.parse"); 
@@ -131,15 +139,31 @@ void Parser::preprocess() {
     if (in.is_open()) {
         std::string current_line;
         while (getline(in, current_line)) { 
-            if (current_line.empty() || current_line[0] == ';') {
+            if (current_line.empty() || current_line[0] == ';' || current_line[0] == '#') {
                 continue;
             }
             vector<string> buf = split(current_line, ' ', false);
             string first = buf.front();
+            if (macro.find(first) != macro.end()) {
+                buf = split(current_line, ' ', true);  // delete ,
+                buf.erase(buf.begin());
+                if (macro[first].params.size() != buf.size()) {
+                     throw ParserException("invalid args amount for macro: " + first);
+                }
+                for (string line: macro[first].macro_lines) {
+                    for (size_t i = 0; i < macro[first].params.size(); i++) {
+                        string_replace(line, macro[first].params[i], buf[i]);
+                    }
+                    counter++;
+                    out << line << endl; 
+                }
+                continue;
+            }
             if (first.at(0) == '.') {
                 if (first == ".macro") {
                     Parser::Macro m_data;
                     string name = buf[1];
+                    buf = split(current_line, ' ', true);  // delete ,
                     buf.erase(buf.begin(), buf.begin() + 2);
                     m_data.params = buf; // many parameters
                     while (getline(in, current_line)) {

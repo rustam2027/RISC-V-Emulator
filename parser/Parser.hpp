@@ -47,9 +47,10 @@ private:
       {"ret", []() { return new Return(); }}};
 
   string file;
-  string concat(const string &sep, const vector<string> &strs);
+  string concat(const string& sep, const vector<string>& strs);
+  void string_replace(string& input, const string& src, const string& dst);
   void delete_commands(vector<Command *> commands);
-  static vector<string> split(const string &s, char del, bool remove_comma);
+  static vector<string> split(const string& s, char del, bool remove_comma);
 
 public:
   Parser(string file);
@@ -66,20 +67,4 @@ public:
     return string("invalid amount of args in " + command + ": required " +
                   to_string(required) + ", provided " + to_string(provided));
   }
-
-
-  // DEBUG print
-  void print_macro() {
-    for (const auto& element : macro) {
-      std::cout << element.first << std::endl;
-      Macro s = element.second;
-      for (string w: s.params) {
-        std::cout << w << std::endl;
-      }
-      for (string w: s.macro_lines) {
-        std::cout << w << std::endl;
-      }
-    }
-  }
-
 };
