@@ -248,7 +248,6 @@ void JumpAndLink::fill_args(vector<string> args) {
 
 void BranchEqual::exec(State &state) {
   if (state.registers[first] == state.registers[second]) {
-    state.registers[ra] = state.registers[pc];
     state.registers[pc] = state.labels[label] - 1;
   }
 }
@@ -266,7 +265,6 @@ void BranchEqual::fill_args(vector<string> args) {
 
 void BranchNotEqual::exec(State &state) {
   if (state.registers[first] != state.registers[second]) {
-    state.registers[ra] = state.registers[pc];
     state.registers[pc] = state.labels[label] - 1;
   }
 }
@@ -284,7 +282,6 @@ void BranchNotEqual::fill_args(vector<string> args) {
 
 void BranchLessThen::exec(State &state) {
   if (state.registers[first] < state.registers[second]) {
-    state.registers[ra] = state.registers[pc];
     state.registers[pc] = state.labels[label] - 1;
   }
 }
@@ -302,7 +299,6 @@ void BranchLessThen::fill_args(vector<string> args) {
 
 void BranchGreaterEqual::exec(State &state) {
   if (state.registers[first] >= state.registers[second]) {
-    state.registers[ra] = state.registers[pc];
     state.registers[pc] = state.labels[label] - 1;
   }
 }
