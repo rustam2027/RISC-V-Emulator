@@ -1,45 +1,39 @@
-#include "State.h"
-#include "Register.h"
-#include "parser/Parser.h"
-#include "commands/Command.h"
-#include "commands/commands.h"
+
+#include "tests/simple_commands_test.hpp"
+#include "parser/Parser.hpp"
+#include "commands/Command.hpp"
+#include "commands/commands.hpp"
+#include "interpreter/Interpreter.hpp"
 
 #include <iostream>
-#include <vector>
 
-using namespace std;
 
 int main(int argc, char *argv[]){
   string file;
   if (argc > 1) {
     file = argv[1];
   } else {
-    cout << "NO incoming file" << endl;
-    file = "in.txt";
+    cout << "No incoming file" << endl; 
+    exit(1);
   }
-
-  State st = State();
-  Li f1 = Li{a1, 8};
-  Li f2 = Li{a2, 8};
-  Add a = Add{a3, a1, a2};
-
-  vector<Command*> command_vector;
-
-  command_vector.push_back(&f1);
-  command_vector.push_back(&f2);
-  command_vector.push_back(&a);
-
-  for (Command* command : command_vector) {
-    printf("LOL\n");
-    command->exec(st);
-  }
-  printf("%d\n", st.registers[a1]);
-  printf("%d\n", st.registers[a2]);
-  printf("%d\n", st.registers[a3]);
 
   Parser parser = Parser(file);
-  
-  vector<Command*> command = parser.get_next();
+  vector<Command*> commands;
+  try {
+    parser.preprocess();
+    commands = parser.get_commands();
+  } catch (ParserException e) {
+    cout << e.get_message() << endl;
+    exit(1);
+  }
+
+  Interpreter interpreter(commands, parser.get_labels());
+
+  try {
+    interpreter.interpret();
+  } catch (const int error_num) {  // catch custom interpreter exception
+    cout << error_num << endl;
+  } 
 
   return 0;
 }

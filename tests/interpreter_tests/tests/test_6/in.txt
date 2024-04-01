@@ -1,0 +1,12 @@
+mv a1, zero
+mv a2, zero
+li a7, 1
+bge a1, a2, good
+bad:
+   li a0, 0
+   j end
+good:
+   li a0, 1
+   j end
+end:
+ecall

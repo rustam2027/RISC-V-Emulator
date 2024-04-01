@@ -1,3 +1,21 @@
-li a1, 10
-li a2, 10
-add a3, a1, a2
+;zhopa
+
+.macro read_char %dst, %rrr
+  li %rrr, 0
+  li a7, 12   ;fifa
+  ecall
+  mv %dst, a0
+.end_macro
+
+j label
+li a1,   6
+li    a2, 6 
+j end
+
+   add a3, a1, a2  ;zhopa popa
+label:
+;  read_char a2, a0
+   li a2, 23
+end:
+
+
