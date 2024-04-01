@@ -20,7 +20,7 @@ void Add::fill_args(vector<string> args) {
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
-  source2 = Parser::get_register(args[1]);
+  source2 = Parser::get_register(args[2]);
 }
 
 void Addi::exec(State &state) {
@@ -62,7 +62,7 @@ void And::fill_args(vector<string> args) {
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
-  source2 = Parser::get_register(args[1]);
+  source2 = Parser::get_register(args[2]);
 }
 
 void Li::exec(State &state) {
@@ -121,7 +121,7 @@ void Or::fill_args(vector<string> args) {
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
-  source2 = Parser::get_register(args[1]);
+  source2 = Parser::get_register(args[2]);
 }
 
 void SLL::exec(State &state) {
@@ -143,7 +143,7 @@ void SLL::fill_args(vector<string> args) {
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
-  source2 = Parser::get_register(args[1]);
+  source2 = Parser::get_register(args[2]);
 }
 
 void SRL::exec(State &state) {
@@ -165,7 +165,7 @@ void SRL::fill_args(vector<string> args) {
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
-  source2 = Parser::get_register(args[1]);
+  source2 = Parser::get_register(args[2]);
 }
 
 void Sub::exec(State &state) {
@@ -184,7 +184,7 @@ void Sub::fill_args(vector<string> args) {
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
-  source2 = Parser::get_register(args[1]);
+  source2 = Parser::get_register(args[2]);
 }
 
 void Xor::exec(State &state) {
@@ -203,7 +203,7 @@ void Xor::fill_args(vector<string> args) {
   }
   dist = Parser::get_register(args[0]);
   source1 = Parser::get_register(args[1]);
-  source2 = Parser::get_register(args[1]);
+  source2 = Parser::get_register(args[2]);
 }
 
 void Ecall::exec(State &state) { 
