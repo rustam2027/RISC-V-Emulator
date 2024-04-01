@@ -27,6 +27,8 @@ int main(int argc, char *argv[]){
     exit(1);
   }
 
+  parser.print_macro();
+
   Interpreter interpreter(commands, parser.get_labels());
 
   try {
