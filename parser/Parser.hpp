@@ -18,8 +18,13 @@ using namespace std;
 
 class Parser {
 private:
+  struct Macro {
+    vector<string> params;
+    vector<string> macro_lines;
+  };
   static map<string, Register> registers_names;
-  map<std::string, int> labels;
+  map<string, int> labels;
+  map<string, Macro> macro;
 
   map<string, function<Command *()>> func = {
       {"add", []() { return new Add(); }},
@@ -61,4 +66,20 @@ public:
     return string("invalid amount of args in " + command + ": required " +
                   to_string(required) + ", provided " + to_string(provided));
   }
+
+
+  // DEBUG print
+  void print_macro() {
+    for (const auto& element : macro) {
+      std::cout << element.first << std::endl;
+      Macro s = element.second;
+      for (string w: s.params) {
+        std::cout << w << std::endl;
+      }
+      for (string w: s.macro_lines) {
+        std::cout << w << std::endl;
+      }
+    }
+  }
+
 };

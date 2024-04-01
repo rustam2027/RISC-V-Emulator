@@ -19,14 +19,13 @@ map<string, Register> Parser::registers_names = {
 
 
 vector<string> Parser::split(const string &s, char del, bool remove_comma) {
-    //TODO: check syntax errors, throw exception
     vector<string> result;
     stringstream input(s);
     string item;
 
     while (getline (input, item, del)) {
         if (item.empty() || item[0] == '\t') { continue; }  // unused space
-        if (item[0] == ';') { return result; } //comment start
+        if (item[0] == ';' || item[0] == '#') { return result; } //comment start
         if (remove_comma) {
             int last = item.size() - 1;
             if (item[last] == ',') {
@@ -124,6 +123,7 @@ vector<Command*> Parser::get_commands() {
 }
 
 void Parser::preprocess() {
+    // COUNTER INC when inline macro
     ifstream in(file);
     std::ofstream out;
     out.open("_in.parse"); 
@@ -136,6 +136,23 @@ void Parser::preprocess() {
             }
             vector<string> buf = split(current_line, ' ', false);
             string first = buf.front();
+            if (first.at(0) == '.') {
+                if (first == ".macro") {
+                    Parser::Macro m_data;
+                    string name = buf[1];
+                    buf.erase(buf.begin(), buf.begin() + 2);
+                    m_data.params = buf; // many parameters
+                    while (getline(in, current_line)) {
+                        vector<string> in_buf = split(current_line, ' ', false);
+                        if (in_buf.front() == ".end_macro") { break; }
+                        m_data.macro_lines.push_back(concat(" ", in_buf));  // delete comments
+                    }
+                    macro[name] = m_data;
+                }
+                // can be .text .data .bss .equ --> switch 
+                // iterate line for one-line situations: .section .text
+                continue;
+            }
             int last = first.size() - 1;
             if (buf.front()[last] == ':') {
                 if (buf.size() == 1) {

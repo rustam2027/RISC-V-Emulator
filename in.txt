@@ -1,4 +1,12 @@
 ;zhopa
+
+.macro read_char %dst
+  li a0, 0
+  li a7, 12   ;fifa
+  ecall
+  mv %dst, a0
+.end_macro
+
 j label
 li a1,   6
 li    a2, 6 
