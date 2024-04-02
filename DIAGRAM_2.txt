@@ -1,0 +1,14 @@
+                                            Gantt chart
+
+                         ║ Apr 01, 2024  ║ Apr 08, 2024  ║ Apr 15, 2024  ║ Apr 22, 2024  ║
+          Task           ║ M T W T F S S ║ M T W T F S S ║ M T W T F S S ║ M T W T F S S ║
+─────────────────────────╫───────────────╫───────────────╫───────────────╫───────────────╫
+   Make asm code work    ║ ======R==L====║========┐      ║               ║               ║
+     Make more tests     ║ ========A=====║========┤      ║               ║               ║
+     Basic requests      ║               ║        ├>=R=L=║======┐        ║               ║
+	(BreakController)    ║               ║        │      ║      │        ║               ║
+     Memmory access      ║               ║        └===A==║======┤        ║               ║
+  Simple view (optional) ║               ║               ║      └==all===║===============║
+	
+       TIMELINE              ^
+

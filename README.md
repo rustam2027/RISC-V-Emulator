@@ -25,7 +25,15 @@ Emulator for RISC V assembler
 
   2. Debug
 
-    Step by step debuging and viewing registers and stack
+    - Support break points
+    - Get request from user and answer
+      - Basic
+        - conitnue (go to the next breakpoint)
+        - show registers
+      - Advanced
+        - show stack
+        - enter line and break on it (*Optional*)
+    - Step by step
 
   3. Visual
 

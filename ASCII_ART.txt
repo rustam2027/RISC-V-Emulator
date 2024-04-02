@@ -1,24 +1,29 @@
                   ===============     
     File.asm --->| PreProccessor |
-                  ===============                                                    
+ including breaks ===============                                                    
                         |
                         |
                         V
                   - Delete commets 
                   - Inline Macros 
-                  - CreateLable Dict --->{ name : ptr_on_line }
+                  - Create Lable Dict --->{ name : ptr_on_line }
+                  - Create Lines Dict --->{ line in _in.parse : line in File.asm} (including macros)
                         |
                         |
                         V
                   ==============
-                  |   Parser    |   < ------------- 
-                  ==============                  |
-                        |                         |
-                        | List[Func]              |
-                        |                         |
-                        V                         |
-                  ==============                  |
-                  | Interpreter | ---> interpert on:
-                  ==============              - State
-                                              - Registers
-                                              - Stack 
+                  |   Parser    |
+                  ==============                  
+                        |                                                                     
+                        | List[Func]                                   ===============        
+                        |>------if-debug----------------------------->|BreakController|
+                        V                                              ===============
+                  ==============                                       - Catch brakepoints
+                  | Interpreter | ---> interpert on:                   - Answer Requests
+                  ==============              - State                  - Continue interpet
+                                              - Registers              - Make steps
+                                              - Stack                         |
+                                                                              |
+                                                                              V
+                                                                     Code and registers view
+                                                                   (Showing code by Lines Dict)
