@@ -6,7 +6,7 @@
    Make asm code work    ║ ======R==L====║========┐      ║               ║               ║
      Make more tests     ║ ========A=====║========┤      ║               ║               ║
      Basic requests      ║               ║        ├>=R=L=║======┐        ║               ║
-	(BreakController)    ║               ║        │      ║      │        ║               ║
+	(BreakController)   ║               ║        │      ║      │        ║               ║
      Memmory access      ║               ║        └===A==║======┤        ║               ║
   Simple view (optional) ║               ║               ║      └==all===║===============║
 	
