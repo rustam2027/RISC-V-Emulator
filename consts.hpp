@@ -16,5 +16,7 @@
 #define WRITE 64
 #define EXIT 93
 
+#define INSTRUCTION_SIZE 32
+
 #define AMOUNT_REGISTERS 33
 #define AMOUNT_STACK 10000
