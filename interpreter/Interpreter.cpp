@@ -1,7 +1,9 @@
 #include "Interpreter.hpp"
+#include "../exceptions/RuntimeException.hpp"
 #include <algorithm>
 #include <cstdio>
 #include <stdio.h>
+#include <string>
 #include <vector>
 #include <iostream>
 
@@ -14,9 +16,12 @@ Interpreter::Interpreter(std::vector<Command *> commands,
 }
 
 void Interpreter::interpret() {
-  while (global_state->registers[pc] < commands.size()) {
-    commands[global_state->registers[pc]]->exec(*global_state);
-    global_state->registers[pc]++;
+  while (global_state->registers[pc] < commands.size() * 32) {
+    if (global_state->registers[pc] % 32 != 0) {
+      throw new RuntimeException("Wrong pc: " + to_string(global_state->registers[pc]));
+    }
+    commands[global_state->registers[pc] / 32]->exec(*global_state);
+    global_state->registers[pc] += 32;
   }
 }
 
