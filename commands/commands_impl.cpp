@@ -220,7 +220,7 @@ void Ecall::fill_args(vector<string> args) {
   }
 }
 
-void Jump::exec(State &state) { state.registers[pc] = state.labels[label] - 1; }
+void Jump::exec(State &state) { state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE; }
 
 void Jump::fill_args(vector<string> args) {
   int args_amount = 1;
@@ -232,8 +232,8 @@ void Jump::fill_args(vector<string> args) {
 }
 
 void JumpAndLink::exec(State &state) {
-  state.registers[return_register] = state.registers[pc]; // May be plus 1
-  state.registers[pc] = state.labels[label] - 1;
+  state.registers[return_register] = state.registers[pc] * INSTRUCTION_SIZE;
+  state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;
 }
  
 void JumpAndLink::fill_args(vector<string> args) {
@@ -248,7 +248,7 @@ void JumpAndLink::fill_args(vector<string> args) {
 
 void BranchEqual::exec(State &state) {
   if (state.registers[first] == state.registers[second]) {
-    state.registers[pc] = state.labels[label] - 1;
+    state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;
   }
 }
  
@@ -265,7 +265,7 @@ void BranchEqual::fill_args(vector<string> args) {
 
 void BranchNotEqual::exec(State &state) {
   if (state.registers[first] != state.registers[second]) {
-    state.registers[pc] = state.labels[label] - 1;
+    state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;
   }
 }
  
@@ -282,7 +282,7 @@ void BranchNotEqual::fill_args(vector<string> args) {
 
 void BranchLessThen::exec(State &state) {
   if (state.registers[first] < state.registers[second]) {
-    state.registers[pc] = state.labels[label] - 1;
+    state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;
   }
 }
  
@@ -299,7 +299,7 @@ void BranchLessThen::fill_args(vector<string> args) {
 
 void BranchGreaterEqual::exec(State &state) {
   if (state.registers[first] >= state.registers[second]) {
-    state.registers[pc] = state.labels[label] - 1;
+    state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;
   }
 }
  

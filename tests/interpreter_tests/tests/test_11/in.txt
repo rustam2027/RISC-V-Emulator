@@ -1,0 +1,4 @@
+mv a1, zero
+mv a0, pc
+li a7, 1
+ecall
