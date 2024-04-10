@@ -1,5 +1,6 @@
 #pragma once
 #include "Command.hpp"
+#include <charconv>
 #include <map>
 #include <cstdio>
 #include <cstdlib>
@@ -92,11 +93,11 @@ struct Xor : Command {
 
 struct Ecall : Command {
   map<int, function<void(State&)>> functions = {
-    {PRINT_INT, [](State& state) { printf("%d", state.registers[a0]); }},
-    {READ_INT, [](State& state) { scanf("%d", &state.registers[a0]); }},
+    {PRINT_INT, [](State& state) { printf("%ld", state.registers[a0]); }},
+    {READ_INT, [](State& state) { scanf("%ld", &state.registers[a0]); }},
     {EXIT_0, [](State& state){ exit(0); }},
     {EXIT, [](State& state) { exit(state.registers[a0]); }},
-    {PRINT_CHAR, [](State& state) { printf("%c", state.registers[a0]); }},
+    {PRINT_CHAR, [](State& state) { printf("%c", (char) state.registers[a0]); }},
     {READ_CHAR, [](State& state) { char c;
                                   scanf("%c", &c); 
                                   state.registers[a0] = (int) c; }}
