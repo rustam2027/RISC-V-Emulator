@@ -135,7 +135,7 @@ void Parser::preprocess() {
     ifstream in(file);
     std::ofstream out;
     out.open("_in.parse"); 
-    int counter = 0;
+    int counter = 0;  // counter for lines in _in.parse
     if (in.is_open()) {
         std::string current_line;
         while (getline(in, current_line)) { 
@@ -143,6 +143,7 @@ void Parser::preprocess() {
                 continue;
             }
             vector<string> buf = split(current_line, ' ', false);
+            if (buf.empty()) { continue; }
             string first = buf.front();
             if (macro.find(first) != macro.end()) {
                 buf = split(current_line, ' ', true);  // delete ,
@@ -163,13 +164,13 @@ void Parser::preprocess() {
                 if (first == ".macro") {
                     Parser::Macro m_data;
                     string name = buf[1];
-                    buf = split(current_line, ' ', true);  // delete ,
-                    buf.erase(buf.begin(), buf.begin() + 2);
-                    m_data.params = buf; // many parameters
+                    buf = split(current_line, ' ', true);     // delete ,
+                    buf.erase(buf.begin(), buf.begin() + 2);  // delete .macro and macro_name
+                    m_data.params = buf;                      // many parameters
                     while (getline(in, current_line)) {
-                        vector<string> in_buf = split(current_line, ' ', false);
+                        vector<string> in_buf = split(current_line, ' ', false);  // delete comments
                         if (in_buf.front() == ".end_macro") { break; }
-                        m_data.macro_lines.push_back(concat(" ", in_buf));  // delete comments
+                        m_data.macro_lines.push_back(concat(" ", in_buf)); 
                     }
                     macro[name] = m_data;
                 }
