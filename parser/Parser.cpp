@@ -47,7 +47,7 @@ vector<string> Parser::get_offset(const vector<string>& args) {
     if (is_number(tmp[0])) {
         result.push_back(tmp[0]);
     } else {
-        throw ParserException("Offset is not int");
+        throw ParserException("Offset is not number");
     }
     result.push_back(tmp[1].erase(tmp[1].size() - 1, 1));
     return result;
