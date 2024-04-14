@@ -2,11 +2,11 @@
 #include <cstdio>
 #include <stdio.h>
 #include <iostream>
-
+#include <vector>
 #include "../exceptions/ParserException.hpp"
 #include "../exceptions/EmulatorException.hpp"
 #include "../State.hpp"
-#include "../commands/commands.hpp"
+#include "../instructions/instructions.hpp"
 
 
 void test_li_1() {

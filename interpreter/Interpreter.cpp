@@ -9,7 +9,7 @@
 
 using namespace std;
 
-Interpreter::Interpreter(std::vector<Command *> commands,
+Interpreter::Interpreter(std::vector<Instruction *> commands,
                          std::map<std::string, int> labels) {
   this->commands = commands;
   global_state = new State(labels);
@@ -26,7 +26,7 @@ void Interpreter::interpret() {
 }
 
 Interpreter::~Interpreter() {
-  for (Command *command : commands) {
+  for (Instruction *command : commands) {
     delete command;
   }
   delete global_state;

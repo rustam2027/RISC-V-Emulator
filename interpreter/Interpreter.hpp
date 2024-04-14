@@ -1,13 +1,13 @@
-#include "../commands/Command.hpp"
-
+#include "../instructions/Instruction.hpp"
+#include <vector>
 #include "../State.hpp"
 
 
 class Interpreter {
   State* global_state;
-  std::vector<Command*> commands;
+  std::vector<Instruction*> commands;
 public:
-  Interpreter(std::vector<Command*> commands, std::map<std::string, int> labels);
+  Interpreter(std::vector<Instruction*> commands, std::map<std::string, int> labels);
   void interpret();
   ~Interpreter();
 };

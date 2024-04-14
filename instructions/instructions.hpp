@@ -1,5 +1,5 @@
 #pragma once
-#include "Command.hpp"
+#include "Instruction.hpp"
 #include <map>
 #include <cstdio>
 #include <cstdlib>
@@ -8,7 +8,7 @@
 #include "../consts.hpp"
 
 using namespace std;
-struct Add : Command {
+struct Add : Instruction {
   Register dist, source1, source2;
 
   Add() {}
@@ -16,7 +16,7 @@ struct Add : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Addi : Command {
+struct Addi : Instruction {
   Register dist, source;
   int immediate;
 
@@ -25,7 +25,7 @@ struct Addi : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct And : Command {
+struct And : Instruction {
   Register dist, source1, source2;
 
   And() {}
@@ -33,7 +33,7 @@ struct And : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Li : Command {
+struct Li : Instruction {
   Register dist;
   int immediate;
 
@@ -42,7 +42,7 @@ struct Li : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Mv : Command {
+struct Mv : Instruction {
   Register dist, source;
 
   Mv() {}
@@ -50,7 +50,7 @@ struct Mv : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Or : Command {
+struct Or : Instruction {
   Register dist, source1, source2;
 
   Or() {}
@@ -58,7 +58,7 @@ struct Or : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct SLL : Command {
+struct SLL : Instruction {
   Register dist, source1, source2;
 
   SLL() {}
@@ -66,7 +66,7 @@ struct SLL : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct SRL : Command {
+struct SRL : Instruction {
   Register dist, source1, source2;
 
   SRL() {}
@@ -74,7 +74,7 @@ struct SRL : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Sub : Command {
+struct Sub : Instruction {
   Register dist, source1, source2;
 
   Sub() {}
@@ -82,7 +82,7 @@ struct Sub : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Xor : Command {
+struct Xor : Instruction {
   Register dist, source1, source2;
 
   Xor() {}
@@ -90,7 +90,7 @@ struct Xor : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Ecall : Command {
+struct Ecall : Instruction {
   map<int, function<void(State&)>> functions = {
     {PRINT_INT, [](State& state) { printf("%ld", state.registers[a0]); }},
     {READ_INT, [](State& state) { scanf("%ld", &state.registers[a0]); }},
@@ -107,20 +107,20 @@ struct Ecall : Command {
   void fill_args(std::vector<std::string> args);
 };
 
-struct Jump : Command {
+struct Jump : Instruction {
   std::string label;
   void exec(State &state);
   void fill_args(vector<std::string> args);
 };
 
-struct JumpAndLink : Command {
+struct JumpAndLink : Instruction {
   Register return_register;
   std::string label;
   void exec(State &state);
   void fill_args(vector<std::string> args);
 };
 
-struct BranchEqual: Command {
+struct BranchEqual: Instruction {
   Register first;
   Register second;
   std::string label;
@@ -128,7 +128,7 @@ struct BranchEqual: Command {
   void fill_args(vector<std::string> args);
 };
 
-struct BranchNotEqual: Command {
+struct BranchNotEqual: Instruction {
   Register first;
   Register second;
   std::string label;
@@ -136,7 +136,7 @@ struct BranchNotEqual: Command {
   void fill_args(vector<std::string> args);
 };
 
-struct BranchLessThen: Command {
+struct BranchLessThen: Instruction {
   Register first;
   Register second;
   std::string label;
@@ -144,7 +144,7 @@ struct BranchLessThen: Command {
   void fill_args(vector<std::string> args);
 };
 
-struct BranchGreaterEqual: Command {
+struct BranchGreaterEqual: Instruction {
   Register first;
   Register second;
   std::string label;
@@ -152,11 +152,11 @@ struct BranchGreaterEqual: Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Return: Command {
+struct Return: Instruction {
   void exec(State &state);
   void fill_args(vector<std::string> args);
 };
-struct Sb : Command {
+struct Sb : Instruction {
   Register src;
   Register dst;
   int offset;
@@ -164,7 +164,7 @@ struct Sb : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Sh : Command {
+struct Sh : Instruction {
   Register src;
   Register dst;
   int offset;
@@ -172,7 +172,7 @@ struct Sh : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Sw : Command {
+struct Sw : Instruction {
   Register src;
   Register dst;
   int offset;
@@ -180,7 +180,7 @@ struct Sw : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Lw : Command {
+struct Lw : Instruction {
   Register src;
   Register dst;
   int offset;
@@ -188,7 +188,7 @@ struct Lw : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Lh : Command {
+struct Lh : Instruction {
   Register src;
   Register dst;
   int offset;
@@ -196,7 +196,7 @@ struct Lh : Command {
   void fill_args(vector<std::string> args);
 };
 
-struct Lb : Command {
+struct Lb : Instruction {
   Register src;
   Register dst;
   int offset;
