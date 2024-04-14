@@ -6,7 +6,7 @@ class ParserException: public EmulatorException {
         ParserException(const std::string& message): EmulatorException(message) {}
 };
 
-class CommandCreationException: public ParserException {
+class InsrtuctionCreationException: public ParserException {
     public:
-        CommandCreationException(const std::string& message): ParserException(message) {}
+        InsrtuctionCreationException(const std::string& message): ParserException(message) {}
 };

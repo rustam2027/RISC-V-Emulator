@@ -9,25 +9,25 @@
 
 using namespace std;
 
-Interpreter::Interpreter(std::vector<Instruction *> commands,
+Interpreter::Interpreter(std::vector<Instruction *> instructions,
                          std::map<std::string, int> labels) {
-  this->commands = commands;
+  this->instructions = instructions;
   global_state = new State(labels);
 }
 
 void Interpreter::interpret() {
-  while (global_state->registers[pc] < commands.size() * 32) {
+  while (global_state->registers[pc] < instructions.size() * 32) {
     if (global_state->registers[pc] % 32 != 0) {
       throw new RuntimeException("Wrong pc: " + to_string(global_state->registers[pc]));
     }
-    commands[global_state->registers[pc] / 32]->exec(*global_state);
+    instructions[global_state->registers[pc] / 32]->exec(*global_state);
     global_state->registers[pc] += 32;
   }
 }
 
 Interpreter::~Interpreter() {
-  for (Instruction *command : commands) {
-    delete command;
+  for (Instruction *instruction : instructions) {
+    delete instruction;
   }
   delete global_state;
 }
