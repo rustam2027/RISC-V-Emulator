@@ -55,17 +55,20 @@ vector<string> Parser::get_offset(const vector<string>& args) {
 
 
 int Parser::get_immediate(const string &str) {
-  if (is_number(str)) {
-    return stoi(str);
-  }
-  if (str.size() > 2) {
-    if (str.at(1) == 'x' && str.at(0) == '0') {
-      return stoi()
-    } else if (str.at(1) == 'b' && str.at(0) == '0') {
-      
+    if (is_dec_number(str)) {
+        return stoi(str);
     }
-    
-  }
+    if (is_hex_number(str)) {
+        char buffer[str.max_size()];
+        str.copy(buffer, str.size() - 2, 2);
+        return stoi(buffer, nullptr, 16);
+    }
+    if (is_binary_number(str)) {
+        char buffer[str.max_size()];
+        str.copy(buffer, str.size() - 2, 2);
+        return stoi(buffer, nullptr, 2);
+    }
+    throw new ParserException("Wrong number: " + str);
 };
 
 
