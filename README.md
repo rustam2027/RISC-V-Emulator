@@ -2,16 +2,16 @@
 Emulator for RISC V assembler
 
 ## Plan
-  1. Support all commands used in the assembly language course:
+  1. Support all instructions used in the assembly language course:
 
 >* Basic system calls
->* Simple commands:
+>* Simple instructions:
 >	  * mv
  >   * li
  >   * Math operations
  >   * addi
  >   * Logical operations
- >  * NSS commands:
+ >  * NSS instructions:
  >    * j
  >    * bgt, beq, bez, etc...
  >    * labels

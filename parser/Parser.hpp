@@ -49,22 +49,22 @@ private:
   string file;
   string concat(const string& sep, const vector<string>& strs);
   void string_replace(string& input, const string& src, const string& dst);
-  void delete_commands(vector<Instruction *> commands);
+  void delete_instructions(vector<Instruction *> instructions);
   static vector<string> split(const string& s, char del, bool remove_comma);
 
 public:
   Parser(string file);
   void preprocess();
-  vector<Instruction *> get_commands();
+  vector<Instruction *> get_instructions();
   static Register get_register(const string &str);
   static vector<string> get_offset(const vector<string> &args);
   static bool is_number(const string &str);
-  Instruction *get_command(const string &str);
+  Instruction *get_instruction(const string &str);
   map<std::string, int> get_labels() { return labels; }
 
-  static string exception_message(const string &command, int required,
+  static string exception_message(const string &instruction, int required,
                                   int provided) {
-    return string("invalid amount of args in " + command + ": required " +
+    return string("invalid amount of args in " + instruction + ": required " +
                   to_string(required) + ", provided " + to_string(provided));
   }
 };

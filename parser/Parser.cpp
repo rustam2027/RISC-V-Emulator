@@ -88,21 +88,21 @@ Register Parser::get_register(const string &str) {
     throw ParserException("invalid register: " + str);
 }
 
-Instruction* Parser::get_command(const string &str) {
+Instruction* Parser::get_instruction(const string &str) {
     if (func.find(str) != func.end()) {
         return func[str]();
     }
-    throw CommandCreationException("invalid command: " + str);
+    throw InsrtuctionCreationException("invalid instruction: " + str);
 }
 
-void Parser::delete_commands(vector<Instruction*> commands) {
-    for (Instruction* command : commands) {
-        delete command;
+void Parser::delete_instructions(vector<Instruction*> instructions) {
+    for (Instruction* instruction : instructions) {
+        delete instruction;
     }
 }
 
-vector<Instruction*> Parser::get_commands() {
-    vector<Instruction*> command_vector;
+vector<Instruction*> Parser::get_instructions() {
+    vector<Instruction*> instruction_vector;
     ifstream in("_in.parse");
     if (in.is_open()) {
         string line;
@@ -110,25 +110,25 @@ vector<Instruction*> Parser::get_commands() {
             vector<string> buf = split(line, ' ', true);
             string start = buf.front();
             buf.erase(buf.begin());
-            Instruction* command;
+            Instruction* instruction;
             try {
-                command = get_command(start);
-                command->fill_args(buf);
-            } catch (CommandCreationException e) {
-                delete_commands(command_vector);
+                instruction = get_instruction(start);
+                instruction->fill_args(buf);
+            } catch (InsrtuctionCreationException e) {
+                delete_instructions(instruction_vector);
                 in.close();
                 throw;
             } catch (ParserException e) {
-                delete_commands(command_vector);
-                delete command;
+                delete_instructions(instruction_vector);
+                delete instruction;
                 in.close();
                 throw;
             } 
-            command_vector.push_back(command);
+            instruction_vector.push_back(instruction);
         }
     }
     in.close();
-    return command_vector;
+    return instruction_vector;
 }
 
 void Parser::preprocess() {

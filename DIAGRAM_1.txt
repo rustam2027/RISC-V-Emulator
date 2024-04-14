@@ -4,9 +4,9 @@
           Task           ║ M T W T F S S ║ M T W T F S S ║ M T W T F S S ║ M T W T F S S ║
 ─────────────────────────╫───────────────╫───────────────╫───────────────╫───────────────╫
       Architecture       ║ ======all=====║==┐            ║               ║               ║
-     Simple commands     ║               ║  └>=all===R=L=║=┐             ║               ║
+     Simple instructions ║               ║  └>=all===R=L=║=┐             ║               ║
     Basic system calls   ║               ║         ===A==║=┤             ║               ║
-      Jump commands      ║               ║               ║ ├>==R=L==┐    ║               ║
+      Jump instructions  ║               ║               ║ ├>==R=L==┐    ║               ║
      Stack functions     ║               ║               ║ └>===A===┤    ║               ║
    Functions(Optional)   ║               ║               ║          └────║>===all===     ║
 Macro, comments(Optional)║               ║               ║        =======║==========     ║
