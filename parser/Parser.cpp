@@ -114,11 +114,11 @@ vector<Instruction*> Parser::get_instructions() {
             try {
                 instruction = get_instruction(start);
                 instruction->fill_args(buf);
-            } catch (InsrtuctionCreationException e) {
+            } catch (const InsrtuctionCreationException& e) {
                 delete_instructions(instruction_vector);
                 in.close();
                 throw;
-            } catch (ParserException e) {
+            } catch (const ParserException& e) {
                 delete_instructions(instruction_vector);
                 delete instruction;
                 in.close();
