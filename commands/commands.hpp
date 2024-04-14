@@ -99,7 +99,7 @@ struct Ecall : Command {
     {PRINT_CHAR, [](State& state) { printf("%c", (char) state.registers[a0]); }},
     {READ_CHAR, [](State& state) { char c;
                                   scanf("%c", &c); 
-                                  state.registers[a0] = (int) c; }}
+                                  state.registers[a0] = (long) c; }}
   };
   Ecall() {}
 
