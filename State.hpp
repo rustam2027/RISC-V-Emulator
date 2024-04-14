@@ -4,6 +4,7 @@
 #include <string>
 #include "Register.hpp"
 #include "consts.hpp"
+#include <vector>
 
 struct State {
   std::vector<long> registers;

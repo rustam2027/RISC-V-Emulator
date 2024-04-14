@@ -88,21 +88,21 @@ Register Parser::get_register(const string &str) {
     throw ParserException("invalid register: " + str);
 }
 
-Command* Parser::get_command(const string &str) {
+Instruction* Parser::get_command(const string &str) {
     if (func.find(str) != func.end()) {
         return func[str]();
     }
     throw CommandCreationException("invalid command: " + str);
 }
 
-void Parser::delete_commands(vector<Command*> commands) {
-    for (Command* command : commands) {
+void Parser::delete_commands(vector<Instruction*> commands) {
+    for (Instruction* command : commands) {
         delete command;
     }
 }
 
-vector<Command*> Parser::get_commands() {
-    vector<Command*> command_vector;
+vector<Instruction*> Parser::get_commands() {
+    vector<Instruction*> command_vector;
     ifstream in("_in.parse");
     if (in.is_open()) {
         string line;
@@ -110,7 +110,7 @@ vector<Command*> Parser::get_commands() {
             vector<string> buf = split(line, ' ', true);
             string start = buf.front();
             buf.erase(buf.begin());
-            Command* command;
+            Instruction* command;
             try {
                 command = get_command(start);
                 command->fill_args(buf);

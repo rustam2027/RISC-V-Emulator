@@ -10,8 +10,8 @@
 #include <string>
 #include <vector>
 
-#include "../commands/Command.hpp"
-#include "../commands/commands.hpp"
+#include "../instructions/Instruction.hpp"
+#include "../instructions/instructions.hpp"
 #include "../exceptions/ParserException.hpp"
 
 using namespace std;
@@ -26,7 +26,7 @@ private:
   map<string, int> labels;
   map<string, Macro> macro;
 
-  map<string, function<Command *()>> func = {
+  map<string, function<Instruction *()>> func = {
       {"add", []() { return new Add(); }},
       {"addi", []() { return new Addi(); }},
       {"and", []() { return new And(); }},
@@ -49,17 +49,17 @@ private:
   string file;
   string concat(const string& sep, const vector<string>& strs);
   void string_replace(string& input, const string& src, const string& dst);
-  void delete_commands(vector<Command *> commands);
+  void delete_commands(vector<Instruction *> commands);
   static vector<string> split(const string& s, char del, bool remove_comma);
 
 public:
   Parser(string file);
   void preprocess();
-  vector<Command *> get_commands();
+  vector<Instruction *> get_commands();
   static Register get_register(const string &str);
   static vector<string> get_offset(const vector<string> &args);
   static bool is_number(const string &str);
-  Command *get_command(const string &str);
+  Instruction *get_command(const string &str);
   map<std::string, int> get_labels() { return labels; }
 
   static string exception_message(const string &command, int required,
