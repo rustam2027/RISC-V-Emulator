@@ -6,19 +6,19 @@
 #include "consts.hpp"
 
 struct State {
-  int *registers;
+  std::vector<long> registers;
   std::byte *stack;
   std::map<std::string, int> labels;
 
   State() {
-    registers = new int[AMOUNT_REGISTERS];
+    registers = std::vector<long>(AMOUNT_REGISTERS);
     stack = new std::byte[AMOUNT_STACK];
     registers[zero] = 0;
     registers[pc] = 0;
   };
 
   State(std::map<std::string, int> labels) {
-    registers = new int[AMOUNT_REGISTERS];
+    registers = std::vector<long>(AMOUNT_REGISTERS);
     stack = new std::byte[AMOUNT_STACK];
     registers[zero] = 0;
     registers[pc] = 0;
@@ -26,7 +26,6 @@ struct State {
   }
 
   ~State() {
-    delete[] registers;
     delete[] stack;
   }
 };
