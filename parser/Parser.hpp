@@ -52,6 +52,14 @@ private:
   void delete_instructions(vector<Instruction *> instructions);
   static vector<string> split(const string& s, char del, bool remove_comma);
 
+  static bool is_binary_number(const string& str);
+  static bool is_hex_number(const string& str);
+  static bool is_dec_number(const string& str);
+
+  static int get_immediate(const string &str);
+  static int is_binary_char(char c);
+  static bool is_hex_char(char c);
+
 public:
   Parser(string file);
   void preprocess();

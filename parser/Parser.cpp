@@ -1,4 +1,6 @@
 #include "Parser.hpp"
+#include <algorithm>
+#include <string>
 
 
 Parser::Parser(string file): file(file) {}
@@ -52,6 +54,21 @@ vector<string> Parser::get_offset(const vector<string>& args) {
 }
 
 
+int Parser::get_immediate(const string &str) {
+  if (is_number(str)) {
+    return stoi(str);
+  }
+  if (str.size() > 2) {
+    if (str.at(1) == 'x' && str.at(0) == '0') {
+      return stoi()
+    } else if (str.at(1) == 'b' && str.at(0) == '0') {
+      
+    }
+    
+  }
+};
+
+
 string Parser::concat(const string& sep, const vector<string>& strs) {
     assert(!strs.empty());
 
@@ -69,16 +86,80 @@ void Parser::string_replace(string& input, const string& src, const string& dst)
     }
 }
 
+int Parser::is_binary_char(char c) {
+    if (c != '0' && c != '1') {
+        return 0;
+    }
+    return 1;
+}
 
-bool Parser::is_number(const string& str) {
-    if (str.empty()) return false;
-    auto iter { str.begin() };
+
+bool Parser::is_hex_char(char c) {
+    if (!(('0' <= c && c <= '9') || 
+       ('a' <= c &&  c <= 'f') ||
+       ('A' <= c &&  c  <= 'F'))) {
+        return false;
+    }
+    return true;
+}
+
+
+bool Parser::is_binary_number(const string& str) {
+    if (str.empty() || str.size() <= 2) return false;
+    auto iter = str.begin();
+
     if (str.front() == '-') {
-      if (str.size() > 1) ++iter; // neg number
-      else return false;          // only -
+        if (str.size() <=3) {
+            return false;
+        }
+        iter++;
+    }
+    
+
+    if (str.at(0) == '0' && str.at(1) == 'b') {
+        iter += 2;
+        return all_of(iter, str.end(), Parser::is_binary_char);
+    }
+    return false;
+}
+
+
+bool Parser::is_hex_number(const string& str) {
+    if (str.empty() || str.size() <= 2) return false;
+    auto iter = str.begin();
+
+    if (str.front() == '-') {
+        if (str.size() <=3) {
+            return false;
+        }
+        iter++;
+    }
+
+    if (str.at(0) == '0' && str.at(1) == 'x') {
+        iter += 2;
+        return all_of(iter, str.end(), Parser::is_hex_char);
+    }
+    return false;
+}
+
+
+bool Parser::is_dec_number(const string& str) {
+    if (str.empty()) return false;
+    auto iter = str.begin();
+
+    if (str.front() == '-') {
+        if (str.size() == 1) {
+            return false;
+        }
+        iter++;
     }
     return all_of(iter, str.end(), ::isdigit);
-  }
+}
+
+
+bool Parser::is_number(const string& str) {
+    return is_binary_number(str) || is_hex_number(str) || is_dec_number(str);
+}
 
 
 Register Parser::get_register(const string &str) {
