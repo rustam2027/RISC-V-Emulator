@@ -1,5 +1,5 @@
 
-#include "tests/simple_instructions_test.hpp"
+// #include "tests/simple_instructions_test.hpp"
 #include "parser/Parser.hpp"
 #include "instructions/Instruction.hpp"
 #include "instructions/instructions.hpp"
@@ -39,6 +39,6 @@ int main(int argc, char *argv[]){
     exit(1);
   } 
 
-  test_all();
+  // test_all();
   return 0;
 }

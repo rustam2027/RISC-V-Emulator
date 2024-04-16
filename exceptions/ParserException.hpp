@@ -3,10 +3,10 @@
 
 class ParserException: public EmulatorException {
     public:
-        ParserException(const std::string& message): EmulatorException(message) {}
-};
+        ParserException(const string& message): EmulatorException(message) {}
 
-class InsrtuctionCreationException: public ParserException {
-    public:
-        InsrtuctionCreationException(const std::string& message): ParserException(message) {}
+        ParserException(const string& instruction, int required, int provided) { 
+            message = "invalid amount of args in " + instruction + ": required " +
+                      to_string(required) + ", provided " + to_string(provided);
+        }
 };
