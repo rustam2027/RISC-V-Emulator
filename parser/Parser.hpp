@@ -56,7 +56,6 @@ private:
   static bool is_hex_number(const string& str);
   static bool is_dec_number(const string& str);
 
-  static int get_immediate(const string &str);
   static int is_binary_char(char c);
   static bool is_hex_char(char c);
 
@@ -66,6 +65,7 @@ public:
   vector<Instruction *> get_instructions();
   static Register get_register(const string &str);
   static vector<string> get_offset(const vector<string> &args);
+  static int get_immediate(const string &str);
   static bool is_number(const string &str);
   Instruction *get_instruction(const string &str);
   map<std::string, int> get_labels() { return labels; }

@@ -1,6 +1,7 @@
 #include "../parser/Parser.hpp"
 #include "../exceptions/RuntimeException.hpp"
 #include "instructions.hpp"
+#include <iomanip>
 #include <string>
 #include <vector>
 
@@ -40,7 +41,7 @@ void Addi::fill_args(vector<string> args) {
   dist = Parser::get_register(args[0]);
   source = Parser::get_register(args[1]);
   if (Parser::is_number(args[2])) {
-      immediate = stoi(args[2]);
+      immediate = Parser::get_register(args[2]);
   } else {
     throw ParserException("invalid immediate in addi: " + args[2]);
   }
@@ -81,7 +82,7 @@ void Li::fill_args(vector<string> args) {
   }
   dist = Parser::get_register(args[0]);
   if (Parser::is_number(args[1])) {
-      immediate = stoi(args[1]);
+      immediate = Parser::get_immediate(args[1]);
   } else {
     throw ParserException("invalid immediate in li: " + args[1]);
   }
@@ -340,7 +341,7 @@ void Sb::fill_args(vector<string> args) {
   }
   src = Parser::get_register(new_args[0]);
   dst = Parser::get_register(new_args[2]);
-  offset = stoi(new_args[1]);
+  offset = Parser::get_immediate(new_args[1]);
 }
 void Sh::exec(State & state) {
   state.stack[dst + offset + 1] = (std::byte) (state.registers[src] & 0xFF);
@@ -357,7 +358,7 @@ void Sh::fill_args(vector<string> args) {
   }
   src = Parser::get_register(new_args[0]);
   dst = Parser::get_register(new_args[2]);
-  offset = stoi(new_args[1]);
+  offset = Parser::get_immediate(new_args[1]);
 }
 
 void Sw::exec(State &state) {
@@ -378,7 +379,7 @@ void Sw::fill_args(vector<string> args) {
   }
   src = Parser::get_register(new_args[0]);
   dst = Parser::get_register(new_args[2]);
-  offset = stoi(new_args[1]);
+  offset = Parser::get_immediate(new_args[1]);
 }
 
 void Lw::exec(State &state) {
@@ -398,7 +399,7 @@ void Lw::fill_args(vector<string> args) {
   }
   dst = Parser::get_register(new_args[0]);
   src = Parser::get_register(new_args[2]);
-  offset = stoi(new_args[1]);
+  offset = Parser::get_immediate(new_args[1]);
 }
 
 void Lh::exec(State &state) {
@@ -416,7 +417,7 @@ void Lh::fill_args(vector<string> args) {
   }
   dst = Parser::get_register(new_args[0]);
   src = Parser::get_register(new_args[2]);
-  offset = stoi(new_args[1]);
+  offset = Parser::get_immediate(new_args[1]);
 }
 
 void Lb::exec(State &state) {
@@ -433,5 +434,5 @@ void Lb::fill_args(vector<string> args) {
   }
   dst = Parser::get_register(new_args[0]);
   src = Parser::get_register(new_args[2]);
-  offset = stoi(new_args[1]);
+  offset = Parser::get_immediate(new_args[1]);
 }
