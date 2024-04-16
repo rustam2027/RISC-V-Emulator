@@ -1,5 +1,5 @@
 
-// #include "tests/simple_instructions_test.hpp"
+#include "tests/simple_instructions_test.hpp"
 #include "parser/Parser.hpp"
 #include "instructions/Instruction.hpp"
 #include "instructions/instructions.hpp"
