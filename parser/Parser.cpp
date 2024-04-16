@@ -98,12 +98,16 @@ int Parser::is_binary_char(char c) {
 
 
 bool Parser::is_hex_char(char c) {
-    if (!(('0' <= c && c <= '9') || 
-       ('a' <= c &&  c <= 'f') ||
-       ('A' <= c &&  c  <= 'F'))) {
-        return false;
+    if ('0' <= c && c <= '9') {
+        return true;
     }
-    return true;
+    if ('a' <= c && c <= 'f') {
+        return true;
+    }
+    if ('A' <= c && c <= 'F') {
+        return true;
+    }
+    return false;
 }
 
 
