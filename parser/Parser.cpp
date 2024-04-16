@@ -59,14 +59,26 @@ int Parser::get_immediate(const string &str) {
         return stoi(str);
     }
     if (is_hex_number(str)) {
-        char buffer[str.max_size()];
-        str.copy(buffer, str.size() - 2, 2);
-        return stoi(buffer, nullptr, 16);
+        std::string buffer;
+        int sign = 1;
+        if (str.at(0) == '-') {
+            buffer = str.substr(3);
+            sign = -1;
+        } else {
+            buffer = str.substr(2);
+        }
+        return sign * stoi(buffer, nullptr, 16);
     }
     if (is_binary_number(str)) {
-        char buffer[str.max_size()];
-        str.copy(buffer, str.size() - 2, 2);
-        return stoi(buffer, nullptr, 2);
+        std::string buffer;
+        int sign = 1;
+        if (str.at(0) == '-') {
+            buffer = str.substr(3);
+            sign = -1;
+        } else {
+            buffer = str.substr(2);
+        }
+        return sign * stoi(buffer, nullptr, 2);
     }
     throw new ParserException("Wrong number: " + str);
 };
@@ -123,8 +135,8 @@ bool Parser::is_binary_number(const string& str) {
     }
     
 
-    if (str.at(0) == '0' && str.at(1) == 'b') {
-        iter += 2;
+    if (*iter == '0' && *++iter == 'b') {
+        iter++;
         return all_of(iter, str.end(), Parser::is_binary_char);
     }
     return false;
@@ -142,8 +154,8 @@ bool Parser::is_hex_number(const string& str) {
         iter++;
     }
 
-    if (str.at(0) == '0' && str.at(1) == 'x') {
-        iter += 2;
+    if (*iter == '0' && *++iter == 'x') {
+        iter++;
         return all_of(iter, str.end(), Parser::is_hex_char);
     }
     return false;
