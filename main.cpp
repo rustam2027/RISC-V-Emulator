@@ -1,9 +1,12 @@
 
-#include "tests/simple_commands_test.hpp"
+#include "tests/simple_instructions_test.hpp"
 #include "parser/Parser.hpp"
-#include "commands/Command.hpp"
-#include "commands/commands.hpp"
+#include "instructions/Instruction.hpp"
+#include "instructions/instructions.hpp"
 #include "interpreter/Interpreter.hpp"
+
+#include "exceptions/ParserException.hpp"
+#include "exceptions/RuntimeException.hpp"
 
 #include <iostream>
 
@@ -18,11 +21,11 @@ int main(int argc, char *argv[]){
   }
 
   Parser parser = Parser(file);
-  vector<Command*> commands;
+  vector<Instruction*> commands;
   try {
     parser.preprocess();
-    commands = parser.get_commands();
-  } catch (ParserException e) {
+    commands = parser.get_instructions();
+  } catch (const ParserException& e) {
     cout << e.get_message() << endl;
     exit(1);
   }
@@ -31,9 +34,11 @@ int main(int argc, char *argv[]){
 
   try {
     interpreter.interpret();
-  } catch (const int error_num) {  // catch custom interpreter exception
-    cout << error_num << endl;
+  } catch (const RuntimeException& e) { 
+    cout << e.get_message() << endl;
+    exit(1);
   } 
 
+  // test_all();
   return 0;
 }
