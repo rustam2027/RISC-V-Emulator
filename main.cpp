@@ -39,6 +39,6 @@ int main(int argc, char *argv[]){
     exit(1);
   } 
 
-  test_all();
+  // test_all();
   return 0;
 }

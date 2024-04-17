@@ -88,11 +88,11 @@ Register Parser::get_register(const string &str) {
     throw ParserException("invalid register: " + str);
 }
 
-Instruction* Parser::get_instruction(const string &str) {
+Instruction* Parser::get_instruction(const string &str, vector<string> args) {
     if (func.find(str) != func.end()) {
-        return func[str]();
+        return func[str](args);
     }
-    throw InsrtuctionCreationException("invalid instruction: " + str);
+    throw ParserException("invalid instruction: " + str);
 }
 
 void Parser::delete_instructions(vector<Instruction*> instructions) {
@@ -112,15 +112,9 @@ vector<Instruction*> Parser::get_instructions() {
             buf.erase(buf.begin());
             Instruction* instruction;
             try {
-                instruction = get_instruction(start);
-                instruction->fill_args(buf);
-            } catch (const InsrtuctionCreationException& e) {
-                delete_instructions(instruction_vector);
-                in.close();
-                throw;
+                instruction = get_instruction(start, buf);
             } catch (const ParserException& e) {
                 delete_instructions(instruction_vector);
-                delete instruction;
                 in.close();
                 throw;
             } 
