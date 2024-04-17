@@ -42,7 +42,7 @@ Li::Li(vector<string> args) {
   Register dist_ = Parser::get_register(args[0]);
   int immediate_;
   if (Parser::is_number(args[1])) {
-      immediate_ = stoi(args[1]);
+      immediate_ = Parser::get_immediate(args[1]);
   } else {
     throw ParserException("invalid immediate in li: " + args[1]);
   }
@@ -69,7 +69,7 @@ Addi::Addi(vector<string> args) {
   Register source_ = Parser::get_register(args[1]);
   int immediate_;
   if (Parser::is_number(args[2])) {
-      immediate_ = stoi(args[2]);
+      immediate_ = Parser::get_immediate(args[2]);
   } else {
     throw ParserException("invalid immediate in addi: " + args[2]);
   }
@@ -391,11 +391,12 @@ Sb::Sb(vector<string> args) {
   }
   Register src_ = Parser::get_register(new_args[0]);
   Register dst_ = Parser::get_register(new_args[2]);
-  int offset_ = stoi(new_args[1]);
+  int offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
   offset = offset_;
+
 }
 
 
@@ -413,7 +414,7 @@ Sh::Sh(vector<string> args) {
   }
   Register src_ = Parser::get_register(new_args[0]);
   Register dst_ = Parser::get_register(new_args[2]);
-  int offset_ = stoi(new_args[1]);
+  int offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
@@ -436,7 +437,7 @@ Sw::Sw(vector<string> args) {
   }
   Register src_ = Parser::get_register(new_args[0]);
   Register dst_ = Parser::get_register(new_args[2]);
-  int offset_ = stoi(new_args[1]);
+  int offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
@@ -459,7 +460,7 @@ Lw::Lw(vector<string> args) {
   }
   Register src_ = Parser::get_register(new_args[0]);
   Register dst_ = Parser::get_register(new_args[2]);
-  int offset_ = stoi(new_args[1]);
+  int offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
@@ -481,7 +482,7 @@ Lh::Lh(vector<string> args) {
 
   Register src_ = Parser::get_register(new_args[0]);
   Register dst_ = Parser::get_register(new_args[2]);
-  int offset_ = stoi(new_args[1]);
+  int offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
@@ -501,7 +502,7 @@ Lb::Lb(vector<string> args) {
   }
   Register src_ = Parser::get_register(new_args[0]);
   Register dst_ = Parser::get_register(new_args[2]);
-  int offset_ = stoi(new_args[1]);
+  int offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
