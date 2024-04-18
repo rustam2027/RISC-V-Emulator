@@ -1,4 +1,4 @@
-#include "../parser/Parser.hpp"
+#include "../frontend/Parser.hpp"
 #include "../exceptions/RuntimeException.hpp"
 #include "instructions.hpp"
 #include <string>
