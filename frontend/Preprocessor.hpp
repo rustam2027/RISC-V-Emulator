@@ -20,17 +20,24 @@ class Preprocessor {
     };
 
     std::map<std::string, int> labels;
+    std::map<std::string, std::string> eqv;
+
     std::map<std::string, Macro> macro;
+    std::map <std::string, int> mapping_macro = {{".macro", 0}, {".eqv", 1}};
+
+
     // if debug --> create two arrays 
 
     void string_replace(std::string& input, const std::string& src, const std::string& dst);
+    void delete_commas(std::vector<std::string>& line);
+    void replace_eqv(std::string& str);
 
-    std::vector<std::string> split_and_delete_comments(const std::string& s, bool remove_comma);
+    std::vector<std::string> split_and_delete_comments(const std::string& s);
     string concat(const std::string& sep, const std::vector<std::string>& strs);
 
   public:
     Preprocessor(bool debug, std::string file): debug_mode(debug), file(file)  {}
-    void preprocess();   // make in better
+    void preprocess(); 
     map<std::string, int> get_labels() { return labels; }  // make it better
 
 };
