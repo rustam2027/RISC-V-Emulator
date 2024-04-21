@@ -54,16 +54,16 @@ void Preprocessor::preprocess() {
             std::vector<std::string> buf = split_and_delete_comments(current_line);
             if (buf.empty()) { continue; }
             std::string first = buf.front();
-            if (macro.find(first) != macro.end()) {
+            if (macros.find(first) != macros.end()) {
                 delete_commas(buf);
                 buf.erase(buf.begin());
-                if (macro[first].params.size() != buf.size()) {
+                if (macros[first].params.size() != buf.size()) {
                     close_resources();
                     throw PreprocessorException("invalid args amount for macro: " + first);
                 }
-                for (std::string line: macro[first].macro_lines) {
-                    for (size_t i = 0; i < macro[first].params.size(); i++) {
-                        string_replace(line, macro[first].params[i], buf[i]);
+                for (std::string line: macros[first].macros_lines) {
+                    for (size_t i = 0; i < macros[first].params.size(); i++) {
+                        string_replace(line, macros[first].params[i], buf[i]);
                     }
                     counter++;
                     replace_eqv(line);
@@ -72,9 +72,9 @@ void Preprocessor::preprocess() {
                 continue;
             }
             if (first.at(0) == '.') {
-                switch(mapping_macro[first]) {
+                switch(mapping_macros[first]) {
                     case 0: {  // .macro
-                      Macro m_data;
+                      Macros m_data;
                       std::string name = buf[1];
                       delete_commas(buf);
                       buf.erase(buf.begin(), buf.begin() + 2);                      // delete .macro and macro_name
@@ -82,9 +82,9 @@ void Preprocessor::preprocess() {
                       while (getline(in, current_line)) {
                         std::vector<std::string> in_buf = split_and_delete_comments(current_line);  // delete comments
                         if (in_buf.front() == ".end_macro") { break; }
-                        m_data.macro_lines.push_back(StringUtils::concat(" ", in_buf)); 
+                        m_data.macros_lines.push_back(StringUtils::concat(" ", in_buf)); 
                       }
-                      macro[name] = m_data;
+                      macros[name] = m_data;
                       break;
                     }
                     case 1:  {   // .eqv

@@ -17,16 +17,16 @@ class Preprocessor {
     std::ofstream out;
     void close_resources();
 
-    struct Macro {
+    struct Macros {
       std::vector<std::string> params;
-      std::vector<std::string> macro_lines;
+      std::vector<std::string> macros_lines;
     };
 
     std::map<std::string, int> labels;
     std::map<std::string, std::string> eqv;
 
-    std::map<std::string, Macro> macro;
-    std::map <std::string, int> mapping_macro = {{".macro", 0}, {".eqv", 1}};
+    std::map<std::string, Macros> macros;
+    std::map <std::string, int> mapping_macros = {{".macro", 0}, {".eqv", 1}};
 
 
     // if debug --> create two arrays  
