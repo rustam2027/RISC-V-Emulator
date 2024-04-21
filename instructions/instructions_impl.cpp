@@ -508,3 +508,14 @@ Lb::Lb(vector<string> args) {
   dst = dst_;
   offset = offset_;
 }
+
+EBreak::EBreak(vector<string> args) {
+  int args_amount = 0;
+  if (args.size() != args_amount) {
+    throw ParserException("Load byte", args_amount, args.size());
+  }
+}
+
+void EBreak::exec(State& state) {
+  state.debug_break = true;
+}
