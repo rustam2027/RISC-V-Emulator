@@ -8,6 +8,7 @@ current = os.getcwd()
 
 PARSER_TESTS = "tests/test_parser"
 INTERPRETER_TESTS = "tests/interpreter_tests/"
+EXAMPLE_TESTS = "tests/examples_test/"
 
 
 def test_pareser():
@@ -32,6 +33,18 @@ def test_interpreter():
     os.chdir(current)
 
 
+def test_examples():
+    print("Example Tests".center(os.get_terminal_size()[0], '_'))
+    os.chdir(EXAMPLE_TESTS)
+    result = sp.run(["python3", "run_tests.py"])
+    if result.returncode == 0:
+        print(f"{Fore.GREEN}PASSED")
+    else:
+        print(f"{Fore.RED}FAILED")
+    os.chdir(current)
+
+
 if __name__ == "__main__":
     test_pareser()
     test_interpreter()
+    test_examples()
