@@ -6,37 +6,19 @@ init(autoreset=True)
 
 current = os.getcwd()
 
-PARSER_TESTS = "tests/test_parser"
-INTERPRETER_TESTS = "tests/interpreter_tests/"
-EXAMPLE_TESTS = "tests/examples_test/"
+TESTS = [
+    ("Parser Tests", "tests/test_parser", ["sh", "./run.sh"]),
+    ("Interpreter Tests", "tests/interpreter_tests/",
+     ["python3", "interpreter_test.py"]),
+    ("Example Tests", "tests/examples_test/", ["python3", "run_tests.py"])
+]
 
 
-def test_pareser():
-    print("Parser Tests".center(os.get_terminal_size()[0], '_'))
-    os.chdir(PARSER_TESTS)
-    result = sp.run(["./run.sh"], shell=True)
-    if result.returncode == 0:
-        print(f"{Fore.GREEN}PASSED")
-    else:
-        print(f"{Fore.RED}FAILED")
-    os.chdir(current)
-
-
-def test_interpreter():
-    print("Interpreter Tests".center(os.get_terminal_size()[0], '_'))
-    os.chdir(INTERPRETER_TESTS)
-    result = sp.run(["python3", "interpreter_test.py"])
-    if result.returncode == 0:
-        print(f"{Fore.GREEN}PASSED")
-    else:
-        print(f"{Fore.RED}FAILED")
-    os.chdir(current)
-
-
-def test_examples():
-    print("Example Tests".center(os.get_terminal_size()[0], '_'))
-    os.chdir(EXAMPLE_TESTS)
-    result = sp.run(["python3", "run_tests.py"])
+def do_tests(test_name: str, path: str, runable: str):
+    print(test_name.center(os.get_terminal_size()[0], '_'))
+    os.chdir(path)
+    result = sp.run(runable)
+    print(f"{test_name}: ", end='')
     if result.returncode == 0:
         print(f"{Fore.GREEN}PASSED")
     else:
@@ -45,6 +27,5 @@ def test_examples():
 
 
 if __name__ == "__main__":
-    test_pareser()
-    test_interpreter()
-    test_examples()
+    for i in range(len(TESTS)):
+        do_tests(*TESTS[i])
