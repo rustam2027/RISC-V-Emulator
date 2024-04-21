@@ -37,14 +37,16 @@ int main(int argc, char* argv[]) {
   }
 
 
-  Parser parser = Parser();
+  Parser* parser = new Parser();
   vector<Instruction*> commands;
   try {
-    commands = parser.get_instructions();
+    commands = parser->get_instructions();
   } catch (const ParserException& e) {
+    delete parser;     // to call lexer destructor
     cout << e.get_message() << endl;
     exit(1);
   }
+  delete parser;
 
   Interpreter interpreter(commands, preprocessor.get_labels());
 

@@ -5,7 +5,6 @@
 #include <functional>
 #include <iostream>
 #include <map>
-#include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -13,8 +12,12 @@
 #include "../instructions/instructions.hpp"
 #include "../exceptions/ParserException.hpp"
 
+#include "Lexer.hpp"
+#include "StringUtils.hpp"
+
 
 class Parser {
+  Lexer lexer;
   static std::map<std::string, Register> registers_names;
 
   std::map<std::string, function<Instruction* (std::vector<std::string> args)>> func = {
@@ -51,12 +54,9 @@ class Parser {
 public:
   Parser()=default;
 
-
   // TODO: move it to Lexer + add checking commas 
-  static std::string concat(const std::string& sep, const std::vector<std::string>& strs);
-  static std::vector<std::string> split(const std::string& s, char del, bool remove_comma);
   
-
+  std::vector<std::string> check_syntax(std::vector<std::string> args_tokens);
   std::vector<Instruction*> get_instructions();
   static Register get_register(const std::string& str);
   static std::vector<std::string> get_offset(const std::vector<std::string>& args);

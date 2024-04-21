@@ -14,46 +14,23 @@ std::map<std::string, Register> Parser::registers_names = {
       {"a5", a5}, {"a6", a6}, {"a7", a7} 
 };
 
-
-std::vector<std::string> Parser::split(const std::string& s, char del, bool remove_comma) {
-    std::vector<std::string> result;
-    std::stringstream input(s);
-    std::string item;
-
-    while (getline (input, item, del)) {
-        if (item.empty() || item[0] == '\t') { continue; }         // unused space
-        if (item[0] == ';' || item[0] == '#') { return result; }   // comment start
-        if (remove_comma) {
-            int last = item.size() - 1;
-            if (item[last] == ',') {
-                item.erase(last, 1);
-            }
-        }
-        result.push_back(item);
-    }
-    return result;
-}
-
-
-std::string Parser::concat(const std::string& sep, const std::vector<std::string>& strs) {
-    assert(!strs.empty());
-
-    return std::accumulate(std::next(strs.cbegin()), strs.cend(), *strs.cbegin(),
-        [&sep](string c, const string& s)
-            { return std::move(c) + sep + s; });
-}
-
 std::vector<std::string> Parser::get_offset(const std::vector<std::string>& args) {
     std::vector<std::string> result;
-    int offset = 0;
     result.push_back(args[0]);
-    std::vector<std::string> tmp = split(args[1], '(', true);
+    std::vector<std::string> tmp = StringUtils::split(args[1], '(');
+    if (tmp.size() < 2) {
+        throw ParserException("Offset - need opening bracket");
+    }
     if (is_number(tmp[0])) {
         result.push_back(tmp[0]);
     } else {
-        throw ParserException("Offset is not number");
+        throw ParserException("Offset is not a number");
     }
-    result.push_back(tmp[1].erase(tmp[1].size() - 1, 1));
+    int last = tmp[1].size() - 1;
+    if (tmp[1][last] != ')') {
+        throw ParserException("Offset - need closing bracket");
+    }
+    result.push_back(tmp[1].erase(last, 1));
     return result;
 }
 
@@ -188,27 +165,37 @@ void Parser::delete_instructions(vector<Instruction*> instructions) {
     }
 }
 
-std::vector<Instruction*> Parser::get_instructions() {
-    std::vector<Instruction*> instruction_vector;
-    std::ifstream in("_in.parse");
-    if (in.is_open()) {
-        std::string line;
-        while (getline(in, line)) { 
-            std::vector<std::string> buf = split(line, ' ', true);
-            std::string start = buf.front();
-            buf.erase(buf.begin());
-            Instruction* instruction;
-            try {
-                instruction = get_instruction(start, buf);
-            } catch (const ParserException& e) {
-                delete_instructions(instruction_vector);
-                in.close();
-                throw;
-            } 
-            instruction_vector.push_back(instruction);
+std::vector<std::string> Parser::check_syntax(std::vector<std::string> args_tokens) {
+    std::vector<std::string> result;
+    for (int i = 0; i < args_tokens.size(); i++) {
+        if (i % 2 == 0) {
+            result.push_back(args_tokens[i]);
+        } else {
+            if (args_tokens[i] != ",") {
+                // can be double commma, missing comma
+                throw ParserException("syntax error, comma problem: " + StringUtils::concat(" ",  args_tokens));
+            }
         }
     }
-    in.close();
+    return result;
+}
+
+std::vector<Instruction*> Parser::get_instructions() {
+    std::vector<Instruction*> instruction_vector;
+    Instruction* instruction;
+
+    std::string instruction_token = lexer.get_next_token();
+    while (instruction_token != "eof") {
+        std::vector<std::string> args_tokens = check_syntax(lexer.get_tokens_until_end_line());
+        try {
+            instruction = get_instruction(instruction_token, args_tokens);
+        } catch (const ParserException& e) {
+            delete_instructions(instruction_vector);
+            throw;
+        } 
+        instruction_vector.push_back(instruction);
+        instruction_token = lexer.get_next_token();
+    }
     return instruction_vector;
 }
 

@@ -35,19 +35,14 @@ void Preprocessor::replace_eqv(std::string& str) {
     }
 }
 
-
-std::string Preprocessor::concat(const std::string& sep, const std::vector<std::string>& strs) {
-    assert(!strs.empty());
-
-    return std::accumulate(std::next(strs.cbegin()), strs.cend(), *strs.cbegin(),
-        [&sep](string c, const string& s)
-            { return std::move(c) + sep + s; });
+void Preprocessor::close_resources() {
+    out.close();
+    in.close();
 }
 
 
 void Preprocessor::preprocess() {
-    std::ifstream in(file);
-    std::ofstream out;
+    in.open(file);
     out.open("_in.parse"); 
     int counter = 0;  // counter for lines in _in.parse
     if (in.is_open()) {
@@ -63,7 +58,8 @@ void Preprocessor::preprocess() {
                 delete_commas(buf);
                 buf.erase(buf.begin());
                 if (macro[first].params.size() != buf.size()) {
-                     throw PreprocessorException("invalid args amount for macro: " + first);
+                    close_resources();
+                    throw PreprocessorException("invalid args amount for macro: " + first);
                 }
                 for (std::string line: macro[first].macro_lines) {
                     for (size_t i = 0; i < macro[first].params.size(); i++) {
@@ -71,7 +67,7 @@ void Preprocessor::preprocess() {
                     }
                     counter++;
                     replace_eqv(line);
-                    out << line << endl; 
+                    out << line << std::endl; 
                 }
                 continue;
             }
@@ -86,7 +82,7 @@ void Preprocessor::preprocess() {
                       while (getline(in, current_line)) {
                         std::vector<std::string> in_buf = split_and_delete_comments(current_line);  // delete comments
                         if (in_buf.front() == ".end_macro") { break; }
-                        m_data.macro_lines.push_back(concat(" ", in_buf)); 
+                        m_data.macro_lines.push_back(StringUtils::concat(" ", in_buf)); 
                       }
                       macro[name] = m_data;
                       break;
@@ -95,7 +91,8 @@ void Preprocessor::preprocess() {
                       if (buf.size() == 3) {
                         eqv[buf[1]] = buf[2];    // name : string to replace
                       } else {
-                        throw PreprocessorException("invalid definition: " + concat(" ", buf));
+                        close_resources();
+                        throw PreprocessorException("invalid definition: " + StringUtils::concat(" ", buf));
                       } 
                       break;
                     }
@@ -112,16 +109,14 @@ void Preprocessor::preprocess() {
                     labels[first] = counter;
                     continue; 
                 }
-                out.close();
-                in.close();
-                throw PreprocessorException("invalid label name: " + concat(" ", buf));
+                close_resources();
+                throw PreprocessorException("invalid label name: " + StringUtils::concat(" ", buf));
             }
             counter++;
-            current_line = concat(" ", buf);
+            current_line = StringUtils::concat(" ", buf);
             replace_eqv(current_line);
-            out << current_line << endl;             
+            out << current_line << std::endl;             
         }
     }
-    out.close();
-    in.close();
+    close_resources();
 }
