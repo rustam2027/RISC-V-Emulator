@@ -194,4 +194,9 @@ struct Lb : Instruction {
   Lb(vector<std::string> args);
   void exec(State &state);
 };
- 
+
+struct EBreak : Instruction {
+  EBreak(vector<std::string> args);
+  void exec(State &state);
+};
+
