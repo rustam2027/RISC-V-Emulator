@@ -1,4 +1,4 @@
-#include "../../parser/Parser.hpp"
+#include "../../frontend/Parser.hpp"
 #include <assert.h>
 #include <cassert>
 #include <type_traits>

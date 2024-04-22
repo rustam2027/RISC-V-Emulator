@@ -47,8 +47,9 @@ class Parser {
   static bool is_binary_number(const std::string& str);
   static bool is_hex_number(const std::string& str);
   static bool is_dec_number(const std::string& str);
+  static bool is_char(const std::string& str);
 
-  static int is_binary_char(char c);
+  static bool is_binary_char(char c);
   static bool is_hex_char(char c);
 
 public:
