@@ -80,6 +80,7 @@ void Preprocessor::preprocess() {
                     m_data.params = buf;                                          // many parameters
                     while (getline(in, current_line)) {
                       std::vector<std::string> in_buf = split_and_delete_comments(current_line);  // delete comments
+                      if (in_buf.empty()) { continue; }
                       if (in_buf.front() == ".end_macro") { break; }
                       m_data.macros_lines.push_back(StringUtils::concat(" ", in_buf)); 
                     }
