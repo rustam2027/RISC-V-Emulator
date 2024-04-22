@@ -1,4 +1,4 @@
-#include "../parser/Parser.hpp"
+#include "../frontend/Parser.hpp"
 #include "../exceptions/RuntimeException.hpp"
 #include "instructions.hpp"
 #include <string>
@@ -507,4 +507,15 @@ Lb::Lb(vector<string> args) {
   src = src_;
   dst = dst_;
   offset = offset_;
+}
+
+EBreak::EBreak(vector<string> args) {
+  int args_amount = 0;
+  if (args.size() != args_amount) {
+    throw ParserException("Load byte", args_amount, args.size());
+  }
+}
+
+void EBreak::exec(State& state) {
+  state.debug_break = true;
 }

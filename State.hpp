@@ -10,15 +10,16 @@ struct State {
   std::vector<long> registers;
   std::byte *stack;
   std::map<std::string, int> labels;
+  bool debug_break;
 
-  State() {
+  State(): debug_break(false) {
     registers = std::vector<long>(AMOUNT_REGISTERS);
     stack = new std::byte[AMOUNT_STACK];
     registers[zero] = 0;
     registers[pc] = 0;
   };
 
-  State(std::map<std::string, int> labels) {
+  State(std::map<std::string, int> labels): debug_break(false) {
     registers = std::vector<long>(AMOUNT_REGISTERS);
     stack = new std::byte[AMOUNT_STACK];
     registers[zero] = 0;
