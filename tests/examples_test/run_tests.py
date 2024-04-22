@@ -13,6 +13,7 @@ init(autoreset=True)
 executable_file = "./../../main"
 input_file = "in.txt"
 out_file = "out.txt"
+return_code = 0
 
 # Проход по папке с файлами тестов
 for root, _, files in os.walk("./tests"):
@@ -30,5 +31,8 @@ for root, _, files in os.walk("./tests"):
             with open(os.path.join(root, out_file), "r") as out_bytes:
                 if out_bytes.read().strip() != res.stdout.strip():
                     print(f'[{file}]: {Fore.RED}FAILED')
+                    return_code = 1
                 else:
                     print(f'[{file}]: {Fore.GREEN}PASSED')
+
+exit(return_code)

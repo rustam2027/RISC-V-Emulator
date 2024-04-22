@@ -1,5 +1,7 @@
 #include "../../parser/Parser.hpp"
 #include <assert.h>
+#include <cassert>
+#include <type_traits>
 
 void Itest_1() { assert(Parser::get_immediate("12") == 12); }
 
@@ -21,6 +23,10 @@ void Itest_9() { assert(Parser::get_immediate("-0b1001") == -9); }
 
 void Itest_10() { assert(Parser::get_immediate("-0b01001") == -9); }
 
+void Itest_11() { assert(Parser::get_immediate("'1'") == '1'); }
+
+void Itest_12() { assert(Parser::get_immediate("'\n'") == '\n'); }
+
 void test_get_immediate() {
   Itest_1();
   Itest_2();
@@ -32,6 +38,8 @@ void test_get_immediate() {
   Itest_8();
   Itest_9();
   Itest_10();
+  Itest_11();
+  Itest_12();
 
   std::cout << "Get immediate tests passed" << std::endl;
 }
