@@ -11,6 +11,7 @@
 
 #include "../instructions/instructions.hpp"
 #include "../exceptions/ParserException.hpp"
+#include "../break_controller/BreakController.hpp"
 
 #include "Lexer.hpp"
 #include "StringUtils.hpp"
@@ -38,7 +39,8 @@ class Parser {
       {"bne", [](std::vector<std::string> args) { return new BranchNotEqual(args); }},
       {"blt", [](std::vector<std::string> args) { return new BranchLessThen(args); }},
       {"bge", [](std::vector<std::string> args) { return new BranchGreaterEqual(args); }},
-      {"ret", [](std::vector<std::string> args) { return new Return(args); }}
+      {"ret", [](std::vector<std::string> args) { return new Return(args); }},
+      {"ebreak", [](std::vector<std::string> args) { return new EBreak(args); }}
   };
 
   void delete_instructions(std::vector<Instruction* > instructions);
@@ -50,6 +52,8 @@ class Parser {
 
   static int is_binary_char(char c);
   static bool is_hex_char(char c);
+
+  friend BreakController;
 
 public:
   Parser()=default;
