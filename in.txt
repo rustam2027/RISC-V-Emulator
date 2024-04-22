@@ -1,8 +1,6 @@
-;zhopa
-
 .macro read_char %dst, %rrr
   li %rrr, 0
-  li a7, 12   ;fifa
+  li a7, 12   
   ecall
   mv %dst, a0
 .end_macro
@@ -12,9 +10,9 @@ li a1,   6
 li    a2, 6 
 j end
 
-   add a3, a1, a2  ;zhopa popa
+   add a3, a1, a2  
 label:
-;  read_char a2, a0
+#  read_char a2, a0
    li a2, 23
 end:
 
