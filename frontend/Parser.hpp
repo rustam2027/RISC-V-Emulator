@@ -35,6 +35,7 @@ class Parser {
       {"j", [](std::vector<std::string> args) { return new Jump(args); }},
       {"jal", [](std::vector<std::string> args) { return new JumpAndLink(args); }},
       {"beq", [](std::vector<std::string> args) { return new BranchEqual(args); }},
+      {"bgt", [](std::vector<std::string> args) { return new BranchGreaterThen(args); } },
       {"bne", [](std::vector<std::string> args) { return new BranchNotEqual(args); }},
       {"blt", [](std::vector<std::string> args) { return new BranchLessThen(args); }},
       {"bge", [](std::vector<std::string> args) { return new BranchGreaterEqual(args); }},

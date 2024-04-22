@@ -367,6 +367,24 @@ BranchGreaterEqual::BranchGreaterEqual(vector<string> args) {
   second = second_;
 }
 
+BranchGreaterThen::BranchGreaterThen(vector<string> args) {
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException("branch greater then", args_amount, args.size());
+  }
+  Register first_ = Parser::get_register(args[0]);
+  Register second_ = Parser::get_register(args[1]);
+
+  label = args[2];
+  first = first_;
+  second = second_;
+}
+
+void BranchGreaterThen::exec(State &state) {
+  if (state.registers[first] > state.registers[second]) {
+    state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;
+  }
+}
 
 void Return::exec(State &state) { state.registers[pc] = state.registers[ra]; }
 
