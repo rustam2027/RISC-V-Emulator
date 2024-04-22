@@ -54,6 +54,17 @@ vector<string> Parser::get_offset(const vector<string>& args) {
 
 
 int Parser::get_immediate(const string &str) {
+    if (str.at(0) == '\'' and str.size() >= 3) {
+        if (str.at(2) == '\'') {
+            return str.at(1);
+        } else if (str.size() == 4) {
+            if (str.at(1) == '\\') {
+                if (str.at(2) == 'n') {
+                    return '\n';
+                }
+            }
+        }
+    }
     if (is_dec_number(str)) {
         return stoi(str);
     }
