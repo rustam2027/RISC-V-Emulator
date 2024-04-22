@@ -379,7 +379,7 @@ Return::Return(vector<string> args) {
 
 
 void Sb::exec(State &state) {
-  state.stack[dst + offset] = (std::byte) (state.registers[src] & 0xFF);
+  state.stack[state.registers[dst] + offset] = (std::byte) (state.registers[src] & 0xFF);
   //  SB instructions store 8-bit values from the low bits of register rs2 to memory.
 }
 
@@ -401,8 +401,8 @@ Sb::Sb(vector<string> args) {
 
 
 void Sh::exec(State & state) {
-  state.stack[dst + offset + 1] = (std::byte) (state.registers[src] & 0xFF);
-  state.stack[dst + offset] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
+  state.stack[state.registers[dst] + offset + 1] = (std::byte) (state.registers[src] & 0xFF);
+  state.stack[state.registers[dst] + offset] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
   // The SH store 16-bit value from the low bits of register rs2 to memory.
 }
 
@@ -422,10 +422,10 @@ Sh::Sh(vector<string> args) {
 }
 
 void Sw::exec(State &state) {
-  state.stack[dst + offset + 3] = (std::byte) (state.registers[src] & 0xFF);
-  state.stack[dst + offset + 2] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
-  state.stack[dst + offset + 1] = (std::byte) ((state.registers[src] >> 16) & 0xFF);
-  state.stack[dst + offset] = (std::byte) ((state.registers[src] >> 24) & 0xFF);
+  state.stack[state.registers[dst] + offset + 3] = (std::byte) (state.registers[src] & 0xFF);
+  state.stack[state.registers[dst] + offset + 2] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
+  state.stack[state.registers[dst] + offset + 1] = (std::byte) ((state.registers[src] >> 16) & 0xFF);
+  state.stack[state.registers[dst] + offset] = (std::byte) ((state.registers[src] >> 24) & 0xFF);
   // The SW, SH, and SB instructions store 32-bit, 16-bit, and 8-bit values from the low bits of register rs2 to memory.
 }
 
@@ -458,8 +458,8 @@ Lw::Lw(vector<string> args) {
   if (new_args.size() != args_amount) {
     throw ParserException("Load word", args_amount, new_args.size());
   }
-  Register src_ = Parser::get_register(new_args[0]);
-  Register dst_ = Parser::get_register(new_args[2]);
+  Register dst_ = Parser::get_register(new_args[0]);
+  Register src_ = Parser::get_register(new_args[2]);
   int offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
@@ -480,8 +480,8 @@ Lh::Lh(vector<string> args) {
     throw ParserException("Load half-word", args_amount, new_args.size());
   }
 
-  Register src_ = Parser::get_register(new_args[0]);
-  Register dst_ = Parser::get_register(new_args[2]);
+  Register dst_ = Parser::get_register(new_args[0]);
+  Register src_ = Parser::get_register(new_args[2]);
   int offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
@@ -490,7 +490,7 @@ Lh::Lh(vector<string> args) {
 }
 
 void Lb::exec(State &state) {
-  std::byte first = state.stack[src + offset];
+  std::byte first = state.stack[state.registers[src] + offset];
   state.registers[dst] = (long) (first);
 }
 
@@ -500,8 +500,8 @@ Lb::Lb(vector<string> args) {
   if (new_args.size() != args_amount) {
     throw ParserException("Load byte", args_amount, new_args.size());
   }
-  Register src_ = Parser::get_register(new_args[0]);
-  Register dst_ = Parser::get_register(new_args[2]);
+  Register dst_ = Parser::get_register(new_args[0]);
+  Register src_ = Parser::get_register(new_args[2]);
   int offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
