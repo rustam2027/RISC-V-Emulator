@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include "../frontend/Parser.hpp"
 #include "../exceptions/ParserException.hpp"
 #include "../exceptions/EmulatorException.hpp"
 #include "../State.hpp"
@@ -351,6 +352,66 @@ void test_xor_2() {
   printf("Test xor_2 passed!\n");
 }
 
+void test_sb_1() {
+  State state;
+  Li f1 = Li({"a1", "10"});
+  Li f2 = Li({"a2", "2"});
+
+  f1.exec(state);
+  f2.exec(state);
+
+  Sb f = Sb({"a1", "4(a2)"});
+  f.exec(state);
+  assert(state.stack[Parser::get_register("a2") + 4] == (std::byte) 10);
+  printf("Test sb_1 passed!\n");
+}
+
+void test_sh_1() {
+  State state;
+  Li f1 = Li({"a1", "1024"});
+  Li f2 = Li({"a2", "2"});
+
+  f1.exec(state);
+  f2.exec(state);
+
+  Sh f = Sh({"a1", "4(a2)"});
+  f.exec(state);
+  assert(state.stack[Parser::get_register("a2") + 5] == (std::byte) (1024 & 0xFF));
+  assert(state.stack[Parser::get_register("a2") + 4] == (std::byte) ((1024 >> 8) & 0xFF));
+  printf("Test sh_1 passed!\n");
+}
+
+void test_sw_1() {
+  State state;
+  Li f1 = Li({"a1", "33554432"});
+  Li f2 = Li({"a2", "2"});
+
+  f1.exec(state);
+  f2.exec(state);
+
+  Sw f = Sw({"a1", "4(a2)"});
+  f.exec(state);
+  assert(state.stack[Parser::get_register("a2") + 4 + 3] == (std::byte) (33554432 & 0xFF));
+  assert(state.stack[Parser::get_register("a2") + 4 + 2] == (std::byte) ((33554432 >> 8) & 0xFF));
+  assert(state.stack[Parser::get_register("a2") + 4 + 1] == (std::byte) ((33554432 >> 16) & 0xFF));
+  assert(state.stack[Parser::get_register("a2") + 4 + 0] == (std::byte) ((33554432 >> 24) & 0xFF));
+  printf("Test sw_1 passed!\n");
+}
+
+void test_lw_1() {
+  State state;
+  Li f1 = Li({"a1", "52"});
+  Li f2 = Li({"a2", "2"});
+  
+  f1.exec(state);
+  f2.exec(state);
+
+  state.stack[Parser::get_register("a2" + 4)] = (std::byte) Parser::get_register("a1");
+  Lb f = Lb({"a3", "4(a2)"});
+  f.exec(state);
+  assert((std::byte) Parser::get_register("a3") == state.stack[Parser::get_register("a2") + 4]);
+
+}
 
 /* 
 void test_ecall_print_int() {
@@ -451,6 +512,9 @@ void test_all() {
 
     test_xor_1();
     test_xor_2();
+    test_sb_1();
+    test_sh_1();
+    test_sw_1();
     
   }
   catch(EmulatorException e)
