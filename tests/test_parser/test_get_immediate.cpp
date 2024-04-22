@@ -27,6 +27,8 @@ void Itest_11() { assert(Parser::get_immediate("'1'") == '1'); }
 
 void Itest_12() { assert(Parser::get_immediate("'\n'") == '\n'); }
 
+void Itest_13() { assert(Parser::get_immediate("0xa0000000") == 2684354560); }
+
 void test_get_immediate() {
   Itest_1();
   Itest_2();
@@ -40,6 +42,7 @@ void test_get_immediate() {
   Itest_10();
   Itest_11();
   Itest_12();
+  Itest_13();
 
   std::cout << "Get immediate tests passed" << std::endl;
 }

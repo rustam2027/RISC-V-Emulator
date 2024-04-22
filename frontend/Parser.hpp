@@ -62,6 +62,6 @@ public:
   std::vector<Instruction*> get_instructions();
   static Register get_register(const std::string& str);
   static std::vector<std::string> get_offset(const std::vector<std::string>& args);
-  static int get_immediate(const std::string& str);
+  static long get_immediate(const std::string& str);
   static bool is_number(const std::string& str);
 };

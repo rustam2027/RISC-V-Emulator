@@ -35,9 +35,9 @@ std::vector<std::string> Parser::get_offset(const std::vector<std::string>& args
 }
 
 
-int Parser::get_immediate(const std::string& str) {
+long Parser::get_immediate(const std::string& str) {
     if (is_dec_number(str)) {
-        return stoi(str);
+        return stol(str);
     }
 
     if (is_char(str)) {
@@ -60,7 +60,7 @@ int Parser::get_immediate(const std::string& str) {
         } else {
             buffer = str.substr(2);
         }
-        return sign * stoi(buffer, nullptr, 16);
+        return sign * stol(buffer, nullptr, 16);
     }
     if (is_binary_number(str)) {
         std::string buffer;
@@ -71,7 +71,7 @@ int Parser::get_immediate(const std::string& str) {
         } else {
             buffer = str.substr(2);
         }
-        return sign * stoi(buffer, nullptr, 2);
+        return sign * stol(buffer, nullptr, 2);
     }
     throw new ParserException("Wrong number: " + str);
 };
