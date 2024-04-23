@@ -397,7 +397,7 @@ Return::Return(vector<string> args) {
 
 
 void Sb::exec(State &state) {
-  state.stack[dst + offset] = (std::byte) (state.registers[src] & 0xFF);
+  state.stack[state.registers[dst] + offset] = (std::byte) (state.registers[src] & 0xFF);
   //  SB instructions store 8-bit values from the low bits of register rs2 to memory.
 }
 
@@ -419,8 +419,8 @@ Sb::Sb(vector<string> args) {
 
 
 void Sh::exec(State & state) {
-  state.stack[dst + offset + 1] = (std::byte) (state.registers[src] & 0xFF);
-  state.stack[dst + offset] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
+  state.stack[state.registers[dst] + offset + 1] = (std::byte) (state.registers[src] & 0xFF);
+  state.stack[state.registers[dst] + offset] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
   // The SH store 16-bit value from the low bits of register rs2 to memory.
 }
 
@@ -440,10 +440,10 @@ Sh::Sh(vector<string> args) {
 }
 
 void Sw::exec(State &state) {
-  state.stack[dst + offset + 3] = (std::byte) (state.registers[src] & 0xFF);
-  state.stack[dst + offset + 2] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
-  state.stack[dst + offset + 1] = (std::byte) ((state.registers[src] >> 16) & 0xFF);
-  state.stack[dst + offset] = (std::byte) ((state.registers[src] >> 24) & 0xFF);
+  state.stack[state.registers[dst] + offset + 3] = (std::byte) (state.registers[src] & 0xFF);
+  state.stack[state.registers[dst] + offset + 2] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
+  state.stack[state.registers[dst] + offset + 1] = (std::byte) ((state.registers[src] >> 16) & 0xFF);
+  state.stack[state.registers[dst] + offset] = (std::byte) ((state.registers[src] >> 24) & 0xFF);
   // The SW, SH, and SB instructions store 32-bit, 16-bit, and 8-bit values from the low bits of register rs2 to memory.
 }
 
@@ -463,11 +463,11 @@ Sw::Sw(vector<string> args) {
 }
 
 void Lw::exec(State &state) {
-  std::byte fourth = state.stack[src + offset];
-  std::byte third = state.stack[src + offset - 1];
-  std::byte second = state.stack[src + offset - 2];
-  std::byte first = state.stack[src + offset - 3];
-  state.registers[dst] = (int) ((first << 24) | (second << 16) | (third << 8) | fourth);
+  std::byte fourth = state.stack[state.registers[src] + offset];
+  std::byte third = state.stack[state.registers[src] + offset - 1];
+  std::byte second = state.stack[state.registers[src] + offset - 2];
+  std::byte first = state.stack[state.registers[src] + offset - 3];
+  state.registers[dst] = (long) ((((long) first) << 24) | (((long) second) << 16) | (((long) third) << 8) | (long) fourth);
 }
 
 Lw::Lw(vector<string> args) {
@@ -486,9 +486,9 @@ Lw::Lw(vector<string> args) {
 }
 
 void Lh::exec(State &state) {
-  std::byte second = state.stack[src + offset];
-  std::byte first = state.stack[src + offset - 1];
-  state.registers[dst] = (int) ((first << 8) | (second));
+  std::byte second = state.stack[state.registers[src] + offset];
+  std::byte first = state.stack[state.registers[src] + offset - 1];
+  state.registers[dst] = (long) ((((long) first << 8)) | (long) (second));
 }
 
 Lh::Lh(vector<string> args) {
@@ -508,8 +508,8 @@ Lh::Lh(vector<string> args) {
 }
 
 void Lb::exec(State &state) {
-  std::byte first = state.stack[src + offset];
-  state.registers[dst] = (int) (first);
+  std::byte first = state.stack[state.registers[src] + offset];
+  state.registers[dst] = (long) (first);
 }
 
 Lb::Lb(vector<string> args) {
