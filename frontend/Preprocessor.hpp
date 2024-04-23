@@ -26,8 +26,6 @@ class Preprocessor {
     std::map<std::string, std::string> eqv;
 
     std::map<std::string, Macros> macros;
-    std::map <std::string, int> mapping_macros = {{".macro", 0}, {".eqv", 1}};
-
 
     // if debug --> create two arrays  
 

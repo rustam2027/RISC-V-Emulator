@@ -72,34 +72,32 @@ void Preprocessor::preprocess() {
                 continue;
             }
             if (first.at(0) == '.') {
-                switch(mapping_macros[first]) {
-                    case 0: {  // .macro
-                      Macros m_data;
-                      std::string name = buf[1];
-                      delete_commas(buf);
-                      buf.erase(buf.begin(), buf.begin() + 2);                      // delete .macro and macro_name
-                      m_data.params = buf;                                          // many parameters
-                      while (getline(in, current_line)) {
-                        std::vector<std::string> in_buf = split_and_delete_comments(current_line);  // delete comments
-                        if (in_buf.front() == ".end_macro") { break; }
-                        m_data.macros_lines.push_back(StringUtils::concat(" ", in_buf)); 
-                      }
-                      macros[name] = m_data;
-                      break;
+                if (first == ".macro") {
+                    Macros m_data;
+                    std::string name = buf[1];
+                    delete_commas(buf);
+                    buf.erase(buf.begin(), buf.begin() + 2);                      // delete .macro and macro_name
+                    m_data.params = buf;                                          // many parameters
+                    while (getline(in, current_line)) {
+                      std::vector<std::string> in_buf = split_and_delete_comments(current_line);  // delete comments
+                      if (in_buf.empty()) { continue; }
+                      if (in_buf.front() == ".end_macro") { break; }
+                      m_data.macros_lines.push_back(StringUtils::concat(" ", in_buf)); 
                     }
-                    case 1:  {   // .eqv
-                      if (buf.size() == 3) {
+                    macros[name] = m_data;
+                } else if (first == ".eqv") {
+                    if (buf.size() == 3) {
                         eqv[buf[1]] = buf[2];    // name : string to replace
-                      } else {
+                    } else {
                         close_resources();
                         throw PreprocessorException("invalid definition: " + StringUtils::concat(" ", buf));
-                      } 
-                      break;
-                    }
-                    default:
-                        // can be .text .section .data .bss 
-                       continue;
-                }
+                    } 
+                } else if (first == ".data" || first == ".text") {
+                    // do something 
+                } else {
+                    close_resources();
+                    throw PreprocessorException("not supported: " + first);
+                }     
                 continue;
             }
             int last = first.size() - 1;

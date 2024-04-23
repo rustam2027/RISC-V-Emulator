@@ -141,6 +141,14 @@ struct BranchGreaterEqual: Instruction {
   void exec(State &state);
 };
 
+struct BranchGreaterThen: Instruction {
+  Register first, second;
+  std::string label;
+
+  BranchGreaterThen(vector<std::string> args);
+  void exec(State &state);
+};
+
 struct Return: Instruction {
   Return(vector<std::string> args);
   void exec(State &state);

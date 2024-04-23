@@ -40,7 +40,7 @@ Li::Li(vector<string> args) {
     throw ParserException("li", args_amount, args.size());
   }
   Register dist_ = Parser::get_register(args[0]);
-  int immediate_;
+  long immediate_;
   if (Parser::is_number(args[1])) {
       immediate_ = Parser::get_immediate(args[1]);
   } else {
@@ -67,7 +67,7 @@ Addi::Addi(vector<string> args) {
   }
   Register dist_ = Parser::get_register(args[0]);
   Register source_ = Parser::get_register(args[1]);
-  int immediate_;
+  long immediate_;
   if (Parser::is_number(args[2])) {
       immediate_ = Parser::get_immediate(args[2]);
   } else {
@@ -367,6 +367,24 @@ BranchGreaterEqual::BranchGreaterEqual(vector<string> args) {
   second = second_;
 }
 
+BranchGreaterThen::BranchGreaterThen(vector<string> args) {
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException("branch greater then", args_amount, args.size());
+  }
+  Register first_ = Parser::get_register(args[0]);
+  Register second_ = Parser::get_register(args[1]);
+
+  label = args[2];
+  first = first_;
+  second = second_;
+}
+
+void BranchGreaterThen::exec(State &state) {
+  if (state.registers[first] > state.registers[second]) {
+    state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;
+  }
+}
 
 void Return::exec(State &state) { state.registers[pc] = state.registers[ra]; }
 
@@ -391,7 +409,7 @@ Sb::Sb(vector<string> args) {
   }
   Register src_ = Parser::get_register(new_args[0]);
   Register dst_ = Parser::get_register(new_args[2]);
-  int offset_ = Parser::get_immediate(new_args[1]);
+  long offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
@@ -414,7 +432,7 @@ Sh::Sh(vector<string> args) {
   }
   Register src_ = Parser::get_register(new_args[0]);
   Register dst_ = Parser::get_register(new_args[2]);
-  int offset_ = Parser::get_immediate(new_args[1]);
+  long offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
@@ -437,7 +455,7 @@ Sw::Sw(vector<string> args) {
   }
   Register src_ = Parser::get_register(new_args[0]);
   Register dst_ = Parser::get_register(new_args[2]);
-  int offset_ = Parser::get_immediate(new_args[1]);
+  long offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
@@ -458,9 +476,9 @@ Lw::Lw(vector<string> args) {
   if (new_args.size() != args_amount) {
     throw ParserException("Load word", args_amount, new_args.size());
   }
-  Register dst_ = Parser::get_register(new_args[0]);
-  Register src_ = Parser::get_register(new_args[2]);
-  int offset_ = Parser::get_immediate(new_args[1]);
+  Register src_ = Parser::get_register(new_args[0]);
+  Register dst_ = Parser::get_register(new_args[2]);
+  long offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
@@ -480,9 +498,9 @@ Lh::Lh(vector<string> args) {
     throw ParserException("Load half-word", args_amount, new_args.size());
   }
 
-  Register dst_ = Parser::get_register(new_args[0]);
-  Register src_ = Parser::get_register(new_args[2]);
-  int offset_ = Parser::get_immediate(new_args[1]);
+  Register src_ = Parser::get_register(new_args[0]);
+  Register dst_ = Parser::get_register(new_args[2]);
+  long offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
@@ -500,9 +518,9 @@ Lb::Lb(vector<string> args) {
   if (new_args.size() != args_amount) {
     throw ParserException("Load byte", args_amount, new_args.size());
   }
-  Register dst_ = Parser::get_register(new_args[0]);
-  Register src_ = Parser::get_register(new_args[2]);
-  int offset_ = Parser::get_immediate(new_args[1]);
+  Register src_ = Parser::get_register(new_args[0]);
+  Register dst_ = Parser::get_register(new_args[2]);
+  long offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
   dst = dst_;
