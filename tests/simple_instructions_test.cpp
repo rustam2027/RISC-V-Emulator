@@ -416,18 +416,38 @@ void test_lb_1() {
 
 void test_lh_1() {
   State state;
-  Li f1 = Li({"a1", "13"});
+  Li f1 = Li({"a1", "1024"});
   Li f2 = Li({"a2", "2"});
   
   f1.exec(state);
   f2.exec(state);
 
-  state.stack[2 + 4] = (std::byte) 13;
+  state.stack[2 + 4] = (std::byte) (1024 & 0xFF);
+  state.stack[2 + 4 - 1] = (std::byte) ((1024 >> 8) & 0xFF);
   Lh f = Lh({"a3", "4(a2)"});
   f.exec(state);
-  assert((std::byte) state.registers[a3] == state.stack[2 + 4]);
+  // printf("%ld \n", state.registers[a3]);
+  assert(state.registers[a3] == 1024);
   printf("Test lh_1 passed!\n");
 
+}
+
+void test_lw_1() {
+  State state;
+  Li f1 = Li({"a1", "33554432"});
+  Li f2 = Li({"a2", "2"});
+  
+  f1.exec(state);
+  f2.exec(state);
+
+  state.stack[2 + 4] = (std::byte) (33554432 & 0xFF);
+  state.stack[2 + 4 - 1] = (std::byte) ((33554432 >> 8) & 0xFF);
+  state.stack[2 + 4 - 2] = (std::byte) ((33554432 >> 16) & 0xFF);
+  state.stack[2 + 4 - 3] = (std::byte) ((33554432 >> 24) & 0xFF);
+  Lw f = Lw({"a3", "4(a2)"});
+  f.exec(state);
+  assert(state.registers[a3] == 33554432);
+  printf("Test lw_1 passed!\n");
 }
 
 /* 
@@ -535,6 +555,8 @@ void test_all() {
     test_sw_1();
 
     test_lb_1();
+    test_lh_1();
+    test_lw_1();
 
     
   }

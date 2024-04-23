@@ -445,11 +445,11 @@ Sw::Sw(vector<string> args) {
 }
 
 void Lw::exec(State &state) {
-  std::byte fourth = state.stack[src + offset];
-  std::byte third = state.stack[src + offset - 1];
-  std::byte second = state.stack[src + offset - 2];
-  std::byte first = state.stack[src + offset - 3];
-  state.registers[dst] = (long) ((first << 24) | (second << 16) | (third << 8) | fourth);
+  std::byte fourth = state.stack[state.registers[src] + offset];
+  std::byte third = state.stack[state.registers[src] + offset - 1];
+  std::byte second = state.stack[state.registers[src] + offset - 2];
+  std::byte first = state.stack[state.registers[src] + offset - 3];
+  state.registers[dst] = (long) ((((long) first) << 24) | (((long) second) << 16) | (((long) third) << 8) | (long) fourth);
 }
 
 Lw::Lw(vector<string> args) {
@@ -468,9 +468,9 @@ Lw::Lw(vector<string> args) {
 }
 
 void Lh::exec(State &state) {
-  std::byte second = state.stack[src + offset];
-  std::byte first = state.stack[src + offset - 1];
-  state.registers[dst] = (long) ((first << 8) | (second));
+  std::byte second = state.stack[state.registers[src] + offset];
+  std::byte first = state.stack[state.registers[src] + offset - 1];
+  state.registers[dst] = (long) ((((long) first << 8)) | (long) (second));
 }
 
 Lh::Lh(vector<string> args) {
