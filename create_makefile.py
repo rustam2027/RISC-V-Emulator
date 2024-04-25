@@ -30,7 +30,7 @@ def get_make_rule(file_path: str) -> List[str]:
 in_file_buff: List[str] = [
     "all: compile\n",
     "\n",
-    f"    {CC} *.o -o main {SANITIZERS}\n"
+    f"\t{CC} *.o -o main {SANITIZERS}\n"
     "\n"
 ]
 compile_rule = "compile:"
