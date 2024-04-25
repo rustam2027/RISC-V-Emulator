@@ -58,7 +58,13 @@ struct SLL : Instruction {
   SLL(vector<std::string> args);
   void exec(State &state);
 };
+struct SLLI : Instruction {
+  Register dist, source;
+  long immediate;
 
+  SLLI(vector<std::string> args);
+  void exec(State &state);
+};
 struct SRL : Instruction {
   Register dist, source1, source2;
 

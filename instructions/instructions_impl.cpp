@@ -179,6 +179,29 @@ void SLL::exec(State &state) {
   // amount held in the lower 5 bits of register rs2.
 }
 
+SLLI::SLLI(vector<string> args) {
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException("sll", args_amount, args.size());
+  }
+
+  Register dist_ = Parser::get_register(args[0]);
+  Register source_ = Parser::get_register(args[1]);
+  long immediate_ = Parser::get_immediate(args[2]);
+
+  dist = dist_;
+  source = source_;
+  immediate = immediate_;
+
+}
+
+void SLLI::exec(State &state) {
+  if (dist == zero) {
+    return;
+  }
+  state.registers[dist] = state.registers[source] << (immediate & ((1 << 5) - 1));
+}
+
 
 SRL::SRL(vector<string> args) {
   // converted to types: Register, Register, Register
@@ -476,8 +499,8 @@ Lw::Lw(vector<string> args) {
   if (new_args.size() != args_amount) {
     throw ParserException("Load word", args_amount, new_args.size());
   }
-  Register src_ = Parser::get_register(new_args[0]);
-  Register dst_ = Parser::get_register(new_args[2]);
+  Register dst_ = Parser::get_register(new_args[0]);
+  Register src_ = Parser::get_register(new_args[2]);
   long offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
@@ -498,8 +521,8 @@ Lh::Lh(vector<string> args) {
     throw ParserException("Load half-word", args_amount, new_args.size());
   }
 
-  Register src_ = Parser::get_register(new_args[0]);
-  Register dst_ = Parser::get_register(new_args[2]);
+  Register dst_ = Parser::get_register(new_args[0]);
+  Register src_ = Parser::get_register(new_args[2]);
   long offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;
@@ -518,8 +541,8 @@ Lb::Lb(vector<string> args) {
   if (new_args.size() != args_amount) {
     throw ParserException("Load byte", args_amount, new_args.size());
   }
-  Register src_ = Parser::get_register(new_args[0]);
-  Register dst_ = Parser::get_register(new_args[2]);
+  Register dst_ = Parser::get_register(new_args[0]);
+  Register src_ = Parser::get_register(new_args[2]);
   long offset_ = Parser::get_immediate(new_args[1]);
 
   src = src_;

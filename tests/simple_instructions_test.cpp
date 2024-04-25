@@ -289,6 +289,21 @@ void test_sll_2() {
 
 }
 
+void test_slli_1() {
+  State state;
+  Li f1 = Li({"a1", "170"});
+
+  f1.exec(state);
+  
+
+  SLLI f = SLLI({"a3", "a1", "1"});
+  f.exec(state);
+
+  assert(state.registers[a3] == 340);
+  printf("Test slli_1 passed!\n");
+
+}
+
 void test_srl_1() {
   State state;
   Li f1 = Li({"a1", "24"});
@@ -409,7 +424,7 @@ void test_lb_1() {
   state.stack[2 + 4] = (std::byte) 13;
   Lb f = Lb({"a3", "4(a2)"});
   f.exec(state);
-  assert((std::byte) state.registers[a3] == state.stack[2 + 4]);
+  assert(state.registers[a3] == 13);
   printf("Test lb_1 passed!\n");
 
 }
@@ -426,7 +441,6 @@ void test_lh_1() {
   state.stack[2 + 4 - 1] = (std::byte) ((1024 >> 8) & 0xFF);
   Lh f = Lh({"a3", "4(a2)"});
   f.exec(state);
-  // printf("%ld \n", state.registers[a3]);
   assert(state.registers[a3] == 1024);
   printf("Test lh_1 passed!\n");
 
@@ -543,6 +557,8 @@ void test_all() {
 
     test_sll_1();
     test_sll_2();
+
+    test_slli_1();
 
     test_srl_1();
     test_srl_2();
