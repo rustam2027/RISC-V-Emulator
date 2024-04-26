@@ -5,7 +5,9 @@ void Preprocessor::string_replace(std::string& input, const std::string& src, co
     size_t pos = input.find(src);
     while(pos != std::string::npos) {
         input.replace(pos, src.size(), dst);
-        pos = input.find(src, pos);
+        size_t new_pos = input.find(src, pos);
+        if (pos == new_pos) break;
+        pos = new_pos;
     }
 }
 
@@ -176,6 +178,7 @@ void Preprocessor::preprocess() {
                         continue;
                       }
                       if (macros.find(in_buf.front()) != macros.end()) {
+                        // заменить in_buf
                         inline_macros(in_buf, counter_in_parse, false, &m_data);
                         continue;
                       }
