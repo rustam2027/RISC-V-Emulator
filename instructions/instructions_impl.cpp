@@ -182,7 +182,7 @@ void SLL::exec(State &state) {
 SLLI::SLLI(vector<string> args) {
   int args_amount = 3;
   if (args.size() != args_amount) {
-    throw ParserException("sll", args_amount, args.size());
+    throw ParserException("slli", args_amount, args.size());
   }
 
   Register dist_ = Parser::get_register(args[0]);
@@ -226,6 +226,29 @@ void SRL::exec(State &state) {
       state.registers[source1] >> (state.registers[source2] & ((1 << 5) - 1));
   // Description: Logical right shift on the value in register rs1 by the shift
   // amount held in the lower 5 bits of register rs2
+}
+
+SRLI::SRLI(vector<string> args) {
+  int args_amount = 3;
+  if (args.size() != args_amount) {
+    throw ParserException("srli", args_amount, args.size());
+  }
+
+  Register dist_ = Parser::get_register(args[0]);
+  Register source_ = Parser::get_register(args[1]);
+  long immediate_ = Parser::get_immediate(args[2]);
+
+  dist = dist_;
+  source = source_;
+  immediate = immediate_;
+
+}
+
+void SRLI::exec(State &state) {
+  if (dist == zero) {
+    return;
+  }
+  state.registers[dist] = state.registers[source] >> (immediate & ((1 << 5) - 1));
 }
 
 
