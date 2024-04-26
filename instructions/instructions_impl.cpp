@@ -517,5 +517,4 @@ EBreak::EBreak(vector<string> args) {
 }
 
 void EBreak::exec(State& state) {
-  state.debug_break = true;
 }
