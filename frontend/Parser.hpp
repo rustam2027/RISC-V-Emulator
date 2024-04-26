@@ -47,7 +47,8 @@ class Parser {
       {"lb", [](std::vector<std::string> args) { return new Lb(args); }},
       {"lh", [](std::vector<std::string> args) { return new Lh(args); }}, 
       {"lw", [](std::vector<std::string> args) { return new Lw(args); }},
-      {"beqz", [](std::vector<std::string> args) { return new BranchEqualZero(args); }}
+      {"beqz", [](std::vector<std::string> args) { return new BranchEqualZero(args); }},
+      {"srli", [](std::vector<std::string> args) { return new SRLI(args); }}
   };
 
   void delete_instructions(std::vector<Instruction* > instructions);
