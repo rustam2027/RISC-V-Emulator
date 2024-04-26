@@ -67,7 +67,11 @@ void Preprocessor::inline_macros(std::vector<std::string>& input_line, int& coun
     for (std::string line: macros[first].macros_lines) {
         if (is_label(line)) {
             line = first + "_" + std::to_string(num) + "_" + line;
-            add_label(line, counter);
+            if (write_to_file) {
+              add_label(line, counter);
+            } else {
+              m_data->macros_lines.push_back(line);
+            }
             continue;
         }
         for (size_t i = 0; i < macros[first].params.size(); i++) {
