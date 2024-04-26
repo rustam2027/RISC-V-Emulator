@@ -53,7 +53,7 @@ std::map<std::string, std::string> Preprocessor::create_replace_labels(std::vect
     return replace_labels;
 }
 
-void Preprocessor::inline_macros(std::vector<std::string>& input_line, int& counter, bool write_to_file, Macros* m_data) {
+void Preprocessor::inline_macros(std::vector<std::string>& input_line, int& counter_in_parse, bool write_to_file, Macros* m_data) {
     std::string first = input_line.front();
     int num = macros[first].instances++;         // get number to create custom label name 
     std::map<std::string, std::string> replace_labels = create_replace_labels(macros[first].macros_labels, std::to_string(num), first);
@@ -64,11 +64,12 @@ void Preprocessor::inline_macros(std::vector<std::string>& input_line, int& coun
         throw PreprocessorException("invalid args amount for macro: " + first);
     }
 
-    for (std::string line: macros[first].macros_lines) {
+    for (size_t j = 0; j < macros[first].macros_lines.size(); j++) {
+        std::string line = macros[first].macros_lines[j];
         if (is_label(line)) {
             line = first + "_" + std::to_string(num) + "_" + line;
             if (write_to_file) {
-              add_label(line, counter);
+              add_label(line, counter_in_parse);
             } else {
               m_data->macros_lines.push_back(line);
             }
@@ -89,7 +90,8 @@ void Preprocessor::inline_macros(std::vector<std::string>& input_line, int& coun
         line = StringUtils::concat(" ", buffer);
 
         if (write_to_file) {
-          counter++;
+          counter_in_parse++;
+          from_inparse_to_in.push_back(macros[first].start_line + j);
           out << line << std::endl; 
         } else {
           m_data->macros_lines.push_back(line);  
@@ -105,32 +107,55 @@ void Preprocessor::close_resources() {
 }
 
 
+
+/* from_in_to_inparse */
+
+/* 
+empty line or comment                  -> -1  
+. definition (.macro .eqv .text .data) -> -2
+label                                  -> -3
+ */
+
+
+
 void Preprocessor::preprocess() {
     in.open(file);
     out.open("_in.parse"); 
-    int counter = 0;  // counter for lines in _in.parse
+    int counter_in_parse = 0;        // counter for lines in _in.parse
+    int counter_in = -1;             // counter for lines in in.txt
+
     if (in.is_open()) {
         std::string current_line;
         while (getline(in, current_line)) { 
+            counter_in++;
             if (current_line.empty() || current_line[0] == '#') {
+                from_in_to_inparse.push_back(-1);                  // comment or empty line -> -1 
                 continue;
             }
             std::vector<std::string> buf = split_and_delete_comments(current_line);
-            if (buf.empty()) { continue; }
+            if (buf.empty()) { 
+                from_in_to_inparse.push_back(-1); 
+                continue; 
+            }
             std::string first = buf.front();
             if (macros.find(first) != macros.end()) {
-                inline_macros(buf, counter, true, nullptr);
+                from_in_to_inparse.push_back(counter_in_parse);    // pointer to start of the macros
+                inline_macros(buf, counter_in_parse, true, nullptr);
                 continue;
             }
-            if (first.at(0) == '.') {
+            if (first.at(0) == '.') {  
+                from_in_to_inparse.push_back(-2); 
                 if (first == ".macro") {
                     Macros m_data;
+                    m_data.start_line = counter_in + 1;
                     std::string name = buf[1];
                     delete_commas(buf);
                     buf.erase(buf.begin(), buf.begin() + 2);                      // delete .macro and macro_name
                     m_data.params = buf;                                          // many parameters
                     std::vector<std::string> macros_labels;
                     while (getline(in, current_line)) {
+                      counter_in++;
+                      from_in_to_inparse.push_back(-2); 
                       std::vector<std::string> in_buf = split_and_delete_comments(current_line);  // delete comments
                       if (in_buf.empty()) { continue; }
                       if (in_buf.front() == ".end_macro") { break; }
@@ -140,7 +165,7 @@ void Preprocessor::preprocess() {
                         continue;
                       }
                       if (macros.find(in_buf.front()) != macros.end()) {
-                        inline_macros(in_buf, counter, false, &m_data);
+                        inline_macros(in_buf, counter_in_parse, false, &m_data);
                         continue;
                       }
                       m_data.macros_lines.push_back(StringUtils::concat(" ", in_buf)); 
@@ -163,14 +188,18 @@ void Preprocessor::preprocess() {
             }
 
             if (buf.size() == 1 && is_label(first)) {
-                add_label(first, counter);
+                add_label(first, counter_in_parse);
+                from_in_to_inparse.push_back(-3);   
                 continue;
             }
 
-            counter++;
+            from_in_to_inparse.push_back(counter_in_parse); 
+            from_inparse_to_in.push_back(counter_in);
+            counter_in_parse++;
+
             current_line = StringUtils::concat(" ", buf);
             replace(current_line, eqv);
-            out << current_line << std::endl;             
+            out << current_line << std::endl;         
         }
     }
     close_resources();
