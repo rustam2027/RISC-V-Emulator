@@ -123,6 +123,14 @@ struct BranchEqual: Instruction {
   void exec(State &state);
 };
 
+struct BranchEqualZero : Instruction {
+  Register first;
+  std::string label;
+
+  BranchEqualZero(vector<std::string> args);
+  void exec(State &state);
+};
+
 struct BranchNotEqual: Instruction {
   Register first, second;
   std::string label;

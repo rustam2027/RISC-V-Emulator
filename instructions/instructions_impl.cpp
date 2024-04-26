@@ -333,6 +333,23 @@ BranchEqual::BranchEqual(vector<string> args) {
   second = second_;
 }
 
+void BranchEqualZero::exec(State &state) {
+  if (state.registers[first] == 0) {
+    state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;
+  }
+}
+ 
+BranchEqualZero::BranchEqualZero(vector<string> args) {
+  int args_amount = 2;
+  if (args.size() != args_amount) {
+    throw ParserException("branch equal", args_amount, args.size());
+  }
+  Register first_ = Parser::get_register(args[0]);
+
+  label = args[2];
+  first = first_;
+}
+
 void BranchNotEqual::exec(State &state) {
   if (state.registers[first] != state.registers[second]) {
     state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;

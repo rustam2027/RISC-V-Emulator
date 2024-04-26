@@ -39,7 +39,15 @@ class Parser {
       {"bne", [](std::vector<std::string> args) { return new BranchNotEqual(args); }},
       {"blt", [](std::vector<std::string> args) { return new BranchLessThen(args); }},
       {"bge", [](std::vector<std::string> args) { return new BranchGreaterEqual(args); }},
-      {"ret", [](std::vector<std::string> args) { return new Return(args); }}
+      {"ret", [](std::vector<std::string> args) { return new Return(args); }},
+      {"slli", [](std::vector<std::string> args) { return new SLLI(args); }},
+      {"sb", [](std::vector<std::string> args) { return new Sb(args); }},
+      {"sh", [](std::vector<std::string> args) { return new Sh(args); }},
+      {"sw", [](std::vector<std::string> args) { return new Sw(args); }},
+      {"lb", [](std::vector<std::string> args) { return new Lb(args); }},
+      {"lh", [](std::vector<std::string> args) { return new Lh(args); }}, 
+      {"lw", [](std::vector<std::string> args) { return new Lw(args); }},
+      {"beqz", [](std::vector<std::string> args) { return new BranchEqualZero(args); }}
   };
 
   void delete_instructions(std::vector<Instruction* > instructions);
