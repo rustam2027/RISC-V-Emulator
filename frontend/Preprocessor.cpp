@@ -100,9 +100,20 @@ void Preprocessor::inline_macros(std::vector<std::string>& input_line, int& coun
 }
 
 
+std::vector<std::string> Preprocessor::all_lines_in() {
+    assert(debug_mode == true);
 
-void Preprocessor::close_resources() {
-    out.close();
+    in.open(file);
+    std::vector<std::string> result;
+    std::string current_line;
+    while (getline(in, current_line)) { result.push_back(current_line); }
+    in.close();
+    return result;
+}
+
+
+void Preprocessor::close_resources() { 
+    out.close(); 
     in.close();
 }
 
