@@ -49,4 +49,6 @@ class Preprocessor {
     std::map<std::string, int> get_labels() { return labels; } 
     std::vector<int> get_from_in_to_inparse() { return from_in_to_inparse; }
     std::vector<int> get_from_inparse_to_in() { return from_inparse_to_in; }
+
+    std::vector<std::string> all_lines_in();
 };

@@ -5,7 +5,9 @@ void Preprocessor::string_replace(std::string& input, const std::string& src, co
     size_t pos = input.find(src);
     while(pos != std::string::npos) {
         input.replace(pos, src.size(), dst);
-        pos = input.find(src, pos);
+        size_t new_pos = input.find(src, pos);
+        if (pos == new_pos) break;
+        pos = new_pos;
     }
 }
 
@@ -100,9 +102,20 @@ void Preprocessor::inline_macros(std::vector<std::string>& input_line, int& coun
 }
 
 
+std::vector<std::string> Preprocessor::all_lines_in() {
+    // use only while debug mode
 
-void Preprocessor::close_resources() {
-    out.close();
+    in.open(file);
+    std::vector<std::string> result;
+    std::string current_line;
+    while (getline(in, current_line)) { result.push_back(current_line); }
+    in.close();
+    return result;
+}
+
+
+void Preprocessor::close_resources() { 
+    out.close(); 
     in.close();
 }
 
@@ -165,6 +178,7 @@ void Preprocessor::preprocess() {
                         continue;
                       }
                       if (macros.find(in_buf.front()) != macros.end()) {
+                        // заменить in_buf
                         inline_macros(in_buf, counter_in_parse, false, &m_data);
                         continue;
                       }
