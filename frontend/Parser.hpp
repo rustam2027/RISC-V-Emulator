@@ -11,6 +11,7 @@
 
 #include "../instructions/instructions.hpp"
 #include "../exceptions/ParserException.hpp"
+#include "../break_controller/BreakController.hpp"
 
 #include "Lexer.hpp"
 #include "StringUtils.hpp"
@@ -48,7 +49,8 @@ class Parser {
       {"lh", [](std::vector<std::string> args) { return new Lh(args); }}, 
       {"lw", [](std::vector<std::string> args) { return new Lw(args); }},
       {"beqz", [](std::vector<std::string> args) { return new BranchEqualZero(args); }},
-      {"srli", [](std::vector<std::string> args) { return new SRLI(args); }}
+      {"srli", [](std::vector<std::string> args) { return new SRLI(args); }},
+      {"ebreak", [](std::vector<std::string> args) { return new EBreak(args); }}
   };
 
   void delete_instructions(std::vector<Instruction* > instructions);
@@ -61,6 +63,8 @@ class Parser {
 
   static bool is_binary_char(char c);
   static bool is_hex_char(char c);
+
+  friend BreakController;
 
 public:
   Parser()=default;
