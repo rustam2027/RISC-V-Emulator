@@ -1,4 +1,4 @@
-#include "../../parser/Parser.hpp"
+#include "../../frontend/Parser.hpp"
 #include <algorithm>
 #include <assert.h>
 
@@ -38,6 +38,13 @@ void Ntest_17() { assert(!Parser::is_number("-0b")); }
 
 void Ntest_18() { assert(Parser::is_number("0x10")); }
 
+void Ntest_19() { assert(Parser::is_number("'9'")); }
+
+void Ntest_20() { assert(Parser::is_number("'\n'")); }
+
+void Ntest_21() { assert(Parser::is_number("'\b'")); }
+
+
 void test_is_number() {
   Ntest_1();
   Ntest_2();
@@ -57,6 +64,9 @@ void test_is_number() {
   Ntest_16();
   Ntest_17();
   Ntest_18();
+  Ntest_19();
+  Ntest_20();
+  Ntest_21();
 
   std::cout << "Is number tests passed!" << std::endl;
 }

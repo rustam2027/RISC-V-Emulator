@@ -35,9 +35,21 @@ std::vector<std::string> Parser::get_offset(const std::vector<std::string>& args
 }
 
 
-int Parser::get_immediate(const std::string& str) {
+long Parser::get_immediate(const std::string& str) {
     if (is_dec_number(str)) {
-        return stoi(str);
+        return stol(str);
+    }
+
+    if (is_char(str)) {
+        if (str.size() == 3) {
+          return str.at(1);
+        }
+        if (str.size() == 4) {
+          switch (str.at(2)){
+            case 'n': return '\n'; break;
+            default: throw ParserException("Wrong char: " + str);
+          }
+        }
     }
     if (is_hex_number(str)) {
         std::string buffer;
@@ -48,7 +60,7 @@ int Parser::get_immediate(const std::string& str) {
         } else {
             buffer = str.substr(2);
         }
-        return sign * stoi(buffer, nullptr, 16);
+        return sign * stol(buffer, nullptr, 16);
     }
     if (is_binary_number(str)) {
         std::string buffer;
@@ -59,17 +71,17 @@ int Parser::get_immediate(const std::string& str) {
         } else {
             buffer = str.substr(2);
         }
-        return sign * stoi(buffer, nullptr, 2);
+        return sign * stol(buffer, nullptr, 2);
     }
     throw new ParserException("Wrong number: " + str);
 };
 
 
-int Parser::is_binary_char(char c) {
+bool Parser::is_binary_char(char c) {
     if (c != '0' && c != '1') {
-        return 0;
+        return false;
     }
-    return 1;
+    return true;
 }
 
 
@@ -139,9 +151,21 @@ bool Parser::is_dec_number(const std::string& str) {
     return all_of(iter, str.end(), ::isdigit);
 }
 
+bool Parser::is_char(const std::string& str) {
+    if (str.size() >= 3 && str.at(0) == '\'') {
+        if (str.size() == 3 && str.at(2) == '\'') {
+            return true;
+        }
+        if (str.size() == 4 && str.at(1) == '\\') {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 bool Parser::is_number(const std::string& str) {
-    return is_binary_number(str) || is_hex_number(str) || is_dec_number(str);
+    return is_binary_number(str) || is_hex_number(str) || is_dec_number(str) || is_char(str);
 }
 
 

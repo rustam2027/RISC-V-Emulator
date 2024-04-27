@@ -58,11 +58,24 @@ struct SLL : Instruction {
   SLL(vector<std::string> args);
   void exec(State &state);
 };
+struct SLLI : Instruction {
+  Register dist, source;
+  long immediate;
 
+  SLLI(vector<std::string> args);
+  void exec(State &state);
+};
 struct SRL : Instruction {
   Register dist, source1, source2;
 
   SRL(vector<std::string> args);
+  void exec(State &state);
+};
+struct SRLI : Instruction {
+  Register dist, source;
+  long immediate;
+
+  SRLI(vector<std::string> args);
   void exec(State &state);
 };
 
@@ -117,6 +130,14 @@ struct BranchEqual: Instruction {
   void exec(State &state);
 };
 
+struct BranchEqualZero : Instruction {
+  Register first;
+  std::string label;
+
+  BranchEqualZero(vector<std::string> args);
+  void exec(State &state);
+};
+
 struct BranchNotEqual: Instruction {
   Register first, second;
   std::string label;
@@ -138,6 +159,14 @@ struct BranchGreaterEqual: Instruction {
   std::string label;
 
   BranchGreaterEqual(vector<std::string> args);
+  void exec(State &state);
+};
+
+struct BranchGreaterThen: Instruction {
+  Register first, second;
+  std::string label;
+
+  BranchGreaterThen(vector<std::string> args);
   void exec(State &state);
 };
 

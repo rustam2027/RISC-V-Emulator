@@ -27,7 +27,7 @@ void Itest_11() { assert(Parser::get_immediate("'1'") == '1'); }
 
 void Itest_12() { assert(Parser::get_immediate("'\n'") == '\n'); }
 
-void Itest_13() { assert(Parser::get_immediate("'9'") == '9'); }
+void Itest_13() { assert(Parser::get_immediate("0xa0000000") == 2684354560); }
 
 void test_get_immediate() {
   Itest_1();

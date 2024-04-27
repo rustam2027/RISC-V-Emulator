@@ -36,10 +36,20 @@ class Parser {
       {"j", [](std::vector<std::string> args) { return new Jump(args); }},
       {"jal", [](std::vector<std::string> args) { return new JumpAndLink(args); }},
       {"beq", [](std::vector<std::string> args) { return new BranchEqual(args); }},
+      {"bgt", [](std::vector<std::string> args) { return new BranchGreaterThen(args); } },
       {"bne", [](std::vector<std::string> args) { return new BranchNotEqual(args); }},
       {"blt", [](std::vector<std::string> args) { return new BranchLessThen(args); }},
       {"bge", [](std::vector<std::string> args) { return new BranchGreaterEqual(args); }},
       {"ret", [](std::vector<std::string> args) { return new Return(args); }},
+      {"slli", [](std::vector<std::string> args) { return new SLLI(args); }},
+      {"sb", [](std::vector<std::string> args) { return new Sb(args); }},
+      {"sh", [](std::vector<std::string> args) { return new Sh(args); }},
+      {"sw", [](std::vector<std::string> args) { return new Sw(args); }},
+      {"lb", [](std::vector<std::string> args) { return new Lb(args); }},
+      {"lh", [](std::vector<std::string> args) { return new Lh(args); }}, 
+      {"lw", [](std::vector<std::string> args) { return new Lw(args); }},
+      {"beqz", [](std::vector<std::string> args) { return new BranchEqualZero(args); }},
+      {"srli", [](std::vector<std::string> args) { return new SRLI(args); }},
       {"ebreak", [](std::vector<std::string> args) { return new EBreak(args); }}
   };
 
@@ -49,8 +59,9 @@ class Parser {
   static bool is_binary_number(const std::string& str);
   static bool is_hex_number(const std::string& str);
   static bool is_dec_number(const std::string& str);
+  static bool is_char(const std::string& str);
 
-  static int is_binary_char(char c);
+  static bool is_binary_char(char c);
   static bool is_hex_char(char c);
 
   friend BreakController;
@@ -64,6 +75,6 @@ public:
   std::vector<Instruction*> get_instructions();
   static Register get_register(const std::string& str);
   static std::vector<std::string> get_offset(const std::vector<std::string>& args);
-  static int get_immediate(const std::string& str);
+  static long get_immediate(const std::string& str);
   static bool is_number(const std::string& str);
 };
