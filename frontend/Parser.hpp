@@ -68,8 +68,6 @@ class Parser {
 
 public:
   Parser()=default;
-
-  // TODO: move it to Lexer + add checking commas 
   
   std::vector<std::string> check_syntax(std::vector<std::string> args_tokens);
   std::vector<Instruction*> get_instructions();

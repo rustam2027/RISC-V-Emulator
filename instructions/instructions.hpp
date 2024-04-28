@@ -17,7 +17,7 @@ struct Add : Instruction {
 
 struct Li : Instruction {
   Register dist;
-  int immediate;
+  long immediate;
 
   Li(vector<std::string> args);
   void exec(State& state);
@@ -25,7 +25,7 @@ struct Li : Instruction {
 
 struct Addi : Instruction {
   Register dist, source;
-  int immediate;
+  long immediate;
 
   Addi(vector<std::string> args);
   void exec(State &state);
