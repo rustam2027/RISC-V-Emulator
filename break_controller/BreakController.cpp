@@ -21,6 +21,9 @@ void BreakController::open_interface() {
         std::string request;
         std::cout << "> ";
         std::getline(std::cin, request);
+        if (request == "") {
+            continue;
+        }
 
         if (request == "continue" || request == "c") {
             break;
@@ -153,10 +156,15 @@ void BreakController::interpret() {
 }
 
 void BreakController::show_context() {
-    size_t index = global_state->registers[pc] / INSTRUCTION_SIZE;
+    int index = global_state->registers[pc] / INSTRUCTION_SIZE;
+     
+    size_t min_index = from_inparse_to_in[std::max(0, ((int)index) - 2)];
+    size_t max_index = from_inparse_to_in[std::min((int)instructions_.size() - 1, index + 2)];
 
-    size_t min_index = from_inparse_to_in[std::max(0, (int)index - 2)];
-    size_t max_index = from_inparse_to_in[std::min(instructions_.size() - 1, index + 2)];
+    if (min_index > max_index) {
+        min_index = std::max(0, from_inparse_to_in[index] - 2);
+        max_index = std::min(from_inparse_to_in[index] + 2, (int) from_in_to_inparse.size());
+    }
     std::cout << std::endl;
 
     for (size_t i = min_index; i <= max_index; i++) {
