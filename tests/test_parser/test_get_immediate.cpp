@@ -1,7 +1,6 @@
 #include "../../frontend/Parser.hpp"
 #include <assert.h>
 #include <cassert>
-#include <type_traits>
 
 void Itest_1() { assert(Parser::get_immediate("12") == 12); }
 

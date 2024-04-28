@@ -1,5 +1,4 @@
 #include "../../frontend/Parser.hpp"
-#include <algorithm>
 #include <assert.h>
 
 void Ntest_1() { assert(Parser::is_number("123")); }
