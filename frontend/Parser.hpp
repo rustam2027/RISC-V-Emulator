@@ -70,7 +70,7 @@ class Parser {
 public:
   Parser()=default;
   
-  std::vector<std::string> check_syntax(std::vector<std::string> args_tokens);
+  static std::vector<std::string> check_syntax(std::vector<std::string> args_tokens);
   std::vector<Instruction*> get_instructions();
   static Register get_register(const std::string& str);
   static std::vector<std::string> get_offset(const std::vector<std::string>& args);
