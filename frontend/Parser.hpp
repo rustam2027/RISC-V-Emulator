@@ -33,6 +33,7 @@ class Parser {
       {"sub", [](std::vector<std::string> args) { return new Sub(args); }},
       {"xor", [](std::vector<std::string> args) { return new Xor(args); }},
       {"ecall", [](std::vector<std::string> args) { return new Ecall(args); }},
+      {"call", [](std::vector<std::string> args) { return new Call(args); }},
       {"j", [](std::vector<std::string> args) { return new Jump(args); }},
       {"jal", [](std::vector<std::string> args) { return new JumpAndLink(args); }},
       {"beq", [](std::vector<std::string> args) { return new BranchEqual(args); }},

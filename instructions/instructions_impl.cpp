@@ -311,6 +311,21 @@ Ecall::Ecall(vector<string> args) {
   }
 }
 
+Call::Call(vector<std::string> args) {
+  // args amount: 1
+  int args_amount = 1;
+  if (args.size() != args_amount) {
+    throw ParserException("call", args_amount, args.size());
+  }
+  label = args[1];
+}
+
+void Call::exec(State &state) { 
+  state.registers[ra] = state.registers[pc] * INSTRUCTION_SIZE;
+  state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;
+}
+
+
 void Jump::exec(State &state) { state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE; }
 
 Jump::Jump(vector<string> args) {

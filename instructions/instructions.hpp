@@ -114,6 +114,12 @@ struct Jump : Instruction {
   void exec(State &state);
 };
 
+struct Call : Instruction {
+  std::string label;
+  Call(vector<std::string> args);
+  void exec(State &state);
+};
+
 struct JumpAndLink : Instruction {
   Register return_register;
   std::string label;
