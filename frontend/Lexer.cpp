@@ -19,8 +19,8 @@ std::string Lexer::get_next_token() {
                 if (token != "") { return token; }  
                 return "eof";
             }
-            if (ch == ',' || ch == '\n' || ch == ' ') {
-                if (ch != ' ') { str_buffer += ch; }   // need to return , or \n token to check syntax or stop
+            if (ch == ',' || ch == '\n' || ch == ' ' || ch == '\t') {
+                if (ch != ' ' && ch != '\t') { str_buffer += ch; }   // need to return , or \n token to check syntax or stop
                 if (token != "") { return token; }
                 continue;
             }
