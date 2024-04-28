@@ -1,0 +1,45 @@
+
+ --> 0  |ebreak
+     1  |jal ra, func_1
+     2  |j func_2
+>
+     0  |ebreak
+ --> 1  |jal ra, func_1
+     2  |j func_2
+     3  |
+     4  |func_1:
+     5  |    li a1, 1
+>
+     1  |jal ra, func_1
+     2  |j func_2
+     3  |
+     4  |func_1:
+ --> 5  |    li a1, 1
+     6  |    ret
+     7  |
+     8  |func_2:
+     9  |   li a2, 4
+>
+     2  |j func_2
+     3  |
+     4  |func_1:
+     5  |    li a1, 1
+ --> 6  |    ret
+     7  |
+     8  |func_2:
+     9  |   li a2, 4
+>
+     0  |ebreak
+     1  |jal ra, func_1
+ --> 2  |j func_2
+     3  |
+     4  |func_1:
+     5  |    li a1, 1
+     6  |    ret
+>
+     5  |    li a1, 1
+     6  |    ret
+     7  |
+     8  |func_2:
+ --> 9  |   li a2, 4
+>

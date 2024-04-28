@@ -28,6 +28,7 @@ def compare_output(output_file, expected_output_file):
 
 if __name__ == "__main__":
     executable_path = "/Users/rustamsalimov/Documents/GitHub/RISC-V-Emulator/main"
+    return_code = 0
 
     test_folders = find_test_folders()
     for folder in test_folders:
@@ -44,8 +45,10 @@ if __name__ == "__main__":
 
             else:
                 print(f"[{folder}]: {Fore.RED}FAILED")
+                return_code = 1
 
         else:
             print(
                 f"Для теста в папке {folder} отсутствует файл in.txt или out.txt")
     os.remove("_in.parse")
+    exit(return_code)

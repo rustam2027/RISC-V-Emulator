@@ -11,83 +11,86 @@ using namespace std;
 struct Add : Instruction {
   Register dist, source1, source2;
 
-  Add() {}
+  Add(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
+};
+
+struct Li : Instruction {
+  Register dist;
+  long immediate;
+
+  Li(vector<std::string> args);
+  void exec(State& state);
 };
 
 struct Addi : Instruction {
   Register dist, source;
-  int immediate;
+  long immediate;
 
-  Addi() {}
+  Addi(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct And : Instruction {
   Register dist, source1, source2;
 
-  And() {}
+  And(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
-};
-
-struct Li : Instruction {
-  Register dist;
-  int immediate;
-
-  Li() {}
-  void exec(State& state);
-  void fill_args(vector<std::string> args);
 };
 
 struct Mv : Instruction {
   Register dist, source;
 
-  Mv() {}
+  Mv(vector<std::string> args);
   void exec(State& state);
-  void fill_args(vector<std::string> args);
 };
 
 struct Or : Instruction {
   Register dist, source1, source2;
 
-  Or() {}
+  Or(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct SLL : Instruction {
   Register dist, source1, source2;
 
-  SLL() {}
+  SLL(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
+struct SLLI : Instruction {
+  Register dist, source;
+  long immediate;
 
+  SLLI(vector<std::string> args);
+  void exec(State &state);
+};
 struct SRL : Instruction {
   Register dist, source1, source2;
 
-  SRL() {}
+  SRL(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
+};
+struct SRLI : Instruction {
+  Register dist, source;
+  long immediate;
+
+  SRLI(vector<std::string> args);
+  void exec(State &state);
 };
 
 struct Sub : Instruction {
   Register dist, source1, source2;
 
-  Sub() {}
+  Sub(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct Xor : Instruction {
   Register dist, source1, source2;
 
-  Xor() {}
+  Xor(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct Ecall : Instruction {
@@ -101,106 +104,134 @@ struct Ecall : Instruction {
                                   scanf("%c", &c); 
                                   state.registers[a0] = (long) c; }}
   };
-  Ecall() {}
-
+  Ecall(std::vector<std::string> args);
   void exec(State &state);
-  void fill_args(std::vector<std::string> args);
 };
 
 struct Jump : Instruction {
   std::string label;
+  Jump(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
+};
+
+struct Call : Instruction {
+  std::string label;
+  Call(vector<std::string> args);
+  void exec(State &state);
 };
 
 struct JumpAndLink : Instruction {
   Register return_register;
   std::string label;
+
+  JumpAndLink(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct BranchEqual: Instruction {
-  Register first;
-  Register second;
+  Register first, second;
   std::string label;
+
+  BranchEqual(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
+};
+
+struct BranchEqualZero : Instruction {
+  Register first;
+  std::string label;
+
+  BranchEqualZero(vector<std::string> args);
+  void exec(State &state);
 };
 
 struct BranchNotEqual: Instruction {
-  Register first;
-  Register second;
+  Register first, second;
   std::string label;
+
+  BranchNotEqual(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct BranchLessThen: Instruction {
-  Register first;
-  Register second;
+  Register first, second;
   std::string label;
+
+  BranchLessThen(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct BranchGreaterEqual: Instruction {
-  Register first;
-  Register second;
+  Register first, second;
   std::string label;
+
+  BranchGreaterEqual(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
+};
+
+struct BranchGreaterThen: Instruction {
+  Register first, second;
+  std::string label;
+
+  BranchGreaterThen(vector<std::string> args);
+  void exec(State &state);
 };
 
 struct Return: Instruction {
+  Return(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
+
+
 struct Sb : Instruction {
-  Register src;
-  Register dst;
+  Register src, dst;
   int offset;
+
+  Sb(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct Sh : Instruction {
-  Register src;
-  Register dst;
+  Register src, dst;
   int offset;
+
+  Sh(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct Sw : Instruction {
-  Register src;
-  Register dst;
+  Register src, dst;
   int offset;
+
+  Sw(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct Lw : Instruction {
-  Register src;
-  Register dst;
+  Register src, dst;
   int offset;
+
+  Lw(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct Lh : Instruction {
-  Register src;
-  Register dst;
+  Register src, dst;
   int offset;
+
+  Lh(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
 
 struct Lb : Instruction {
-  Register src;
-  Register dst;
+  Register src, dst;
   int offset;
+
+  Lb(vector<std::string> args);
   void exec(State &state);
-  void fill_args(vector<std::string> args);
 };
- 
+
+struct EBreak : Instruction {
+  EBreak(vector<std::string> args);
+  void exec(State &state);
+};
+

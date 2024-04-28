@@ -1,0 +1,27 @@
+     0  |li a1, 0
+     1  |li a2, 3
+     2  |start:
+ --> 3  |    ebreak
+     4  |    addi a1, a1, 1
+     5  |    blt a1, a2, start
+>
+     1  |li a2, 3
+     2  |start:
+     3  |    ebreak
+ --> 4  |    addi a1, a1, 1
+     5  |    blt a1, a2, start
+>
+     0  |li a1, 0
+     1  |li a2, 3
+     2  |start:
+ --> 3  |    ebreak
+     4  |    addi a1, a1, 1
+     5  |    blt a1, a2, start
+>
+     0  |li a1, 0
+     1  |li a2, 3
+     2  |start:
+ --> 3  |    ebreak
+     4  |    addi a1, a1, 1
+     5  |    blt a1, a2, start
+>
