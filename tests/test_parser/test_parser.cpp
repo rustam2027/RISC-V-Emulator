@@ -1,4 +1,4 @@
-#include "test_is_number.hpp"
+#include "test_parser.hpp"
 
 int main() {
   test_is_number();

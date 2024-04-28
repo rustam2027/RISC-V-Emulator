@@ -3,3 +3,5 @@ makefile
 _in.parse
 in.txt
 main
+.vscode/c_cpp_properties.json
+/.vscode
