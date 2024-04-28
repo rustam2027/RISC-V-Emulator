@@ -10,7 +10,8 @@ TESTS = [
     ("Parser Tests", "tests/test_parser", ["sh", "./run.sh"]),
     ("Interpreter Tests", "tests/interpreter_tests/",
      ["python3", "interpreter_test.py"]),
-    ("Example Tests", "tests/examples_test/", ["python3", "run_tests.py"])
+    ("Example Tests", "tests/examples_test/", ["python3", "run_tests.py"]),
+    ("BreakController", "tests/breakcontroller_tests/", ["python3", "run_tests.py"])
 ]
 
 

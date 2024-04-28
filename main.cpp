@@ -1,18 +1,16 @@
 
+#include <iostream>
+
+#include "break_controller/BreakController.hpp"
+#include "exceptions/ParserException.hpp"
+#include "exceptions/PreprocessorException.hpp"
+#include "exceptions/RuntimeException.hpp"
 #include "frontend/Parser.hpp"
 #include "frontend/Preprocessor.hpp"
 #include "instructions/Instruction.hpp"
 #include "instructions/instructions.hpp"
 #include "interpreter/Interpreter.hpp"
 #include "tests/simple_instructions_test.hpp"
-
-#include "exceptions/ParserException.hpp"
-#include "exceptions/PreprocessorException.hpp"
-#include "exceptions/RuntimeException.hpp"
-
-#include "break_controller/BreakController.hpp"
-
-#include <iostream>
 
 int main(int argc, char *argv[]) {
   string file;
@@ -42,14 +40,14 @@ int main(int argc, char *argv[]) {
   try {
     commands = parser->get_instructions();
   } catch (const ParserException &e) {
-    delete parser; // to call lexer destructor
+    delete parser;  // to call lexer destructor
     cout << e.get_message() << endl;
     exit(1);
   }
   delete parser;
 
   if (debug_mode) {
-    BreakController controller(commands, preprocessor.get_labels());
+    BreakController controller(commands, preprocessor.get_labels(), preprocessor.all_lines_in(), preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in());
 
     try {
       controller.interpret();
@@ -59,7 +57,6 @@ int main(int argc, char *argv[]) {
     }
 
   } else {
-
     Interpreter interpreter(commands, preprocessor.get_labels());
 
     try {
