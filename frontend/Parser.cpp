@@ -190,6 +190,10 @@ void Parser::delete_instructions(vector<Instruction*> instructions) {
 }
 
 std::vector<std::string> Parser::check_syntax(std::vector<std::string> args_tokens) {
+    std::string error_message = "syntax error, comma problem: " + StringUtils::concat(" ",  args_tokens);
+    if (args_tokens.size() != 0 && args_tokens[args_tokens.size() - 1] == ",") {
+        throw ParserException(error_message);
+    }
     std::vector<std::string> result;
     for (int i = 0; i < args_tokens.size(); i++) {
         if (i % 2 == 0) {
@@ -197,7 +201,7 @@ std::vector<std::string> Parser::check_syntax(std::vector<std::string> args_toke
         } else {
             if (args_tokens[i] != ",") {
                 // can be double commma, missing comma
-                throw ParserException("syntax error, comma problem: " + StringUtils::concat(" ",  args_tokens));
+                throw ParserException(error_message);
             }
         }
     }

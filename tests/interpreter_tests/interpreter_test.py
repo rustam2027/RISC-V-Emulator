@@ -27,7 +27,7 @@ def compare_output(output_file, expected_output_file):
 
 
 if __name__ == "__main__":
-    executable_path = "/Users/rustamsalimov/Documents/GitHub/RISC-V-Emulator/main"
+    executable_path = "../../../main"
     return_code = 0
 
     test_folders = find_test_folders()
