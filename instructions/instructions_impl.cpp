@@ -337,7 +337,7 @@ Jump::Jump(vector<string> args) {
 }
 
 void JumpAndLink::exec(State &state) {
-  state.registers[return_register] = state.registers[pc] * INSTRUCTION_SIZE;
+  state.registers[return_register] = state.registers[pc];
   state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;
 }
  
