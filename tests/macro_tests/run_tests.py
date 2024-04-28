@@ -17,7 +17,7 @@ return_code = 0
 
 # Проход по папке с файлами тестов
 for root, _, files in sorted(os.walk("./tests")):
-    for file in files:
+    for file in sorted(files):
         if file.endswith(".asm"):
             cmd = f"cat {os.path.join(root, input_file)} | {executable_file} {os.path.join(root, file)}"
             res = sp.run(cmd, shell=True, capture_output=True, text=True)
@@ -29,10 +29,11 @@ for root, _, files in sorted(os.walk("./tests")):
                 continue
 
             with open(os.path.join(root, out_file), "r") as out_bytes:
-                if out_bytes.read().strip() != res.stdout.strip():
-                    print(res.stdout.strip())
-                    print(out_bytes.read().strip())
+                out = out_bytes.read().strip()
+                if out != res.stdout.strip():
                     print(f'[{file}]: {Fore.RED}FAILED')
+                    print(f'\t     {Fore.RED} actual: {res.stdout.strip()}')
+                    print(f'\t     {Fore.RED} expected: {out}')
                     return_code = 1
                 else:
                     print(f'[{file}]: {Fore.GREEN}PASSED')
