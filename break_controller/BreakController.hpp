@@ -32,8 +32,8 @@ class BreakController {
     std::string get_hex(long num);
 
    public:
-    BreakController(std::vector<Instruction *> instructions, std::map<std::string, int> labels, std::vector<std::string> all_lines,
-                    std::vector<int> in_to_inparse, std::vector<int> inparse_to_in);
+    BreakController(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
+                    std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in);
 
     void interpret();
     void open_interface();

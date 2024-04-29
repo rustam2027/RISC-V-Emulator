@@ -114,8 +114,8 @@ void BreakController::show_register(std::string rg_str) {
     }
 }
 
-BreakController::BreakController(std::vector<Instruction *> instructions, std::map<std::string, int> labels, std::vector<std::string> all_lines,
-                                 std::vector<int> in_to_inparse, std::vector<int> inparse_to_in)
+BreakController::BreakController(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
+                                 std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in)
     : exit(false) {
     instructions_ = instructions;
     global_state = new State(labels);

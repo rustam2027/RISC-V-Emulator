@@ -33,6 +33,8 @@ class Preprocessor {
     std::vector<int> from_in_to_inparse;  
     std::vector<int> from_inparse_to_in;
 
+    std::vector<std::string> all_lines;
+
     void string_replace(std::string& input, const std::string& src, const std::string& dst);
     void delete_commas(std::vector<std::string>& line);
     void replace(std::string& str, std::map<std::string, std::string> replace_map);
@@ -44,11 +46,17 @@ class Preprocessor {
     std::map<std::string, std::string> create_replace_labels(std::vector<std::string>& macro_labels, std::string num, std::string name);
 
   public:
-    Preprocessor(bool debug, std::string file): debug_mode(debug), file(file)  {}
-    void preprocess(); 
-    std::map<std::string, int> get_labels() { return labels; } 
-    std::vector<int> get_from_in_to_inparse() { return from_in_to_inparse; }
-    std::vector<int> get_from_inparse_to_in() { return from_inparse_to_in; }
+    Preprocessor(bool debug, std::string file): debug_mode(debug), file(file)  {
+      in.open(file);
+      std::string current_line;
+      while (getline(in, current_line)) { all_lines.push_back(current_line); }
+      in.close();
+    }
 
-    std::vector<std::string> all_lines_in();
+    void preprocess(); 
+    std::map<std::string, int>& get_labels() { return labels; } 
+    std::vector<int>& get_from_in_to_inparse() { return from_in_to_inparse; }
+    std::vector<int>& get_from_inparse_to_in() { return from_inparse_to_in; }
+
+    std::vector<std::string>& all_lines_in();
 };

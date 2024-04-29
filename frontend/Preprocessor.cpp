@@ -102,15 +102,8 @@ void Preprocessor::inline_macros(std::vector<std::string>& input_line, int& coun
 }
 
 
-std::vector<std::string> Preprocessor::all_lines_in() {
-    // use only while debug mode
-
-    in.open(file);
-    std::vector<std::string> result;
-    std::string current_line;
-    while (getline(in, current_line)) { result.push_back(current_line); }
-    in.close();
-    return result;
+std::vector<std::string>& Preprocessor::all_lines_in() {
+    return all_lines;
 }
 
 
