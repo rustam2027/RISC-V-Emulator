@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
   delete parser;
 
   if (debug_mode) {
-    BreakController controller(commands, preprocessor.get_labels(), preprocessor.all_lines_in(), preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in());
+    BreakController controller(commands, preprocessor.get_labels(), preprocessor.all_lines_in(), preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
 
     try {
       controller.interpret();
