@@ -3,10 +3,7 @@
 #include <ios>
 #include <iostream>
 #include <sstream>
-#include <stack>
 #include <string>
-#include <type_traits>
-#include <typeinfo>
 #include <vector>
 
 #include "../exceptions/RuntimeException.hpp"
@@ -115,10 +112,11 @@ void BreakController::show_register(std::string rg_str) {
 }
 
 BreakController::BreakController(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
-                                 std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in)
+                                 std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug_flag)
     : exit(false) {
     instructions_ = instructions;
     global_state = new State(labels);
+    debug = debug_flag;
 
     all_lines_in = all_lines;
 
@@ -132,11 +130,11 @@ void BreakController::interpret() {
             throw new RuntimeException("Wrong pc: " + std::to_string(global_state->registers[pc]));
         }
 
-        if (dynamic_cast<EBreak *>(instructions_[global_state->registers[pc] /  // Check if
+        if (debug && (dynamic_cast<EBreak *>(instructions_[global_state->registers[pc] /  // Check if
                                                                                 // instruction is
                                                                                 // instance EBReak
                                                  INSTRUCTION_SIZE]) != nullptr ||
-            break_points[global_state->registers[pc] / INSTRUCTION_SIZE] == 1) {  // Or Break point is set
+            break_points[global_state->registers[pc] / INSTRUCTION_SIZE] == 1)) {  // Or Break point is set
             open_interface();
             break_points[global_state->registers[pc] / INSTRUCTION_SIZE] = 0;
         }
@@ -150,7 +148,7 @@ void BreakController::interpret() {
     }
     // If the last command is a break point we can check condition after
     // execution
-    if (break_points[global_state->registers[pc] / INSTRUCTION_SIZE - 1] == 1) {
+    if (debug && break_points[global_state->registers[pc] / INSTRUCTION_SIZE - 1] == 1) {
         open_interface();
     }
 }
