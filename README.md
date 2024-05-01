@@ -37,6 +37,15 @@ Emulator for RISC V assembler
 
   3. Visual
 
+ > - Fix **issues** from Ugliansky
+ >    - Delete _in.parse
+ >    - Merge BreakController
+ >    - Delete ebreak ;(
+ >    - e.t.c
+ > - Support **memory**
+ > - Make some **tui**
+ > - Implement **step over** command
+
     Maybe some pseudo graphics
 
 ## Architecture
@@ -56,8 +65,3 @@ Emulator for RISC V assembler
   3. Visual (*OPTIONAL*)
 
 ## Check our DIAGRAM.txt
-
-### Good basic part
-
-  1. Read from file and simple parse
-  2. 
