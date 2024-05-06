@@ -70,6 +70,10 @@ void BreakController::open_interface() {
             break;
         } else if (request == "help") {
             show_help();
+        } else if (request.rfind("breakpoint set --name", 0) == 0) {
+            breakpoint_set_by_label(request.substr(22));
+        } else if (request.rfind("breakpoint set --line", 0) == 0) {
+            breakpoint_set_by_number(Parser::get_immediate(request.substr(22)));
         } else {
             std::cout << "UNKNOWN COMMAND : '" << request << "'" << std::endl;
             faild_requests++;
@@ -113,15 +117,7 @@ void BreakController::show_register(std::string rg_str) {
 
 BreakController::BreakController(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
                                  std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug_flag)
-    : exit(false) {
-    instructions_ = instructions;
-    global_state = new State(labels);
-    debug = debug_flag;
-
-    all_lines_in = all_lines;
-
-    from_in_to_inparse = in_to_inparse;
-    from_inparse_to_in = inparse_to_in;
+    : exit(false), instructions_(instructions), global_state(new State(labels)), debug(debug_flag), all_lines_in(all_lines), from_in_to_inparse(in_to_inparse), from_inparse_to_in(inparse_to_in) {
 }
 
 void BreakController::interpret() {
@@ -139,12 +135,13 @@ void BreakController::interpret() {
             break_points[global_state->registers[pc] / INSTRUCTION_SIZE] = 0;
         }
 
-        instructions_[global_state->registers[pc] / INSTRUCTION_SIZE]->exec(*global_state);
-        global_state->registers[pc] += INSTRUCTION_SIZE;
 
         if (exit) {
             return;
         }
+
+        instructions_[global_state->registers[pc] / INSTRUCTION_SIZE]->exec(*global_state);
+        global_state->registers[pc] += INSTRUCTION_SIZE;
     }
     // If the last command is a break point we can check condition after
     // execution
@@ -175,6 +172,23 @@ void BreakController::show_context() {
         num.resize(3, ' ');
 
         std::cout << num << "|" << all_lines_in[i] << std::endl;
+    }
+}
+
+void BreakController::breakpoint_set_by_label(std::string label) {
+    if (global_state->labels.find(label) != global_state->labels.cend()) {
+        break_points[global_state->labels[label]] = 1;
+    } else {
+        std::cout << "UNKNOWN LABEL: " << label << std::endl;
+    }
+}
+
+void BreakController::breakpoint_set_by_number(int num) {
+    if (all_lines_in.size() > num) {
+        while (from_in_to_inparse[num] == -1) {num--;}
+        break_points[from_in_to_inparse[num]] = 1;
+    } else {
+        std::cout << "NUMBER IS TOO BIG: "<< num << std::endl;
     }
 }
 
