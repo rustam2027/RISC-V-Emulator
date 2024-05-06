@@ -11,7 +11,7 @@
 
 #include "../instructions/instructions.hpp"
 #include "../exceptions/ParserException.hpp"
-#include "../break_controller/BreakController.hpp"
+#include "../interpreter/Interpreter.hpp"
 
 #include "Lexer.hpp"
 #include "StringUtils.hpp"
@@ -65,7 +65,7 @@ class Parser {
   static bool is_binary_char(char c);
   static bool is_hex_char(char c);
 
-  friend BreakController;
+  friend Interpreter;
 
 public:
   Parser()=default;

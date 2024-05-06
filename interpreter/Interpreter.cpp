@@ -8,9 +8,9 @@
 
 #include "../exceptions/RuntimeException.hpp"
 #include "../frontend/Parser.hpp"
-#include "BreakController.hpp"
+#include "Interpreter.hpp"
 
-void BreakController::open_interface() {
+void Interpreter::open_interface() {
     int faild_requests = 0;
 
     show_context();
@@ -82,7 +82,7 @@ void BreakController::open_interface() {
     }
 }
 
-void BreakController::show_stack(size_t from, size_t to) {
+void Interpreter::show_stack(size_t from, size_t to) {
     std::cout << "SHOWING STACK" << std::endl;
     for (int i = from; i < to; i++) {
         std::cout << "[" << i * 8 << "]: ";
@@ -95,14 +95,14 @@ void BreakController::show_stack(size_t from, size_t to) {
     }
 }
 
-void BreakController::show_registers() {
+void Interpreter::show_registers() {
     std::cout << "SHOWING REGISTERS" << std::endl;
     for (auto iter = Parser::registers_names.begin(); iter != Parser::registers_names.end(); ++iter) {
         std::cout << iter->first << ": " << get_hex(global_state->registers[iter->second]) << std::endl;
     }
 }
 
-void BreakController::show_register(std::string rg_str) {
+void Interpreter::show_register(std::string rg_str) {
     try {
         Register rg_reg = Parser::get_register(rg_str);
         std::cout << '[' << rg_str << "]: " << get_hex(global_state->registers[rg_reg]) << std::endl;
@@ -111,7 +111,7 @@ void BreakController::show_register(std::string rg_str) {
     }
 }
 
-BreakController::BreakController(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
+Interpreter::Interpreter(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
                                  std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug_flag)
     : exit(false) {
     instructions_ = instructions;
@@ -124,7 +124,7 @@ BreakController::BreakController(std::vector<Instruction *>& instructions, std::
     from_inparse_to_in = inparse_to_in;
 }
 
-void BreakController::interpret() {
+void Interpreter::interpret() {
     while (global_state->registers[pc] < instructions_.size() * INSTRUCTION_SIZE) {
         if (global_state->registers[pc] % INSTRUCTION_SIZE != 0) {
             throw new RuntimeException("Wrong pc: " + std::to_string(global_state->registers[pc]));
@@ -153,7 +153,7 @@ void BreakController::interpret() {
     }
 }
 
-void BreakController::show_context() {
+void Interpreter::show_context() {
     int index = global_state->registers[pc] / INSTRUCTION_SIZE;
      
     size_t min_index = from_inparse_to_in[std::max(0, ((int)index) - 2)];
@@ -178,7 +178,7 @@ void BreakController::show_context() {
     }
 }
 
-void BreakController::step_in() {
+void Interpreter::step_in() {
     if ((instructions_.size() > ((global_state->registers[pc] / INSTRUCTION_SIZE)))) {
         if (dynamic_cast<JumpAndLink *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]) != nullptr) {
             JumpAndLink *jal = dynamic_cast<JumpAndLink *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]);
@@ -196,11 +196,11 @@ void BreakController::step_in() {
     break_points[(global_state->registers[pc] / INSTRUCTION_SIZE) + 1] = 1;
 }
 
-void BreakController::next() {
+void Interpreter::next() {
     break_points[(global_state->registers[pc] / INSTRUCTION_SIZE) + 1] = 1;
 }
 
-void BreakController::show_help() {
+void Interpreter::show_help() {
     std::cout << "Oops look like u don't know what happening let me explain.\n"
               << "'help' -- to see this message\n"
               << "'continue' or 'c' to go to the next break point\n"
@@ -211,14 +211,14 @@ void BreakController::show_help() {
               << "'next' or 'n' to not step inside\n";
 }
 
-BreakController::~BreakController() {
+Interpreter::~Interpreter() {
     for (Instruction *instruction : instructions_) {
         delete instruction;
     }
     delete global_state;
 }
 
-std::string BreakController::get_hex(long num) {
+std::string Interpreter::get_hex(long num) {
     std::string str;
     std::string nul;
 

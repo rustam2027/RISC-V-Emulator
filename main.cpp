@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include "break_controller/BreakController.hpp"
+#include "interpreter/Interpreter.hpp"
 #include "exceptions/ParserException.hpp"
 #include "exceptions/PreprocessorException.hpp"
 #include "exceptions/RuntimeException.hpp"
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
   }
   delete parser;
 
-  BreakController controller(commands, preprocessor.get_labels(), preprocessor.all_lines_in(), preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
+  Interpreter controller(commands, preprocessor.get_labels(), preprocessor.all_lines_in(), preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
 
 
   try {

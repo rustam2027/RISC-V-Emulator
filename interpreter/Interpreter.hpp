@@ -5,7 +5,7 @@
 
 #include "../instructions/Instruction.hpp"
 
-class BreakController {
+class Interpreter {
     std::vector<Instruction *> instructions_;
     std::bitset<100000> break_points;
     State *global_state;
@@ -33,11 +33,11 @@ class BreakController {
     std::string get_hex(long num);
 
    public:
-    BreakController(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
+    Interpreter(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
                     std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug);
 
     void interpret();
     void open_interface();
 
-    ~BreakController();
+    ~Interpreter();
 };
