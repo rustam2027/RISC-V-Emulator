@@ -12,7 +12,6 @@ class Lexer {
 
   public:
     Lexer(std::stringstream& inparse_): inparse(inparse_) {}
-    ~Lexer()=default;
 
     std::string get_next_token();
     std::vector<std::string> get_tokens_until_end_line();
