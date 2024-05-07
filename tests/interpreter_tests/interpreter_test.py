@@ -50,5 +50,4 @@ if __name__ == "__main__":
         else:
             print(
                 f"Для теста в папке {folder} отсутствует файл in.txt или out.txt")
-    os.remove("_in.parse")
     exit(return_code)

@@ -28,32 +28,32 @@ int main(int argc, char *argv[]) {
 
   try {
     preprocessor.preprocess();
-  } catch (const PreprocessorException &e) {
+  } catch (const PreprocessorException& e) {
     cout << e.get_message() << endl;
     exit(1);
   }
 
-  Parser *parser = new Parser();
-  vector<Instruction *> commands;
+  Lexer lexer(preprocessor.get_inparse());
+
+  Parser parser(lexer);
+  vector<Instruction*> instructions;
   try {
-    commands = parser->get_instructions();
-  } catch (const ParserException &e) {
-    delete parser;  // to call lexer destructor
+    instructions = parser.get_instructions();
+  } catch (const ParserException& e) {
     cout << e.get_message() << endl;
     exit(1);
   }
-  delete parser;
 
-  Interpreter controller(commands, preprocessor.get_labels(), preprocessor.all_lines_in(), preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
-
+  Interpreter controller(instructions, preprocessor.get_labels(), preprocessor.all_lines_in(), preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
 
   try {
     controller.interpret();
-  } catch (const RuntimeException &e) {
+  } catch (const RuntimeException& e) {
     cout << e.get_message() << endl;
     exit(1);
   }
 
+  // preprocessor.dump_inparse();
   // test_all();
   return 0;
 }

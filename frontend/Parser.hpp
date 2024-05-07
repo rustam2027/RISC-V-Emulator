@@ -68,7 +68,7 @@ class Parser {
   friend Interpreter;
 
 public:
-  Parser()=default;
+  Parser(Lexer lexer_): lexer(lexer_) {}
   
   static std::vector<std::string> check_syntax(std::vector<std::string> args_tokens);
   std::vector<Instruction*> get_instructions();
