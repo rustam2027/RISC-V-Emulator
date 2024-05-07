@@ -6,3 +6,4 @@ main
 .vscode/c_cpp_properties.json
 /.vscode
 .vscode
+build
