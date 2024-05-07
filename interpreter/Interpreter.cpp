@@ -106,7 +106,7 @@ void Interpreter::show_register(std::string rg_str) {
     try {
         Register rg_reg = Parser::get_register(rg_str);
         std::cout << '[' << rg_str << "]: " << get_hex(global_state->registers[rg_reg]) << std::endl;
-    } catch (ParserException pe) {
+    } catch (const ParserException& pe) {
         std::cout << pe.get_message() << std::endl;
     }
 }
