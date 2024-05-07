@@ -27,7 +27,7 @@ std::vector<std::string> Preprocessor::split_and_delete_comments(const std::stri
 
 
 void Preprocessor::delete_commas(std::vector<std::string>& line) {
-    for (std::string& word: line) { string_replace(word, ",", ""); }
+    for (auto& word: line) { string_replace(word, ",", ""); }
 }
 
 
@@ -43,6 +43,10 @@ bool Preprocessor::is_label(std::string& token) {
 
 void Preprocessor::add_label(std::string& label, int lines_counter) {
     label.erase(label.size() - 1, 1);
+    if (labels.find(label) != labels.end()) {
+        in.close();
+        throw PreprocessorException("Name conflict, need to rename label: " + label);
+    }
     labels[label] = lines_counter;
 }
 

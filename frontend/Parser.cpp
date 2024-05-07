@@ -221,6 +221,13 @@ std::vector<Instruction*> Parser::get_instructions() {
             delete_instructions(instruction_vector);
             throw;
         } 
+
+        if (jump_instructions.find(instruction_token) != jump_instructions.end()) {   // need to check label existence
+            if (labels.find(args_tokens.back()) == labels.end()) {
+                delete_instructions(instruction_vector);
+                throw ParserException("Jump to a non-existent label: " + instruction_token + " " + StringUtils::concat(" ", args_tokens));
+            }
+        }
         instruction_vector.push_back(instruction);
         instruction_token = lexer.get_next_token();
     }
