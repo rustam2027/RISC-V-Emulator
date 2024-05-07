@@ -42,7 +42,7 @@ class Preprocessor {
     std::map<std::string, std::string> create_replace_labels(std::vector<std::string>& macro_labels, std::string num, std::string name);
 
   public:
-    Preprocessor(bool debug, std::string file): file(file)  {
+    Preprocessor(std::string file): file(file)  {
       in.open(file);
       std::string current_line;
       while (getline(in, current_line)) { all_lines.push_back(current_line); }

@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  Preprocessor preprocessor = Preprocessor(debug_mode, file);
+  Preprocessor preprocessor = Preprocessor(file);
 
   try {
     preprocessor.preprocess();

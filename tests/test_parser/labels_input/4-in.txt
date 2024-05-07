@@ -1,0 +1,16 @@
+.macro my_macro %src
+    mv a0, %src
+  my_main:
+    li t0, 5
+.end_macro
+
+main:
+  li t0, 'X'
+  my_macro t0
+  j my_macro_0_my_main
+
+main_1:
+  mv a2, a3
+
+my_macro_0_my_main:
+  li t2, 7
