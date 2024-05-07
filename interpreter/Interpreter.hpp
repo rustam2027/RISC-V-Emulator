@@ -7,17 +7,22 @@
 
 class Interpreter {
     std::vector<Instruction *> instructions_;
+
     std::bitset<100000> break_points;
+    std::bitset<100000> set_manually;
+
     State *global_state;
     bool exit;
     bool debug;
+    bool break_on_next = false;
     
     void show_registers();
     void show_register(std::string rg);
     void show_stack(size_t from, size_t to);
 
+    void step_over();
     void step_in();
-    void next();
+    void step_out();
 
     void set_break_point();
 
