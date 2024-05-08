@@ -1,0 +1,5 @@
+main:
+    li t1, 3
+    li t2, 0
+    j label_111
+    

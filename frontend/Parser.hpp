@@ -5,6 +5,7 @@
 #include <functional>
 #include <iostream>
 #include <map>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -19,6 +20,7 @@
 
 class Parser {
   Lexer lexer;
+  std::map<std::string, int>& labels;
   static std::map<std::string, Register> registers_names;
 
   std::map<std::string, function<Instruction* (std::vector<std::string> args)>> func = {
@@ -54,6 +56,8 @@ class Parser {
       {"ebreak", [](std::vector<std::string> args) { return new EBreak(args); }}
   };
 
+  std::set<std::string> jump_instructions = {"j", "jal", "beq", "bgt", "bne", "blt", "bge"};
+
   void delete_instructions(std::vector<Instruction* > instructions);
   Instruction* get_instruction(const std::string& str, std::vector<std::string> args);
 
@@ -68,7 +72,7 @@ class Parser {
   friend Interpreter;
 
 public:
-  Parser(Lexer lexer_): lexer(lexer_) {}
+  Parser(Lexer lexer_, std::map<std::string, int>& labels_): lexer(lexer_), labels(labels_) {}
   
   static std::vector<std::string> check_syntax(std::vector<std::string> args_tokens);
   std::vector<Instruction*> get_instructions();
