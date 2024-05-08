@@ -62,7 +62,7 @@ void Preprocessor::inline_macros(std::vector<std::string>& input_line, int& coun
     delete_commas(input_line);
     input_line.erase(input_line.begin());
     if (macros[first].params.size() != input_line.size()) {
-        close_resources();
+        in.close();
         throw PreprocessorException("invalid args amount for macro: " + first);
     }
 
@@ -94,24 +94,12 @@ void Preprocessor::inline_macros(std::vector<std::string>& input_line, int& coun
         if (write_to_file) {
           counter_in_parse++;
           from_inparse_to_in.push_back(macros[first].start_line + j);
-          out << line << std::endl; 
+          inparse << line << std::endl;
         } else {
           m_data->macros_lines.push_back(line);  
         }
     }
 }
-
-
-std::vector<std::string>& Preprocessor::all_lines_in() {
-    return all_lines;
-}
-
-
-void Preprocessor::close_resources() { 
-    out.close(); 
-    in.close();
-}
-
 
 
 /* from_in_to_inparse */
@@ -123,10 +111,8 @@ label                                  -> -3
  */
 
 
-
 void Preprocessor::preprocess() {
     in.open(file);
-    out.open("_in.parse"); 
     int counter_in_parse = 0;        // counter for lines in _in.parse
     int counter_in = -1;             // counter for lines in in.txt
 
@@ -171,7 +157,6 @@ void Preprocessor::preprocess() {
                         continue;
                       }
                       if (macros.find(in_buf.front()) != macros.end()) {
-                        // заменить in_buf
                         inline_macros(in_buf, counter_in_parse, false, &m_data);
                         continue;
                       }
@@ -182,13 +167,13 @@ void Preprocessor::preprocess() {
                     if (buf.size() == 3) {
                         eqv[buf[1]] = buf[2];    // name : string to replace
                     } else {
-                        close_resources();
+                        in.close();
                         throw PreprocessorException("invalid definition: " + StringUtils::concat(" ", buf));
                     } 
                 } else if (first == ".data" || first == ".text") {
                     // do something 
                 } else {
-                    close_resources();
+                    in.close();
                     throw PreprocessorException("not supported: " + first);
                 }     
                 continue;
@@ -203,11 +188,18 @@ void Preprocessor::preprocess() {
             from_in_to_inparse.push_back(counter_in_parse); 
             from_inparse_to_in.push_back(counter_in);
             counter_in_parse++;
-
             current_line = StringUtils::concat(" ", buf);
             replace(current_line, eqv);
-            out << current_line << std::endl;         
+            inparse << current_line << std::endl;        
         }
     }
-    close_resources();
+    in.close();
+}
+
+
+void Preprocessor::dump_inparse() {
+    std::ofstream out("_in.parse");
+    // maybe need to copy
+    out << inparse.str();
+    out.close();
 }

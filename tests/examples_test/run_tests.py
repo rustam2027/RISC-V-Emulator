@@ -22,8 +22,6 @@ for root, _, files in os.walk("./tests"):
             cmd = f"cat {os.path.join(root, input_file)} | {executable_file} {os.path.join(root, file)}"
             res = sp.run(cmd, shell=True, capture_output=True, text=True)
 
-            os.remove("_in.parse")
-
             if res.returncode != 0:
                 print("Problem occured with {file}: \n{res.stderr}")
                 continue
