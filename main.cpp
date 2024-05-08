@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <cstring>
 
 #include "interpreter/Interpreter.hpp"
 #include "exceptions/ParserException.hpp"
