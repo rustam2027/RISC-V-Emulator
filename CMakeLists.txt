@@ -21,7 +21,16 @@ if(NOT ftxui_POPULATED)
   add_subdirectory(${ftxui_SOURCE_DIR} ${ftxui_BINARY_DIR} EXCLUDE_FROM_ALL)
 endif()
 
-add_executable(${PROJECT_NAME} main.cpp interpreter/Interpreter.cpp frontend/Lexer.cpp frontend/Parser.cpp frontend/Preprocessor.cpp instructions/instructions_impl.cpp interpreter/Interpreter.cpp)
+add_executable(${PROJECT_NAME} main.cpp 
+    interpreter/Interpreter.cpp 
+    frontend/Lexer.cpp 
+    frontend/Parser.cpp 
+    frontend/Preprocessor.cpp 
+    instructions/instructions_impl.cpp 
+    interpreter/Interpreter.cpp
+    tests/simple_instructions_test.cpp
+    UI/UI.cpp
+    UI/padding.cpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE src)
  

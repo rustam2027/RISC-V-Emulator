@@ -1,4 +1,5 @@
-
+#include <ftxui/dom/elements.hpp>
+#include <ftxui/screen/screen.hpp>
 #include <iostream>
 
 #include "interpreter/Interpreter.hpp"
@@ -9,6 +10,9 @@
 #include "frontend/Preprocessor.hpp"
 #include "instructions/Instruction.hpp"
 #include "tests/simple_instructions_test.hpp"
+#include "UI/UI.hpp"
+
+
 
 int main(int argc, char *argv[]) {
   string file;
@@ -46,8 +50,11 @@ int main(int argc, char *argv[]) {
 
   Interpreter controller(instructions, preprocessor.get_labels(), preprocessor.all_lines_in(), preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
 
+  UI ui(preprocessor.all_lines_in(), controller);
+  ui.render();
+
   try {
-    controller.interpret();
+    // controller.interpret();.
   } catch (const RuntimeException& e) {
     cout << e.get_message() << endl;
     exit(1);

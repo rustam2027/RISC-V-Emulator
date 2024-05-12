@@ -38,6 +38,9 @@ class Interpreter {
 
     void interpret();
     void open_interface();
+    State* get_state() {
+        return global_state;
+    }
 
     ~Interpreter();
 };

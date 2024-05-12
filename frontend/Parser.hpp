@@ -70,6 +70,9 @@ class Parser {
 public:
   Parser(Lexer lexer_): lexer(lexer_) {}
   
+  static std::map<std::string, Register> get_register_names() {
+    return registers_names;
+  }
   static std::vector<std::string> check_syntax(std::vector<std::string> args_tokens);
   std::vector<Instruction*> get_instructions();
   static Register get_register(const std::string& str);
