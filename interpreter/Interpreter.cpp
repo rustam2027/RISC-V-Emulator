@@ -65,8 +65,11 @@ void Interpreter::open_interface() {
         } else if (request == "step in" || request == "s") {
             step_in();
             break;
-        } else if (request == "next" || request == "n") {
-            next();
+        } else if (request == "step over" || request == "n") {
+            step_over();
+            break;
+        } else if (request == "step out" || request == "o") {
+            step_out();
             break;
         } else if (request == "help") {
             show_help();
@@ -125,11 +128,15 @@ void Interpreter::interpret() {
         if (global_state->registers[pc] % INSTRUCTION_SIZE != 0) {
             throw new RuntimeException("Wrong pc: " + std::to_string(global_state->registers[pc]));
         }
+        size_t index = global_state->registers[pc] / INSTRUCTION_SIZE;
 
-        if (debug && (dynamic_cast<EBreak *>(instructions_[global_state->registers[pc] / INSTRUCTION_SIZE]) != nullptr ||
-            break_points[global_state->registers[pc] / INSTRUCTION_SIZE] == 1)) {  // Or Break point is set
+        if (debug && ((dynamic_cast<EBreak *>(instructions_[index]) != nullptr ||
+            break_points[index] == 1) || break_on_next)) {  // Or Break point is set
+            break_on_next = false;
             open_interface();
-            break_points[global_state->registers[pc] / INSTRUCTION_SIZE] = 0;
+            if (set_manually[index]) {
+                break_points[index] = 0;
+            }
         }
 
         if (exit) {
@@ -141,7 +148,7 @@ void Interpreter::interpret() {
     }
     // If the last command is a break point we can check condition after
     // execution
-    if (debug && break_points[global_state->registers[pc] / INSTRUCTION_SIZE - 1] == 1) {
+    if (debug && (break_points[global_state->registers[pc] / INSTRUCTION_SIZE - 1] == 1 || break_on_next)) {
         open_interface();
     }
 }
@@ -188,37 +195,37 @@ void Interpreter::breakpoint_set_by_number(int num) {
     }
 }
 
-void Interpreter::step_in() {
-    if ((instructions_.size() > ((global_state->registers[pc] / INSTRUCTION_SIZE)))) {
-        if (dynamic_cast<JumpAndLink *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]) != nullptr) {
-            JumpAndLink *jal = dynamic_cast<JumpAndLink *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]);
-            break_points[global_state->labels[jal->label]] = 1;
-            return;
-        } else if (dynamic_cast<Return *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]) != nullptr) {
-            break_points[global_state->registers[ra] / INSTRUCTION_SIZE + 1] = 1;
-            return;
-        } else if (dynamic_cast<Jump *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]) != nullptr) {
-            Jump *j = dynamic_cast<Jump *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]);
-            break_points[global_state->labels[j->label]] = 1;
-            return;
-        }
+void Interpreter::step_over() {
+    size_t index = global_state->registers[pc] / INSTRUCTION_SIZE;
+
+    if (index < instructions_.size() && dynamic_cast<JumpAndLink *>(instructions_[index]) != nullptr) {
+        break_points[index + 1] = 1;
+        return;
+    } else {
+        break_on_next = true;
     }
-    break_points[(global_state->registers[pc] / INSTRUCTION_SIZE) + 1] = 1;
 }
 
-void Interpreter::next() {
-    break_points[(global_state->registers[pc] / INSTRUCTION_SIZE) + 1] = 1;
+void Interpreter::step_in() {
+    break_on_next = true;
+}
+
+void Interpreter::step_out() {
+    break_points[(global_state->registers[ra] / INSTRUCTION_SIZE) + 1] = 1;
 }
 
 void Interpreter::show_help() {
-    std::cout << "Oops look like u don't know what happening let me explain.\n"
-              << "'help' -- to see this message\n"
-              << "'continue' or 'c' to go to the next break point\n"
-              << "'exit' or 'q' to exit debugger\n"
-              << "'show stack n m' to view stack from n to m\n"
-              << "'show registers' or 'sr' to view registers\n"
-              << "'show register rg' or 'sr rg' to view only rg register" << "'step in' to step inside\n"
-              << "'next' or 'n' to not step inside\n";
+    std::cout << "Oops look like u don't know what happening let me explain." << std::endl;
+    std::cout << "Available commands:" << std::endl;
+    std::cout << "- continue (c): Continue execution until the next breakpoint or the end of the program." << std::endl;
+    std::cout << "- exit (q): Exit the debugger." << std::endl;
+    std::cout << "- show stack <from> <to>: Show the stack contents from address <from> to <to>." << std::endl;
+    std::cout << "- show registers (sr): Show the contents of all registers." << std::endl;
+    std::cout << "- show register <name>: Show the contents of the specified register." << std::endl;
+    std::cout << "- step in (s): Execute the next instruction and step into any function calls." << std::endl;
+    std::cout << "- step over (n): Execute the next instruction and skip over any function calls." << std::endl;
+    std::cout << "- step out (o): Execute until the current function returns." << std::endl;
+    std::cout << "- help: Show this help message." << std::endl;
 }
 
 Interpreter::~Interpreter() {

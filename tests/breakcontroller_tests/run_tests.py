@@ -39,10 +39,9 @@ for root, _, files in sorted(os.walk("./tests"), key=lambda x: x[2]):
                 else:
                     for i in range(len(result)):
                         if (result[i].split() != expected[i].split()):
-                            print(result[i], " --expected-->", expected[i])
+                            print(result[i], f" {Fore.BLUE}--expected-->", expected[i])
                             return_code = 1
                             passed = False
-                            break
                 if passed:
                     print(f'[{file}]: {Fore.GREEN}PASSED')
                 else:
