@@ -5,4 +5,5 @@ int main() {
   test_get_immediate();
   test_get_offset();
   test_check_sytax();
+  test_labels();
 }

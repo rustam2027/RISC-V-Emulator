@@ -1,0 +1,8 @@
+main:
+    li t1, 3
+    li t2, 4
+    bgt t1, t2, label_33
+
+label_3:
+  li t0, 0
+  

@@ -1,15 +1,14 @@
 
 #include <iostream>
+#include <cstring>
 
-#include "break_controller/BreakController.hpp"
+#include "interpreter/Interpreter.hpp"
 #include "exceptions/ParserException.hpp"
 #include "exceptions/PreprocessorException.hpp"
 #include "exceptions/RuntimeException.hpp"
 #include "frontend/Parser.hpp"
 #include "frontend/Preprocessor.hpp"
 #include "instructions/Instruction.hpp"
-#include "instructions/instructions.hpp"
-#include "interpreter/Interpreter.hpp"
 #include "tests/simple_instructions_test.hpp"
 
 int main(int argc, char *argv[]) {
@@ -26,47 +25,36 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  Preprocessor preprocessor = Preprocessor(debug_mode, file);
+  Preprocessor preprocessor = Preprocessor(file);
 
   try {
     preprocessor.preprocess();
-  } catch (const PreprocessorException &e) {
+  } catch (const PreprocessorException& e) {
     cout << e.get_message() << endl;
     exit(1);
   }
 
-  Parser *parser = new Parser();
-  vector<Instruction *> commands;
+  Lexer lexer(preprocessor.get_inparse());
+
+  Parser parser(lexer, preprocessor.get_labels());
+  vector<Instruction*> instructions;
   try {
-    commands = parser->get_instructions();
-  } catch (const ParserException &e) {
-    delete parser;  // to call lexer destructor
+    instructions = parser.get_instructions();
+  } catch (const ParserException& e) {
     cout << e.get_message() << endl;
     exit(1);
   }
-  delete parser;
 
-  if (debug_mode) {
-    BreakController controller(commands, preprocessor.get_labels(), preprocessor.all_lines_in(), preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
+  Interpreter controller(instructions, preprocessor.get_labels(), preprocessor.all_lines_in(), preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
 
-    try {
-      controller.interpret();
-    } catch (const RuntimeException &e) {
-      cout << e.get_message() << endl;
-      exit(1);
-    }
-
-  } else {
-    Interpreter interpreter(commands, preprocessor.get_labels());
-
-    try {
-      interpreter.interpret();
-    } catch (const RuntimeException &e) {
-      cout << e.get_message() << endl;
-      exit(1);
-    }
+  try {
+    controller.interpret();
+  } catch (const RuntimeException& e) {
+    cout << e.get_message() << endl;
+    exit(1);
   }
 
+  // preprocessor.dump_inparse();
   // test_all();
   return 0;
 }

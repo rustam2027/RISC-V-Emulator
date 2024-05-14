@@ -5,13 +5,14 @@
 #include <functional>
 #include <iostream>
 #include <map>
+#include <set>
 #include <sstream>
 #include <string>
 #include <vector>
 
 #include "../instructions/instructions.hpp"
 #include "../exceptions/ParserException.hpp"
-#include "../break_controller/BreakController.hpp"
+#include "../interpreter/Interpreter.hpp"
 
 #include "Lexer.hpp"
 #include "StringUtils.hpp"
@@ -19,6 +20,7 @@
 
 class Parser {
   Lexer lexer;
+  std::map<std::string, int>& labels;
   static std::map<std::string, Register> registers_names;
 
   std::map<std::string, function<Instruction* (std::vector<std::string> args)>> func = {
@@ -54,6 +56,8 @@ class Parser {
       {"ebreak", [](std::vector<std::string> args) { return new EBreak(args); }}
   };
 
+  std::set<std::string> jump_instructions = {"j", "jal", "beq", "bgt", "bne", "blt", "bge"};
+
   void delete_instructions(std::vector<Instruction* > instructions);
   Instruction* get_instruction(const std::string& str, std::vector<std::string> args);
 
@@ -65,10 +69,10 @@ class Parser {
   static bool is_binary_char(char c);
   static bool is_hex_char(char c);
 
-  friend BreakController;
+  friend Interpreter;
 
 public:
-  Parser()=default;
+  Parser(Lexer lexer_, std::map<std::string, int>& labels_): lexer(lexer_), labels(labels_) {}
   
   static std::vector<std::string> check_syntax(std::vector<std::string> args_tokens);
   std::vector<Instruction*> get_instructions();
