@@ -20,11 +20,12 @@ class Interpreter {
     void show_register(std::string rg);
     void show_stack(size_t from, size_t to);
 
+    void breakpoint_set_by_label(std::string label);
+    void breakpoint_set_by_number(int num);
+
     void step_over();
     void step_in();
     void step_out();
-
-    void set_break_point();
 
     void show_context();
 
