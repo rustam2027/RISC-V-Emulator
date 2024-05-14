@@ -94,7 +94,7 @@ void Interpreter::show_stack(size_t from, size_t to) {
     for (int i = from; i < to; i++) {
         std::cout << "[" << i * 8 << "]: ";
         long word = 0;
-        for (int j = 0; j < 8; j++) {
+        for (int j = 7; j > -1; j--) {
             word = word << 8;
             word += (int)global_state->stack[i * 8 + j];
         }
