@@ -134,7 +134,7 @@ void Interpreter::interpret() {
             break_points[index] == 1) || break_on_next)) {  // Or Break point is set
             break_on_next = false;
             open_interface();
-            if (set_manually[index]) {
+            if (!set_manually[index]) {
                 break_points[index] = 0;
             }
         }
@@ -181,6 +181,7 @@ void Interpreter::show_context() {
 void Interpreter::breakpoint_set_by_label(std::string label) {
     if (global_state->labels.find(label) != global_state->labels.cend()) {
         break_points[global_state->labels[label]] = 1;
+        set_manually[global_state->labels[label]] = 1;
     } else {
         std::cout << "UNKNOWN LABEL: " << label << std::endl;
     }
@@ -190,6 +191,7 @@ void Interpreter::breakpoint_set_by_number(int num) {
     if (all_lines_in.size() > num) {
         while (from_in_to_inparse[num] == -1) {num--;}
         break_points[from_in_to_inparse[num]] = 1;
+        set_manually[from_in_to_inparse[num]] = 1;
     } else {
         std::cout << "NUMBER IS TOO BIG: "<< num << std::endl;
     }
