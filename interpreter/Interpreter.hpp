@@ -31,16 +31,20 @@ class Interpreter {
 
     void show_help();
 
-    std::vector<std::string> all_lines_in;
+    std::vector<std::string>& all_lines_in;
 
-    std::vector<int> from_in_to_inparse;
-    std::vector<int> from_inparse_to_in;
+    std::vector<int>& from_in_to_inparse;
+    std::vector<int>& from_inparse_to_in;
 
     std::string get_hex(long num);
 
    public:
     Interpreter(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
                     std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug);
+
+    int get_line();
+
+    const State* get_stack() const { return global_state; };
 
     void interpret();
     void open_interface();

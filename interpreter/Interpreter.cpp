@@ -253,3 +253,11 @@ std::string Interpreter::get_hex(long num) {
 
     return "0x" + nul + str;
 }
+
+int Interpreter::get_line() {
+    int index = global_state->registers[pc] / INSTRUCTION_SIZE;
+    if (index >= from_inparse_to_in.size()) {
+        return -1;
+    }
+    return from_inparse_to_in[index];
+}
