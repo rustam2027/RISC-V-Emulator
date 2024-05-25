@@ -10,6 +10,8 @@
 #include <ftxui/component/component_base.hpp>
 #include <iostream>
 
+#include <stdlib.h>
+
 using namespace ftxui;
 
 Component Wrap(std::string name, Component component) {
@@ -54,12 +56,12 @@ ftxui::Element UI::render_intsructions(int line_number) {
             separator(),
             vbox({
                 std::move(instructions_elements)
-            }) | padding(1) | size(HEIGHT, EQUAL, 150),
+            }) | padding(1) | size(HEIGHT, EQUAL, 100),
             filler(),
         })
     }) | border;
 }
-auto UI::render_registers(State& state) {
+auto UI::render_registers(State* state) {
     std::vector<std::vector<std::string>> vec = {{"Register name", "Value"}}; 
     auto registers = Parser::get_register_names();
     // for (auto const& i : registers) {
@@ -68,7 +70,7 @@ auto UI::render_registers(State& state) {
 
     for (auto const& reg : registers) {
         auto name = reg.first;
-        auto value = std::to_string(state.registers[reg.second]);
+        auto value = std::to_string(state->registers[reg.second]);
         vec.push_back({name, value});
         // std::cout << name << " " << value << std::endl;
 
@@ -90,7 +92,7 @@ Element UI::render_stack(State& state) {
 
 }
 
-void UI::render(int line_number, State& state) {
+void UI::render(int line_number, State* state) {
     auto document = vbox({
             hbox({
                 render_intsructions(line_number) | flex,
@@ -105,13 +107,11 @@ void UI::render(int line_number, State& state) {
     clean();
     std::cout << screen.ToString() << std::flush;
     reset_position = screen.ResetPosition();
-    getchar();
     
 }
 
 void UI::clean() {
     std::cout << reset_position;
-    n_lines = 100;
     if (n_lines) {
         std::cout << "\r" << "\x1B[2K";
         for (int i = 0; i < n_lines + 1; i ++) {
@@ -138,9 +138,21 @@ std::string UI::getline() {
     return str;
 }
 void UI::start() {
-    State state = State();
+    Interpreter controller = Interpreter(instructions, labels, all_lines_in, in_to_inparse, inparse_to_in, debug_flag); 
+    /* Надо придумать услвоие для остановки. Что-то типа:
+    while(controller.has_lines()) {
+        
+    }
+    */ 
     for (int i = 1; i < 20; i++) {
         clean();
-        render(i);
+        auto line_num = controller.get_line();
+        auto state = controller.get_state();
+        render(line_num, state);
+        
+        print("> press N to step in, S to step over, O to step out and q or exit to quit\n");
+        std::string command = getline();
+        controller.make_step(command);
+
     }
 }

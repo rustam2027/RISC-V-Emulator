@@ -142,6 +142,7 @@ void Interpreter::interpret() {
         if (exit) {
             return;
         }
+        
 
         instructions_[global_state->registers[pc] / INSTRUCTION_SIZE]->exec(*global_state);
         global_state->registers[pc] += INSTRUCTION_SIZE;
@@ -260,4 +261,8 @@ int Interpreter::get_line() {
         return -1;
     }
     return from_inparse_to_in[index];
+}
+
+void Interpreter::make_step(std::string command) {
+    
 }

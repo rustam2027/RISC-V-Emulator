@@ -48,11 +48,11 @@ int main(int argc, char *argv[]) {
     cout << e.get_message() << endl;
     exit(1);
   }
+  auto all_lines_in = preprocessor.all_lines_in();
+  // Interpreter controller(instructions, preprocessor.get_labels(), all_lines_in, preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
 
-  Interpreter controller(instructions, preprocessor.get_labels(), preprocessor.all_lines_in(), preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
-
-  UI ui(preprocessor.all_lines_in(), controller);
-  ui.render();
+  UI ui(instructions, preprocessor.get_labels(), all_lines_in, preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
+  ui.start();
 
   try {
     // controller.interpret();.

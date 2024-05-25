@@ -49,6 +49,7 @@ class Interpreter {
 
     void interpret();
     void open_interface();
+    void make_step(std::string command);
     State* get_state() {
         return global_state;
     }
