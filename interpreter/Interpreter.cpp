@@ -65,11 +65,18 @@ void Interpreter::open_interface() {
         } else if (request == "step in" || request == "s") {
             step_in();
             break;
-        } else if (request == "next" || request == "n") {
-            next();
+        } else if (request == "step over" || request == "n") {
+            step_over();
+            break;
+        } else if (request == "step out" || request == "o") {
+            step_out();
             break;
         } else if (request == "help") {
             show_help();
+        } else if (request.rfind("breakpoint set --name", 0) == 0) {
+            breakpoint_set_by_label(request.substr(22));
+        } else if (request.rfind("breakpoint set --line", 0) == 0) {
+            breakpoint_set_by_number(Parser::get_immediate(request.substr(22)));
         } else {
             std::cout << "UNKNOWN COMMAND : '" << request << "'" << std::endl;
             faild_requests++;
@@ -106,22 +113,14 @@ void Interpreter::show_register(std::string rg_str) {
     try {
         Register rg_reg = Parser::get_register(rg_str);
         std::cout << '[' << rg_str << "]: " << get_hex(global_state->registers[rg_reg]) << std::endl;
-    } catch (ParserException pe) {
+    } catch (const ParserException& pe) {
         std::cout << pe.get_message() << std::endl;
     }
 }
 
 Interpreter::Interpreter(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
                                  std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug_flag)
-    : exit(false) {
-    instructions_ = instructions;
-    global_state = new State(labels);
-    debug = debug_flag;
-
-    all_lines_in = all_lines;
-
-    from_in_to_inparse = in_to_inparse;
-    from_inparse_to_in = inparse_to_in;
+    : exit(false), instructions_(instructions), global_state(new State(labels)), debug(debug_flag), all_lines_in(all_lines), from_in_to_inparse(in_to_inparse), from_inparse_to_in(inparse_to_in) {
 }
 
 void Interpreter::interpret() {
@@ -129,26 +128,27 @@ void Interpreter::interpret() {
         if (global_state->registers[pc] % INSTRUCTION_SIZE != 0) {
             throw new RuntimeException("Wrong pc: " + std::to_string(global_state->registers[pc]));
         }
+        size_t index = global_state->registers[pc] / INSTRUCTION_SIZE;
 
-        if (debug && (dynamic_cast<EBreak *>(instructions_[global_state->registers[pc] /  // Check if
-                                                                                // instruction is
-                                                                                // instance EBReak
-                                                 INSTRUCTION_SIZE]) != nullptr ||
-            break_points[global_state->registers[pc] / INSTRUCTION_SIZE] == 1)) {  // Or Break point is set
+        if (debug && ((dynamic_cast<EBreak *>(instructions_[index]) != nullptr ||
+            break_points[index] == 1) || break_on_next)) {  // Or Break point is set
+            break_on_next = false;
             open_interface();
-            break_points[global_state->registers[pc] / INSTRUCTION_SIZE] = 0;
+            if (!set_manually[index]) {
+                break_points[index] = 0;
+            }
         }
-
-        instructions_[global_state->registers[pc] / INSTRUCTION_SIZE]->exec(*global_state);
-        global_state->registers[pc] += INSTRUCTION_SIZE;
 
         if (exit) {
             return;
         }
+
+        instructions_[global_state->registers[pc] / INSTRUCTION_SIZE]->exec(*global_state);
+        global_state->registers[pc] += INSTRUCTION_SIZE;
     }
     // If the last command is a break point we can check condition after
     // execution
-    if (debug && break_points[global_state->registers[pc] / INSTRUCTION_SIZE - 1] == 1) {
+    if (debug && (break_points[global_state->registers[pc] / INSTRUCTION_SIZE - 1] == 1 || break_on_next)) {
         open_interface();
     }
 }
@@ -178,37 +178,56 @@ void Interpreter::show_context() {
     }
 }
 
-void Interpreter::step_in() {
-    if ((instructions_.size() > ((global_state->registers[pc] / INSTRUCTION_SIZE)))) {
-        if (dynamic_cast<JumpAndLink *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]) != nullptr) {
-            JumpAndLink *jal = dynamic_cast<JumpAndLink *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]);
-            break_points[global_state->labels[jal->label]] = 1;
-            return;
-        } else if (dynamic_cast<Return *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]) != nullptr) {
-            break_points[global_state->registers[ra] / INSTRUCTION_SIZE + 1] = 1;
-            return;
-        } else if (dynamic_cast<Jump *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]) != nullptr) {
-            Jump *j = dynamic_cast<Jump *>(instructions_[(global_state->registers[pc] / INSTRUCTION_SIZE)]);
-            break_points[global_state->labels[j->label]] = 1;
-            return;
-        }
+void Interpreter::breakpoint_set_by_label(std::string label) {
+    if (global_state->labels.find(label) != global_state->labels.cend()) {
+        break_points[global_state->labels[label]] = 1;
+        set_manually[global_state->labels[label]] = 1;
+    } else {
+        std::cout << "UNKNOWN LABEL: " << label << std::endl;
     }
-    break_points[(global_state->registers[pc] / INSTRUCTION_SIZE) + 1] = 1;
 }
 
-void Interpreter::next() {
-    break_points[(global_state->registers[pc] / INSTRUCTION_SIZE) + 1] = 1;
+void Interpreter::breakpoint_set_by_number(int num) {
+    if (all_lines_in.size() > num) {
+        while (from_in_to_inparse[num] == -1) {num--;}
+        break_points[from_in_to_inparse[num]] = 1;
+        set_manually[from_in_to_inparse[num]] = 1;
+    } else {
+        std::cout << "NUMBER IS TOO BIG: "<< num << std::endl;
+    }
+}
+
+void Interpreter::step_over() {
+    size_t index = global_state->registers[pc] / INSTRUCTION_SIZE;
+
+    if (index < instructions_.size() && dynamic_cast<JumpAndLink *>(instructions_[index]) != nullptr) {
+        break_points[index + 1] = 1;
+        return;
+    } else {
+        break_on_next = true;
+    }
+}
+
+void Interpreter::step_in() {
+    break_on_next = true;
+}
+
+void Interpreter::step_out() {
+    break_points[(global_state->registers[ra] / INSTRUCTION_SIZE) + 1] = 1;
 }
 
 void Interpreter::show_help() {
-    std::cout << "Oops look like u don't know what happening let me explain.\n"
-              << "'help' -- to see this message\n"
-              << "'continue' or 'c' to go to the next break point\n"
-              << "'exit' or 'q' to exit debugger\n"
-              << "'show stack n m' to view stack from n to m\n"
-              << "'show registers' or 'sr' to view registers\n"
-              << "'show register rg' or 'sr rg' to view only rg register" << "'step in' to step inside\n"
-              << "'next' or 'n' to not step inside\n";
+    std::cout << "Oops look like u don't know what happening let me explain." << std::endl;
+    std::cout << "Available commands:" << std::endl;
+    std::cout << "- continue (c): Continue execution until the next breakpoint or the end of the program." << std::endl;
+    std::cout << "- exit (q): Exit the debugger." << std::endl;
+    std::cout << "- show stack <from> <to>: Show the stack contents from address <from> to <to>." << std::endl;
+    std::cout << "- show registers (sr): Show the contents of all registers." << std::endl;
+    std::cout << "- show register <name>: Show the contents of the specified register." << std::endl;
+    std::cout << "- step in (s): Execute the next instruction and step into any function calls." << std::endl;
+    std::cout << "- step over (n): Execute the next instruction and skip over any function calls." << std::endl;
+    std::cout << "- step out (o): Execute until the current function returns." << std::endl;
+    std::cout << "- help: Show this help message." << std::endl;
 }
 
 Interpreter::~Interpreter() {
@@ -233,4 +252,12 @@ std::string Interpreter::get_hex(long num) {
     transform(str.begin(), str.end(), str.begin(), ::toupper);
 
     return "0x" + nul + str;
+}
+
+int Interpreter::get_line() {
+    int index = global_state->registers[pc] / INSTRUCTION_SIZE;
+    if (index >= from_inparse_to_in.size()) {
+        return -1;
+    }
+    return from_inparse_to_in[index];
 }

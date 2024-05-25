@@ -576,7 +576,7 @@ void test_all() {
 
     
   }
-  catch(EmulatorException e)
+  catch (const EmulatorException& e)
   {
     std::cerr << e.get_message() << '\n';
   }

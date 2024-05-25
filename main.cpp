@@ -1,6 +1,7 @@
 #include <ftxui/dom/elements.hpp>
 #include <ftxui/screen/screen.hpp>
 #include <iostream>
+#include <cstring>
 
 #include "interpreter/Interpreter.hpp"
 #include "exceptions/ParserException.hpp"
@@ -28,7 +29,7 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  Preprocessor preprocessor = Preprocessor(debug_mode, file);
+  Preprocessor preprocessor = Preprocessor(file);
 
   try {
     preprocessor.preprocess();
@@ -39,7 +40,7 @@ int main(int argc, char *argv[]) {
 
   Lexer lexer(preprocessor.get_inparse());
 
-  Parser parser(lexer);
+  Parser parser(lexer, preprocessor.get_labels());
   vector<Instruction*> instructions;
   try {
     instructions = parser.get_instructions();
