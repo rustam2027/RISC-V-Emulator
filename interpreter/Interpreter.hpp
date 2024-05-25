@@ -4,8 +4,9 @@
 #include <vector>
 
 #include "../instructions/Instruction.hpp"
+#include "../UI/UI.hpp"
 
-class Interpreter {
+class Interpreter { 
     std::vector<Instruction *> instructions_;
     std::bitset<100000> break_points;
     State *global_state;
