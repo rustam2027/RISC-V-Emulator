@@ -50,6 +50,7 @@ class Interpreter {
     void interpret();
     void open_interface();
     void make_step(std::string command);
+    bool has_lines(); 
     State* get_state() {
         return global_state;
     }
