@@ -64,5 +64,7 @@ class Interpreter {
         return global_state;
     }
 
+    bool is_breakpoint(size_t num);
+
     ~Interpreter();
 };
