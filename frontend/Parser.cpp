@@ -225,7 +225,7 @@ std::vector<Instruction*> Parser::get_instructions() {
         if (label_instructions.find(instruction_token) != label_instructions.end()) {   // need to check label existence
             if (labels.find(args_tokens.back()) == labels.end()) {
                 delete_instructions(instruction_vector);
-                throw ParserException("Using a non-existent label: " + instruction_token + " " + StringUtils::concat(" ", args_tokens));
+                throw ParserException("Using non-existent label: " + instruction_token + " " + StringUtils::concat(" ", args_tokens));
             }
         }
         instruction_vector.push_back(instruction);

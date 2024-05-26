@@ -143,8 +143,8 @@ void Preprocessor::preprocess() {
                 continue;
             }
             if (first.at(0) == '.') {  
-                from_in_to_inparse.push_back(-2); 
                 if (first == ".macro") {
+                    from_in_to_inparse.push_back(-2); 
                     Macros m_data;
                     m_data.start_line = counter_in + 1;
                     std::string name = buf[1];
@@ -171,6 +171,7 @@ void Preprocessor::preprocess() {
                     }
                     macros[name] = m_data;
                 } else if (first == ".eqv") {
+                    from_in_to_inparse.push_back(-2); 
                     if (buf.size() == 3) {
                         eqv[buf[1]] = buf[2];    // name : string to replace
                     } else {
@@ -178,6 +179,7 @@ void Preprocessor::preprocess() {
                         throw PreprocessorException("invalid definition: " + StringUtils::concat(" ", buf));
                     } 
                 } else if (first == ".section") {
+                    from_in_to_inparse.push_back(-2); 
                     if (buf.size() < 2) {
                         throw PreprocessorException("Section not declared");
                     }

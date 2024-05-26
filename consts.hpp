@@ -16,7 +16,7 @@
 #define WRITE 64
 #define EXIT 93
 
-#define INSTRUCTION_SIZE 64
+#define INSTRUCTION_SIZE 8
 
 #define BYTE_BITS 8
 
