@@ -1,6 +1,8 @@
 #include "../frontend/Parser.hpp"
 #include "../exceptions/RuntimeException.hpp"
 #include "instructions.hpp"
+#include "../consts.hpp"
+#include "cassert"
 #include <string>
 #include <vector>
 
@@ -633,6 +635,22 @@ Lb::Lb(vector<string> args) {
   offset = offset_;
 }
 
+
+void La::exec(State &state) {
+  state.registers[dst] = state.labels[label] * INSTRUCTION_SIZE;
+}
+
+La::La(vector<string> args) {
+  int args_amount = 2;
+  if (args.size() != args_amount) {
+    throw ParserException("Load address", args_amount, args.size());
+  }
+  Register dst_ = Parser::get_register(args[0]);
+  dst = dst_;
+  label = args[1];
+}
+
+
 EBreak::EBreak(vector<string> args) {
   int args_amount = 0;
   if (args.size() != args_amount) {
@@ -640,5 +658,14 @@ EBreak::EBreak(vector<string> args) {
   }
 }
 
-void EBreak::exec(State& state) {
+void EBreak::exec(State& state) { }
+
+
+Data::Data(vector<string> args) {
+  assert(args.size() == 1);
+  content = Parser::get_immediate(args[0]);
+}
+
+void Data::exec(State& state) {
+  throw RuntimeException("Data is read-only");
 }

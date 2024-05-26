@@ -230,8 +230,24 @@ struct Lb : Instruction {
   void exec(State &state);
 };
 
+struct La : Instruction {
+  // Load label address to register (dst) 
+  Register dst;
+  std::string label;
+
+  La(vector<std::string> args);
+  void exec(State &state);
+};
+
 struct EBreak : Instruction {
   EBreak(vector<std::string> args);
+  void exec(State &state);
+};
+
+struct Data : Instruction {
+  long content;
+
+  Data(vector<std::string> args);
   void exec(State &state);
 };
 
