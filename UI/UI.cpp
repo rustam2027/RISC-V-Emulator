@@ -170,20 +170,20 @@ void UI::start() {
         
     }
     */ 
-    for (int i = 1; i < 20; i++) {
+    while (controller.has_lines()) {
         clean();
         auto line_num = controller.get_line();
         auto state = controller.get_state();
-        // state->stack[0] = 64;
-        // state->stack[0] = 64;
-        // state->stack[0] = 64;
-        // state->stack[0] = 64;
-        // state->stack[0] = 64;
-        render(i, state, 8);
-        
-        print("> press N to step in, S to step over, O to step out and q or exit to quit\n");
-        std::string command = getline();
-        controller.make_step(command);
 
+        std::string command;
+        
+        while (controller.get_stop()) {
+            render(line_num, state, 8);
+            print("> press N to step in, S to step over, O to step out and q or exit to quit\n");
+            print("> ");
+            command = getline();
+            controller.process_request(command); 
+        }
+        controller.interpret();
     }
 }

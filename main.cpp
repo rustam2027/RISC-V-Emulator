@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
       }
       else if (strcmp(argv[2], "-g") == 0) {
         graph_mode = true;
+        debug_mode = true;
       }
     }
   } else {

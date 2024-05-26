@@ -4,6 +4,7 @@ project(RISC-V-Emulator
   VERSION 1.0.0
 )
 set(CMAKE_CXX_STANDARD 20)
+add_compile_options(-g)
 
 
 include(FetchContent)

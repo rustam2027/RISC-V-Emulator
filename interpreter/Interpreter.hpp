@@ -56,8 +56,10 @@ class Interpreter {
 
     void open_interface();
     void make_step(std::string command);
-    bool has_lines(); 
     static std::string get_hex(long num);
+    bool get_stop() {
+        return stop && !exit;
+    }
     State* get_state() {
         return global_state;
     }

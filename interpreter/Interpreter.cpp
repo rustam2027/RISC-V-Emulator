@@ -152,6 +152,9 @@ bool Interpreter::has_lines() {
 }
 
 void Interpreter::interpret() {
+    if (exit) {
+        return;
+    }
     bool first = true;
 
     if (first_instruction) {
@@ -299,12 +302,4 @@ int Interpreter::get_line() {
         return -1;
     }
     return from_inparse_to_in[index];
-}
-
-void Interpreter::make_step(std::string command) {
-
-}
-
-bool Interpreter::has_lines() {
-
 }
