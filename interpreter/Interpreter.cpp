@@ -177,6 +177,7 @@ void Interpreter::interpret() {
             }
             return;
         }
+        
 
         instructions_[global_state->registers[pc] / INSTRUCTION_SIZE]->exec(*global_state);
         global_state->registers[pc] += INSTRUCTION_SIZE;
@@ -300,4 +301,20 @@ std::string Interpreter::get_hex(long num) {
     transform(str.begin(), str.end(), str.begin(), ::toupper);
 
     return "0x" + nul + str;
+}
+
+int Interpreter::get_line() {
+    int index = global_state->registers[pc] / INSTRUCTION_SIZE;
+    if (index >= from_inparse_to_in.size()) {
+        return -1;
+    }
+    return from_inparse_to_in[index];
+}
+
+void Interpreter::make_step(std::string command) {
+
+}
+
+bool Interpreter::has_lines() {
+
 }
