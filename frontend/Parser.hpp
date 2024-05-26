@@ -58,7 +58,7 @@ class Parser {
       {"la", [](std::vector<std::string> args) { return new La(args); }}
   };
 
-  std::set<std::string> jump_instructions = {"j", "jal", "beq", "bgt", "bne", "blt", "bge"};
+  std::set<std::string> label_instructions = {"j", "jal", "beq", "bgt", "bne", "blt", "bge", "la"};
 
   void delete_instructions(std::vector<Instruction* > instructions);
   Instruction* get_instruction(const std::string& str, std::vector<std::string> args);
