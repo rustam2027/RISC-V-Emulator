@@ -52,5 +52,7 @@ class Interpreter {
 
     void open_interface();
 
+    bool is_breakpoint(size_t num);
+
     ~Interpreter();
 };

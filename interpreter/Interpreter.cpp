@@ -25,12 +25,12 @@ int Interpreter::process_request(std::string request) {
         stop = false;
         return 0;
     } else if (request.rfind("show stack", 0) == 0) {
-        int from, to;
+        std::string from, to;
         std::string buffer;
         std::stringstream stream_request(request);
         stream_request >> buffer >> buffer >> from >> to;  // FIXME: Some how check that exactly two numbers were
                                                            // given
-        show_stack(from, to);
+        show_stack(Parser::get_immediate(from), Parser::get_immediate(to));
         return 0;
     } else if (request.rfind("show register", 0) == 0) {
         if (request == "show registers") {
@@ -93,6 +93,9 @@ int Interpreter::process_request(std::string request) {
 }
 
 void Interpreter::open_interface() {
+    if (!debug) {
+        return;
+    }
     stop = true;
     show_context();
     int failed_requests = 0;
@@ -266,6 +269,13 @@ void Interpreter::show_help() {
     std::cout << "- step over (n): Execute the next instruction and skip over any function calls." << std::endl;
     std::cout << "- step out (o): Execute until the current function returns." << std::endl;
     std::cout << "- help: Show this help message." << std::endl;
+}
+
+bool Interpreter::is_breakpoint(size_t num) {
+    if (from_in_to_inparse[num] >= 0) {
+        return break_points[from_in_to_inparse[num]] & set_manually[from_in_to_inparse[num]];
+    }
+    return false;
 }
 
 Interpreter::~Interpreter() {
