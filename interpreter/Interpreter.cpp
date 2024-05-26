@@ -10,81 +10,105 @@
 #include "../frontend/Parser.hpp"
 #include "Interpreter.hpp"
 
-void Interpreter::open_interface() {
-    int faild_requests = 0;
+const int SHOW_REGISTER_CMD_LEN = 14;
 
-    show_context();
-    while (true) {
-        std::string request;
-        std::cout << "> ";
-        std::getline(std::cin, request);
-        if (request == "") {
-            continue;
+int Interpreter::process_request(std::string request) {
+    if (request == "") {
+        return 0;
+    }
+
+    if (request == "continue" || request == "c") {
+        stop = false;
+        return 0;
+    } else if (request == "exit" || request == "q") {
+        exit = true;
+        stop = false;
+        return 0;
+    } else if (request.rfind("show stack", 0) == 0) {
+        int from, to;
+        std::string buffer;
+        std::stringstream stream_request(request);
+        stream_request >> buffer >> buffer >> from >> to;  // FIXME: Some how check that exactly two numbers were
+                                                           // given
+        show_stack(from, to);
+        return 0;
+    } else if (request.rfind("show register", 0) == 0) {
+        if (request == "show registers") {
+            show_registers();
+        } else if (request.size() > SHOW_REGISTER_CMD_LEN) {
+            show_register(request.substr(SHOW_REGISTER_CMD_LEN));
+        } else {
+            std::cout << "UNKNOWN COMMAND : '" << request << "'" << std::endl;
+            return 1;
         }
-
-        if (request == "continue" || request == "c") {
-            break;
-        } else if (request == "exit" || request == "q") {
-            exit = true;
-            break;
-        } else if (request.rfind("show stack", 0) == 0) {
+        return 0;
+    } else if (request.rfind("sr", 0) == 0) {
+        if (request.size() == 2) {
+            show_registers();
+        } else {
+            show_register(request.substr(3));
+        }
+        return 0;
+    } else if (request.rfind("show", 0) == 0 || request == "sr") {
+        if (request.rfind("show stack", 0) == 0) {
             int from, to;
             std::string buffer;
             std::stringstream stream_request(request);
             stream_request >> buffer >> buffer >> from >> to;  // FIXME: Some how check that exactly two numbers were
                                                                // given
             show_stack(from, to);
-        } else if (request.rfind("show register", 0) == 0) {
-            if (request == "show registers") {
-                show_registers();
-            } else if (request.size() > 14) {  // Size of "show registers"
-                show_register(request.substr(14));
-            } else {
-                std::cout << "UNKNOWN COMMAND : '" << request << "'" << std::endl;
-            }
-        } else if (request.rfind("sr", 0) == 0) {
-            if (request.size() == 2) {
-                show_registers();
-            } else {
-                show_register(request.substr(3));
-            }
-        } else if (request.rfind("show", 0) == 0 || request == "sr") {
-            if (request.rfind("show stack", 0) == 0) {
-                int from, to;
-                std::string buffer;
-                std::stringstream stream_request(request);
-                stream_request >> buffer >> buffer >> from >> to;  // FIXME: Some how check that exactly two numbers were
-                                                                   // given
-                show_stack(from, to);
-            } else if (request == "show registers" || request == "sr") {
-                show_registers();
-            } else {
-                std::cout << "UNKNOWN COMMAND : '" << request << "'" << std::endl;
-                faild_requests++;
-            }
-        } else if (request == "step in" || request == "s") {
-            step_in();
-            break;
-        } else if (request == "step over" || request == "n") {
-            step_over();
-            break;
-        } else if (request == "step out" || request == "o") {
-            step_out();
-            break;
-        } else if (request == "help") {
-            show_help();
-        } else if (request.rfind("breakpoint set --name", 0) == 0) {
-            breakpoint_set_by_label(request.substr(22));
-        } else if (request.rfind("breakpoint set --line", 0) == 0) {
-            breakpoint_set_by_number(Parser::get_immediate(request.substr(22)));
+        } else if (request == "show registers" || request == "sr") {
+            show_registers();
         } else {
             std::cout << "UNKNOWN COMMAND : '" << request << "'" << std::endl;
-            faild_requests++;
+            return 1;
         }
+        return 0;
+    } else if (request == "step in" || request == "s") {
+        step_in();
+        stop = false;
+        return 0;
+    } else if (request == "step over" || request == "n") {
+        step_over();
+        stop = false;
+        return 0;
+    } else if (request == "step out" || request == "o") {
+        step_out();
+        stop = false;
+        return 0;
+    } else if (request == "help") {
+        show_help();
+        return 0;
+    } else if (request.rfind("breakpoint set --name", 0) == 0) {
+        breakpoint_set_by_label(request.substr(22));
+        return 0;
+    } else if (request.rfind("breakpoint set --line", 0) == 0) {
+        breakpoint_set_by_number(Parser::get_immediate(request.substr(22)));
+        return 0;
+    } else {
+        std::cout << "UNKNOWN COMMAND : '" << request << "'" << std::endl;
+        return 1;
+    }
 
-        if (faild_requests >= 3) {
+}
+
+void Interpreter::open_interface() {
+    stop = true;
+    show_context();
+    int failed_requests = 0;
+    while (stop) {
+        std::string request;
+        std::cout << "> ";
+        std::getline(std::cin, request);
+        if (request == "") {
+            continue;
+        }
+        if (process_request(request) == 0) {
+            ++failed_requests;
+        }
+        if (failed_requests >= 3) {
             show_help();
-            faild_requests = 0;
+            failed_requests = 0;
         }
     }
 }
@@ -123,34 +147,48 @@ Interpreter::Interpreter(std::vector<Instruction *>& instructions, std::map<std:
     : exit(false), instructions_(instructions), global_state(new State(labels)), debug(debug_flag), all_lines_in(all_lines), from_in_to_inparse(in_to_inparse), from_inparse_to_in(inparse_to_in) {
 }
 
+bool Interpreter::has_lines() {
+    return global_state->registers[pc] < instructions_.size() * INSTRUCTION_SIZE && !exit;
+}
+
 void Interpreter::interpret() {
-    while (global_state->registers[pc] < instructions_.size() * INSTRUCTION_SIZE) {
+    bool first = true;
+
+    if (first_instruction) {
+        first = false;
+        first_instruction = false;
+    }
+
+    while(has_lines()) {
         if (global_state->registers[pc] % INSTRUCTION_SIZE != 0) {
             throw new RuntimeException("Wrong pc: " + std::to_string(global_state->registers[pc]));
         }
+
         size_t index = global_state->registers[pc] / INSTRUCTION_SIZE;
 
-        if (debug && ((dynamic_cast<EBreak *>(instructions_[index]) != nullptr ||
-            break_points[index] == 1) || break_on_next)) {  // Or Break point is set
+        if (!first && debug && ((dynamic_cast<EBreak *>(instructions_[index]) != nullptr || break_points[index] == 1) || break_on_next)) { 
             break_on_next = false;
-            open_interface();
+            stop = true;
             if (!set_manually[index]) {
                 break_points[index] = 0;
             }
-        }
-
-        if (exit) {
             return;
         }
 
         instructions_[global_state->registers[pc] / INSTRUCTION_SIZE]->exec(*global_state);
         global_state->registers[pc] += INSTRUCTION_SIZE;
+        first = false;
+
+        if (exit) {
+            return;
+        }
     }
-    // If the last command is a break point we can check condition after
-    // execution
+
     if (debug && (break_points[global_state->registers[pc] / INSTRUCTION_SIZE - 1] == 1 || break_on_next)) {
-        open_interface();
+        stop = true;
+        return;
     }
+
 }
 
 void Interpreter::show_context() {

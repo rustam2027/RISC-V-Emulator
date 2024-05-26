@@ -14,7 +14,10 @@ class Interpreter {
     State *global_state;
     bool exit;
     bool debug;
+    bool stop;
     bool break_on_next = false;
+
+    bool first_instruction = true;
     
     void show_registers();
     void show_register(std::string rg);
@@ -43,6 +46,10 @@ class Interpreter {
                     std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug);
 
     void interpret();
+    int process_request(std::string command);
+
+    bool has_lines();
+
     void open_interface();
 
     ~Interpreter();
