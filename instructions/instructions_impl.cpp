@@ -176,7 +176,7 @@ void SLL::exec(State &state) {
     return;
   }
   state.registers[dist] = state.registers[source1]
-                          << (state.registers[source2] & ((1 << 5) - 1));
+                          << (state.registers[source2] & ((1 << 7) - 1));
   // Performs logical left shift on the value in register rs1 by the shift
   // amount held in the lower 5 bits of register rs2.
 }
@@ -201,7 +201,7 @@ void SLLI::exec(State &state) {
   if (dist == zero) {
     return;
   }
-  state.registers[dist] = state.registers[source] << (immediate & ((1 << 5) - 1));
+  state.registers[dist] = (state.registers[source] << (immediate & ((1 << 7) - 1)));
 }
 
 
@@ -225,7 +225,7 @@ void SRL::exec(State &state) {
     return;
   }
   state.registers[dist] =
-      state.registers[source1] >> (state.registers[source2] & ((1 << 5) - 1));
+      state.registers[source1] >> (state.registers[source2] & ((1 << 7) - 1));
   // Description: Logical right shift on the value in register rs1 by the shift
   // amount held in the lower 5 bits of register rs2
 }
@@ -250,7 +250,7 @@ void SRLI::exec(State &state) {
   if (dist == zero) {
     return;
   }
-  state.registers[dist] = state.registers[source] >> (immediate & ((1 << 5) - 1));
+  state.registers[dist] = state.registers[source] >> (immediate & ((1 << 7) - 1));
 }
 
 
@@ -386,7 +386,7 @@ BranchEqualZero::BranchEqualZero(vector<string> args) {
   }
   Register first_ = Parser::get_register(args[0]);
 
-  label = args[2];
+  label = args[1];
   first = first_;
 }
 
