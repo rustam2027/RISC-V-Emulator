@@ -1,4 +1,5 @@
 #include "Preprocessor.hpp"
+#include "../consts.hpp"
 
 
 void Preprocessor::string_replace(std::string& input, const std::string& src, const std::string& dst) {
@@ -184,28 +185,40 @@ void Preprocessor::preprocess() {
                         throw PreprocessorException("Section " + buf[1] + " not supported");
                     }
                 } else if (first == ".word") {
+                    if (buf.size() < 2) {
+                        throw PreprocessorException("No content in .word");
+                    }
                     from_in_to_inparse.push_back(counter_in_parse);    // MAY BE ERROR
                     from_inparse_to_in.push_back(counter_in);
                     counter_in_parse++;
                     inparse << "data " + buf[1] << std::endl;     
                 } else if (first == ".string") {
-                    // char - 1 byte
-                    // long - 8 byte
+                    buf.erase(buf.begin());
+                    if (buf.empty()) {
+                        throw PreprocessorException("No content in .string");
+                    }
 
-                    buf.erase(buf.begin());  // check for empty here ??
                     std::string content = StringUtils::concat(" ", buf);
                     content.erase(0, 1);
                     content.erase(content.size() - 1, 1);
-                    int words_amount = (content.size() / 8) + 1; 
-                    long* raw_content = (long*) content.data();
+
+                    int words_amount = (content.size() / BYTE_BITS) + 1; 
+                    char* raw_content = content.data();
                     for (int i = 0; i < words_amount; i++) {
+                        int stop_index = (i == words_amount - 1) ? (content.size() % BYTE_BITS) : BYTE_BITS;
+                        long data_word = 0;
+                        for (int j = 0; j < stop_index; j++) {
+                            data_word <<= BYTE_BITS;
+                            data_word += raw_content[i * BYTE_BITS + j]; 
+                        } 
+
+                        for (int j = stop_index; j < BYTE_BITS; j++) {
+                            data_word <<= BYTE_BITS;  // * 2^8
+                        }
+
                         from_in_to_inparse.push_back(counter_in_parse);    // MAY BE ERROR
                         from_inparse_to_in.push_back(counter_in);
                         counter_in_parse++;
-                        long data_word = raw_content[i];
-                        if (i == words_amount - 1) {
-                            data_word <<= (8 - (content.size() % 8));
-                        }
                         inparse << "data " + std::to_string(data_word) << std::endl;    
                     }
                 } else {
