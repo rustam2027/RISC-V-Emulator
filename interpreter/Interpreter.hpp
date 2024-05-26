@@ -37,7 +37,6 @@ class Interpreter {
     std::vector<int>& from_in_to_inparse;
     std::vector<int>& from_inparse_to_in;
 
-    std::string get_hex(long num);
 
    public:
     Interpreter(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
@@ -51,6 +50,7 @@ class Interpreter {
     void open_interface();
     void make_step(std::string command);
     bool has_lines(); 
+    static std::string get_hex(long num);
     State* get_state() {
         return global_state;
     }

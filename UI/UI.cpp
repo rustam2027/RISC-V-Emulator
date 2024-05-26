@@ -31,6 +31,7 @@ ftxui::Element UI::render_intsructions(int line_number) {
     Elements nums_elements, instructions_elements;
     for(auto const& line : all_lines_in) {
         auto num = text(std::to_string(i)) | align_right;
+    
         auto instruction = text(line);
         // std::cout << i << " " << line_number << std::endl;
         if (i == line_number) {
@@ -88,18 +89,42 @@ auto UI::render_registers(State* state) {
     return table;
 }
 
-Element UI::render_stack(State& state) {
+auto UI::render_stack(State* state, int from, int to = 45) {
+    std::vector<std::vector<std::string>> vec = {{"Byte number","Stack"}};
+    for (int i = from; i < to; i++) {
+        std::string num  = std::to_string(i * 8);
+        long word = 0;
+        for (int j = 0; j < 8; j++) {
+            word = word << 8;
+            word += (int)state->stack[i * 8 + j];
+        }
+        std::string value = Interpreter::get_hex(word);
+        vec.push_back({num, value});
+    }
+    auto table = Table(vec);
+    table.SelectColumn(0).Border(LIGHT);
+    table.SelectColumn(1).Border(LIGHT);
+    table.SelectRow(0).Decorate(bold);
+    table.SelectRow(0).SeparatorVertical(LIGHT);
+    table.SelectRow(0).Border(DOUBLE);
+ 
+    // table.SelectColumn(2).DecorateCells(align_right);
+
+    return table;
 
 }
 
-void UI::render(int line_number, State* state) {
+
+
+void UI::render(int line_number, State* state, int from, int to = 45) {
     auto document = vbox({
             hbox({
                 render_intsructions(line_number) | flex,
-                hbox({render_registers(state).Render() | flex})
+                hbox({render_registers(state).Render() | flex}),
+                vbox({render_stack(state, from, from + to).Render() | flex})
             }), 
             separator(),
-    });
+    }) | size(HEIGHT, EQUAL, 45);
 
     auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(document));
     Render(screen, document.get());
@@ -112,6 +137,7 @@ void UI::render(int line_number, State* state) {
 
 void UI::clean() {
     std::cout << reset_position;
+    n_lines = 1000;
     if (n_lines) {
         std::cout << "\r" << "\x1B[2K";
         for (int i = 0; i < n_lines + 1; i ++) {
@@ -148,7 +174,12 @@ void UI::start() {
         clean();
         auto line_num = controller.get_line();
         auto state = controller.get_state();
-        render(line_num, state);
+        // state->stack[0] = 64;
+        // state->stack[0] = 64;
+        // state->stack[0] = 64;
+        // state->stack[0] = 64;
+        // state->stack[0] = 64;
+        render(i, state, 8);
         
         print("> press N to step in, S to step over, O to step out and q or exit to quit\n");
         std::string command = getline();

@@ -268,5 +268,5 @@ void Interpreter::make_step(std::string command) {
 }
 
 bool Interpreter::has_lines() {
-    
+
 }
