@@ -2,7 +2,6 @@
 #include <ftxui/screen/screen.hpp>
 #include <iostream>
 #include <cstring>
-
 #include "interpreter/Interpreter.hpp"
 #include "exceptions/ParserException.hpp"
 #include "exceptions/PreprocessorException.hpp"
@@ -54,6 +53,7 @@ int main(int argc, char *argv[]) {
     cout << e.get_message() << endl;
     exit(1);
   }
+  
   auto all_lines_in = preprocessor.all_lines_in();
   
   if (graph_mode){
@@ -62,11 +62,17 @@ int main(int argc, char *argv[]) {
   } else if (debug_mode){
       Interpreter controller(instructions, preprocessor.get_labels(), all_lines_in, preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
       try {
-        controller.interpret();
+        while (controller.has_lines()) {
+          controller.interpret();
+          if (debug_mode && controller.has_lines()) {
+            controller.open_interface();
+          }
+        }
       } catch (const RuntimeException& e) {
         cout << e.get_message() << endl;
         exit(1);
     }
+
   }
 
   // preprocessor.dump_inparse();
