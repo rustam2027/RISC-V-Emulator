@@ -16,7 +16,9 @@ class UI {
     std::map<std::string, int>& labels;
     std::vector<int>& in_to_inparse;
     std::vector<int>& inparse_to_in;
+    std::vector<std::string> output;
     bool debug_flag;
+    void move_output(std::vector<std::string>& v, std::string last);
 
     public:
     
@@ -30,12 +32,13 @@ class UI {
             inparse_to_in(_inparse_to_in),
             debug_flag(_debug_flag) {}
 
-        void render(int line_number, State* state, int from, int to);
+        void render(int line_number, State* state, int from, int to, Interpreter& controller);
         void clean();
+        void clear_string();
         std::string getline();
         void print(std::string s);
         auto render_registers(State* state);
         void start();
-        ftxui::Element render_intsructions(int line_number = 0);
+        ftxui::Element render_intsructions(int line_number, Interpreter& controller);
         auto render_stack(State* state, int from, int to );
 };

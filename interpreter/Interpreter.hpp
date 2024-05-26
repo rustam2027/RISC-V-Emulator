@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "../instructions/Instruction.hpp"
-#include "../UI/UI.hpp"
+
 
 class Interpreter { 
     std::vector<Instruction *> instructions_;
@@ -16,6 +16,7 @@ class Interpreter {
     bool exit;
     bool debug;
     bool stop;
+    bool graph_flag;
     bool break_on_next = false;
 
     bool first_instruction = true;
@@ -24,8 +25,8 @@ class Interpreter {
     void show_register(std::string rg);
     void show_stack(size_t from, size_t to);
 
-    void breakpoint_set_by_label(std::string label);
-    void breakpoint_set_by_number(int num);
+    int breakpoint_set_by_label(std::string label);
+    int breakpoint_set_by_number(int num);
 
     void step_over();
     void step_in();
@@ -43,7 +44,7 @@ class Interpreter {
 
    public:
     Interpreter(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
-                    std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug);
+                    std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug, bool graph);
 
     int get_line();
 
@@ -55,7 +56,6 @@ class Interpreter {
     bool has_lines();
 
     void open_interface();
-    void make_step(std::string command);
     static std::string get_hex(long num);
     bool get_stop() {
         return stop && !exit;

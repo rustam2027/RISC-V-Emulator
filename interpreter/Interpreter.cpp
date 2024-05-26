@@ -80,13 +80,15 @@ int Interpreter::process_request(std::string request) {
         show_help();
         return 0;
     } else if (request.rfind("breakpoint set --name", 0) == 0) {
-        breakpoint_set_by_label(request.substr(22));
-        return 0;
+        int exit_code = breakpoint_set_by_label(request.substr(22));
+        return exit_code;
     } else if (request.rfind("breakpoint set --line", 0) == 0) {
-        breakpoint_set_by_number(Parser::get_immediate(request.substr(22)));
-        return 0;
+        int exit_code = breakpoint_set_by_number(Parser::get_immediate(request.substr(22)));
+        return exit_code;
     } else {
-        std::cout << "UNKNOWN COMMAND : '" << request << "'" << std::endl;
+        if (!graph_flag) {
+            std::cout << "UNKNOWN COMMAND : '" << request << "'" << std::endl;
+        }
         return 1;
     }
 
@@ -146,8 +148,8 @@ void Interpreter::show_register(std::string rg_str) {
 }
 
 Interpreter::Interpreter(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
-                                 std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug_flag)
-    : exit(false), instructions_(instructions), global_state(new State(labels)), debug(debug_flag), all_lines_in(all_lines), from_in_to_inparse(in_to_inparse), from_inparse_to_in(inparse_to_in) {
+                                 std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug_flag, bool graph)
+    : exit(false), instructions_(instructions), global_state(new State(labels)), debug(debug_flag), all_lines_in(all_lines), from_in_to_inparse(in_to_inparse), from_inparse_to_in(inparse_to_in), graph_flag(graph) {
 }
 
 bool Interpreter::has_lines() {
@@ -223,22 +225,26 @@ void Interpreter::show_context() {
     }
 }
 
-void Interpreter::breakpoint_set_by_label(std::string label) {
+int Interpreter::breakpoint_set_by_label(std::string label) {
     if (global_state->labels.find(label) != global_state->labels.cend()) {
         break_points[global_state->labels[label]] = 1;
         set_manually[global_state->labels[label]] = 1;
+        return 0;
     } else {
         std::cout << "UNKNOWN LABEL: " << label << std::endl;
+        return 1;
     }
 }
 
-void Interpreter::breakpoint_set_by_number(int num) {
+int Interpreter::breakpoint_set_by_number(int num) {
     if (all_lines_in.size() > num) {
         while (from_in_to_inparse[num] == -1) {num--;}
         break_points[from_in_to_inparse[num]] = 1;
         set_manually[from_in_to_inparse[num]] = 1;
+        return 0;
     } else {
         std::cout << "NUMBER IS TOO BIG: "<< num << std::endl;
+        return 1;
     }
 }
 

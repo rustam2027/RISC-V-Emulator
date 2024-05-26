@@ -24,25 +24,36 @@ Component Wrap(std::string name, Component component) {
            xflex;
   });
 }
+void UI::move_output(std::vector<std::string>& v, std::string last) {
+    for (int i = 0; i < 8; ++i) {
+        v[i] = v[i + 1];
+    }
+    v.pop_back();
+}
 
 
-ftxui::Element UI::render_intsructions(int line_number) {
+ftxui::Element UI::render_intsructions(int line_number, Interpreter& controller) {
     auto i = 1;
-    Elements nums_elements, instructions_elements;
+    Elements nums_elements, instructions_elements, output_elements;
     for(auto const& line : all_lines_in) {
         auto num = text(std::to_string(i)) | align_right;
+        if (controller.is_breakpoint(i)) {
+            num = bgcolor(Color::Red, text(std::to_string(i)));
+        }
     
         auto instruction = text(line);
-        // std::cout << i << " " << line_number << std::endl;
+
         if (i == line_number) {
-            // std::cout << i << " " << line_number << std::endl;
             instruction = bgcolor(Color::Red, text(line));
         }
         nums_elements.push_back(std::move(num));
         instructions_elements.push_back(std::move(instruction));
-        // std::cout << line << endl;
-        // std::cout << i << endl;
         i++;
+    }
+
+    for (auto const& line : output) {
+        auto out_line = text(line);
+        output_elements.push_back(std::move(out_line));
     }
     return vbox({
         hbox({
@@ -59,15 +70,24 @@ ftxui::Element UI::render_intsructions(int line_number) {
                 std::move(instructions_elements)
             }) | padding(1) | size(HEIGHT, EQUAL, 100),
             filler(),
+            
+        }),
+        separator(),
+        hbox({text(L"OUTPUT") | padding(1) | flex}),
+        
+        hbox({
+            vbox({
+                std::move(output_elements)
+            }) | padding(1) | size(HEIGHT, EQUAL, 30),
+            filler(),
+            
         })
     }) | border;
 }
 auto UI::render_registers(State* state) {
     std::vector<std::vector<std::string>> vec = {{"Register name", "Value"}}; 
     auto registers = Parser::get_register_names();
-    // for (auto const& i : registers) {
-    //     std::cout << i.first << std::endl;
-    // }
+
 
     for (auto const& reg : registers) {
         auto name = reg.first;
@@ -89,8 +109,8 @@ auto UI::render_registers(State* state) {
     return table;
 }
 
-auto UI::render_stack(State* state, int from, int to = 45) {
-    std::vector<std::vector<std::string>> vec = {{"Byte number","Stack"}};
+auto UI::render_stack(State* state, int from, int to) {
+    std::vector<std::vector<std::string>> vec = {{"  Number  ","Stack"}};
     for (int i = from; i < to; i++) {
         std::string num  = std::to_string(i * 8);
         long word = 0;
@@ -116,11 +136,13 @@ auto UI::render_stack(State* state, int from, int to = 45) {
 
 
 
-void UI::render(int line_number, State* state, int from, int to = 45) {
+void UI::render(int line_number, State* state, int from, int to, Interpreter& controller) {
     auto document = vbox({
             hbox({
-                render_intsructions(line_number) | flex,
-                hbox({render_registers(state).Render() | flex}),
+                render_intsructions(line_number, controller) | flex,
+    
+                vbox({render_registers(state).Render() | flex,
+                    }),
                 vbox({render_stack(state, from, from + to).Render() | flex})
             }), 
             separator(),
@@ -163,26 +185,40 @@ std::string UI::getline() {
     n_lines++;
     return str;
 }
+
+void UI::clear_string() {
+    std::cout << "\x1B[1A" << "\x1B[2K";
+}
+
 void UI::start() {
-    Interpreter controller = Interpreter(instructions, labels, all_lines_in, in_to_inparse, inparse_to_in, debug_flag); 
-    /* Надо придумать услвоие для остановки. Что-то типа:
-    while(controller.has_lines()) {
-        
-    }
-    */ 
+    Interpreter controller = Interpreter(instructions, labels, all_lines_in, in_to_inparse, inparse_to_in, debug_flag, true); 
     while (controller.has_lines()) {
-        clean();
         auto line_num = controller.get_line();
         auto state = controller.get_state();
 
         std::string command;
-        
+        int from = 0;
+        clean();
         while (controller.get_stop()) {
-            render(line_num, state, 8);
+            render(line_num, state, from, from + 45, controller);
             print("> press N to step in, S to step over, O to step out and q or exit to quit\n");
             print("> ");
             command = getline();
-            controller.process_request(command); 
+            clear_string();
+            if (command.rfind("show stack", 0) == 0) {
+                    std::string to;
+                    std::string buffer;
+                    std::stringstream stream_request(command);
+                    stream_request >> buffer >> buffer >> from >> to;
+                    continue;
+            }
+            int exit_code = controller.process_request(command);
+            if (exit_code) {
+                output.push_back("> UNKNOWN COMMAND: " + command);
+                if (output.size() > 7) {
+                    move_output(output, "> UNKNOWN COMMAND: " + command);
+                }
+            }
         }
         controller.interpret();
     }

@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     UI ui(instructions, preprocessor.get_labels(), all_lines_in, preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
     ui.start();
   } else if (debug_mode){
-      Interpreter controller(instructions, preprocessor.get_labels(), all_lines_in, preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
+      Interpreter controller(instructions, preprocessor.get_labels(), all_lines_in, preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode, graph_mode);
       try {
         while (controller.has_lines()) {
           controller.interpret();
