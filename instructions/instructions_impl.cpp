@@ -319,11 +319,11 @@ Call::Call(vector<std::string> args) {
   if (args.size() != args_amount) {
     throw ParserException("call", args_amount, args.size());
   }
-  label = args[1];
+  label = args[0];
 }
 
 void Call::exec(State &state) { 
-  state.registers[ra] = state.registers[pc] * INSTRUCTION_SIZE;
+  state.registers[ra] = state.registers[pc];
   state.registers[pc] = (state.labels[label] - 1) * INSTRUCTION_SIZE;
 }
 

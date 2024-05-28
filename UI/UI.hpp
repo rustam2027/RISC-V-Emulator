@@ -21,7 +21,7 @@ class UI {
         {4, "> INVALID LINE (MAYBE MACROS DONT USE THEM!!!): "}
     };
 
-    std::vector<std::string> all_lines_in;
+    std::vector<std::string> all_lines_in; // FIXME: HELL!!!
     std::vector<Instruction *>& instructions;
     std::vector<int>& in_to_inparse;
     std::vector<int>& inparse_to_in;
