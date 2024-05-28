@@ -73,7 +73,7 @@ long Parser::get_immediate(const std::string& str) {
         }
         return sign * stol(buffer, nullptr, 2);
     }
-    throw new ParserException("Wrong number: " + str);
+    throw ParserException("Wrong number: " + str);
 };
 
 

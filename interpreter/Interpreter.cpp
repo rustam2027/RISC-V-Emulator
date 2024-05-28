@@ -26,11 +26,29 @@ int Interpreter::process_request(std::string request) {
         return 0;
     } else if (request.rfind("show memory", 0) == 0) {
         std::string from, to;
-        std::string buffer;
-        std::stringstream stream_request(request);
-        stream_request >> buffer >> buffer >> from >> to;  // FIXME: Some how check that exactly two numbers were
-                                                           // given
-        show_memory(Parser::get_immediate(from), Parser::get_immediate(to));
+        vector<std::string> buffer;
+        buffer = StringUtils::split(request, ' ');
+        if (buffer.size() < 3) {
+            std::cout << "NOT ENOUGH ARGUMENTS" << std::endl;
+            return 1;
+        } else if (buffer.size() == 3){
+            try {
+                int num = Parser::get_immediate(buffer[2]);
+                std::cout << num << std::endl;
+                show_memory(num, num + 1);
+            } catch (ParserException p) {
+                std::cout << p.get_message() << std::endl;
+            }
+            return 0;
+        } else if (buffer.size() > 4) {
+            std::cout << "TOO MANY ARGUMENTS" << std::endl;
+            return 1;
+        }
+            try {
+                show_memory(Parser::get_immediate(buffer[2]), Parser::get_immediate(buffer[3]));
+            } catch (ParserException p) {
+                std::cout << p.get_message() << std::endl;
+            }
         return 0;
     } else if (request.rfind("show register", 0) == 0) {
         if (request == "show registers") {
@@ -108,7 +126,7 @@ void Interpreter::open_interface() {
         if (request == "") {
             continue;
         }
-        if (process_request(request) == 0) {
+        if (process_request(request) != 0) {
             ++failed_requests;
         }
         if (failed_requests >= 3) {
@@ -119,7 +137,7 @@ void Interpreter::open_interface() {
 }
 
 void Interpreter::show_memory(size_t from, size_t to) {
-    std::cout << "SHOWING STACK" << std::endl;
+    std::cout << "SHOWING MEMORY" << std::endl;
     for (int i = from; i < to; i++) {
         std::cout << "[" << i * 8 << "]: ";
         long word = 0;
@@ -169,6 +187,10 @@ Interpreter::Interpreter(std::vector<Instruction *>& instructions, std::map<std:
 
 bool Interpreter::has_lines() {
     return global_state->registers[pc] < instructions_.size() * INSTRUCTION_SIZE && !exit;
+}
+
+bool Interpreter::is_break() {
+    return break_on_next;
 }
   
 
@@ -222,7 +244,7 @@ void Interpreter::show_context() {
     if (index < from_inparse_to_in.size()) {
         index_in_file = from_inparse_to_in[index];   
     } else {
-        index_in_file = from_inparse_to_in.size();
+        index_in_file = all_lines_in.size();
     }
  
     size_t min_index = std::max(0, ((int)index_in_file) - 3);
@@ -300,7 +322,7 @@ void Interpreter::show_help() {
     std::cout << "Available commands:" << std::endl;
     std::cout << "- continue (c): Continue execution until the next breakpoint or the end of the program." << std::endl;
     std::cout << "- exit (q): Exit the debugger." << std::endl;
-    std::cout << "- show stack <from> <to>: Show the stack contents from address <from> to <to>." << std::endl;
+    std::cout << "- show memory <from> <to>: Show the stack contents from address <from> to <to>." << std::endl;
     std::cout << "- show registers (sr): Show the contents of all registers." << std::endl;
     std::cout << "- show register <name>: Show the contents of the specified register." << std::endl;
     std::cout << "- step in (s): Execute the next instruction and step into any function calls." << std::endl;

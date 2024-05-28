@@ -1,6 +1,9 @@
 --> 0  |ebreak
      1  |li a1, 1
 >
+ --> 0  |ebreak
+     1  |li a1, 1
+>
      0  |ebreak
  --> 1  |li a1, 1
 >

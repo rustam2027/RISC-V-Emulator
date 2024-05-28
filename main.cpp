@@ -63,11 +63,18 @@ int main(int argc, char *argv[]) {
   } else {
       Interpreter controller(instructions, preprocessor.get_labels(), all_lines_in, preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode, graph_mode);
       try {
+        if (debug_mode && controller.has_lines()) {
+          controller.open_interface();
+        }
+
         while (controller.has_lines()) {
           controller.interpret();
           if (debug_mode && controller.has_lines()) {
             controller.open_interface();
           }
+        }
+        if (debug_mode && controller.is_break()) {
+          controller.open_interface();
         }
       } catch (const RuntimeException& e) {
         cout << e.get_message() << endl;

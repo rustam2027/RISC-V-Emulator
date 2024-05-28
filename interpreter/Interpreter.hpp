@@ -66,5 +66,7 @@ class Interpreter {
 
     bool is_breakpoint(size_t num);
 
+    bool is_break();
+
     ~Interpreter();
 };
