@@ -13,7 +13,6 @@ using namespace ftxui;
 class UI {
 
     std::string reset_position;
-    std::map<std::string, int>& labels;
     std::map<int, std::string> error_strings = {
         {1, "> UNKNOWN COMMAND: "},
         {2, "> UNKNOWN LABEL: "},
@@ -22,9 +21,6 @@ class UI {
     };
 
     std::vector<std::string> all_lines_in;
-    std::vector<Instruction *>& instructions;
-    std::vector<int>& in_to_inparse;
-    std::vector<int>& inparse_to_in;
     std::vector<std::string> output;
 
     std::stringstream output_stream;
@@ -33,19 +29,18 @@ class UI {
 
     bool debug_flag;
     void move_output(std::vector<std::string>& v);
+
+    Interpreter& controller;
     
 
     public:
     
         UI() = delete;
-        UI(std::vector<Instruction *>& _instructions, std::map<std::string, int>& _labels, std::vector<std::string> _all_lines_in,
-                                    std::vector<int>& _in_to_inparse, std::vector<int>& _inparse_to_in, bool _debug_flag):
+        UI(std::vector<std::string> _all_lines_in,
+         bool _debug_flag, Interpreter& _controller):
             all_lines_in(_all_lines_in), 
-            instructions(_instructions),
-            labels(_labels),
-            in_to_inparse(_in_to_inparse),
-            inparse_to_in(_inparse_to_in),
-            debug_flag(_debug_flag) {}
+            debug_flag(_debug_flag),
+            controller(_controller) {}
 
         void render(int line_number, State* state, int from, int to, Interpreter& controller);
         void clean();

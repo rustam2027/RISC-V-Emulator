@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
   Lexer lexer(preprocessor.get_inparse());
 
-  Parser parser(lexer, preprocessor.get_labels());
+  Parser parser(lexer, preprocessor.get_labels(), preprocessor.get_from_in_to_inparse());
   vector<Instruction*> instructions;
   try {
     instructions = parser.get_instructions();
@@ -57,8 +57,9 @@ int main(int argc, char *argv[]) {
   
   auto all_lines_in = preprocessor.all_lines_in();
   
+  Interpreter controller(instructions, preprocessor.get_labels(), all_lines_in, preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode, graph_mode);
   if (graph_mode){
-    UI ui(instructions, preprocessor.get_labels(), all_lines_in, preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode);
+    UI ui(all_lines_in, debug_mode, controller);
     ui.start();
   } else if (debug_mode){
       Interpreter controller(instructions, preprocessor.get_labels(), all_lines_in, preprocessor.get_from_in_to_inparse(), preprocessor.get_from_inparse_to_in(), debug_mode, graph_mode);

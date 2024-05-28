@@ -83,7 +83,7 @@ auto UI::render_registers(State* state) {
 
     for (auto const& reg : registers) {
         auto name = reg.first;
-        auto value = std::to_string(state->registers[reg.second]);
+        auto value = Interpreter::get_hex(state->registers[reg.second]);
         vec.push_back({name, value});
 
 
@@ -149,7 +149,7 @@ void UI::render(int line_number, State* state, int from, int to, Interpreter& co
 
 void UI::clean() {
     std::cout << reset_position;
-    n_lines = 200;
+    n_lines = 60;
     if (n_lines) {
         std::cout << "\r" << "\x1B[2K";
         for (int i = 0; i < n_lines + 1; i ++) {
@@ -157,7 +157,6 @@ void UI::clean() {
         }
     }
 
-    n_lines = 0;
 }
 
 void UI::print(std::string s) {
@@ -181,7 +180,6 @@ void UI::clear_string() {
 }
 
 void UI::start() {
-    Interpreter controller = Interpreter(instructions, labels, all_lines_in, in_to_inparse, inparse_to_in, debug_flag, true); 
     std::streambuf* originalCoutBuffer = std::cout.rdbuf();
 
     while (controller.has_lines()) {
