@@ -1,4 +1,8 @@
-
+--> 0  |li a1, 23
+     1  |# ebreak
+     2  |li a2, 1
+     3  |ebreak
+>
      0  |li a1, 23
      1  |# ebreak
      2  |li a2, 1

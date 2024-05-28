@@ -188,6 +188,10 @@ Interpreter::Interpreter(std::vector<Instruction *>& instructions, std::map<std:
 bool Interpreter::has_lines() {
     return global_state->registers[pc] < instructions_.size() * INSTRUCTION_SIZE && !exit;
 }
+
+bool Interpreter::is_break() {
+    return break_on_next;
+}
   
 
 void Interpreter::interpret() {
@@ -240,7 +244,7 @@ void Interpreter::show_context() {
     if (index < from_inparse_to_in.size()) {
         index_in_file = from_inparse_to_in[index];   
     } else {
-        index_in_file = from_inparse_to_in.size();
+        index_in_file = all_lines_in.size();
     }
  
     size_t min_index = std::max(0, ((int)index_in_file) - 3);

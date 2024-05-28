@@ -3,6 +3,11 @@
      2  |li a1, 12
      3  |j end
 >
+ --> 0  |ebreak
+     1  |jal ra, func
+     2  |li a1, 12
+     3  |j end
+>
      0  |ebreak
  --> 1  |jal ra, func
      2  |li a1, 12
