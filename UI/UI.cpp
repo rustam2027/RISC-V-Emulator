@@ -11,6 +11,9 @@
 #include <iostream>
 
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+
 
 using namespace ftxui;
 
@@ -105,7 +108,7 @@ auto UI::render_stack(State* state, int from, int to) {
     for (int i = from; i < to; i++) {
         std::string num  = std::to_string(i * 8);
         long word = 0;
-        for (int j = 0; j < 8; j++) {
+        for (int j = 7; j > -1; j--) {
             word = word << 8;
             word += (int)state->stack[i * 8 + j];
         }
@@ -180,7 +183,7 @@ void UI::clear_string() {
 }
 
 void UI::start() {
-    std::streambuf* originalCoutBuffer = std::cout.rdbuf();
+
 
     while (controller.has_lines()) {
         auto line_num = controller.get_line();
@@ -196,11 +199,20 @@ void UI::start() {
             command = getline();
             clear_string();
             if (command.rfind("show stack", 0) == 0) {
-                    std::string to;
-                    std::string buffer;
-                    std::stringstream stream_request(command);
-                    stream_request >> buffer >> buffer >> from >> to;
-                    continue;
+                std::string to;
+                std::string buffer;
+                std::stringstream stream_request(command);
+                stream_request >> buffer >> buffer >> from >> to;
+                continue;
+            } else if ((command.rfind("show register", 0) == 0) || (command.rfind("sr", 0) == 0)) {
+                render_output(ERROR_CODE_FOR_SR, command);
+                continue;
+            } else if (command.rfind("help", 0) == 0) {
+                render_help();
+                continue;
+            } else if (command.rfind("clear", 0) == 0) {
+                output.clear();
+                continue;
             }
             int exit_code = controller.process_request(command);
             if (exit_code) {
@@ -211,11 +223,23 @@ void UI::start() {
     }
 }
 
+void UI::render_help()
+{
+    std::string empty_string = "";
+    for (int i = 6; i < 7 + 6; i++) {   
+        render_output(i, empty_string);
+    }
+}
+
 void UI::render_output(int exit_code, std::string &command)
 {
-    std::string str;
     output.push_back(error_strings[exit_code] + command);
     if (output.size() > 7) {
         move_output(output);
     }
 }
+
+void UI::clear_output() {
+    output.clear();
+}
+
