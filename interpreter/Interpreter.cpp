@@ -170,18 +170,20 @@ void Interpreter::interpret() {
 
 void Interpreter::show_context() {
     int index = global_state->registers[pc] / INSTRUCTION_SIZE;
-     
-    size_t min_index = from_inparse_to_in[std::max(0, ((int)index) - 2)];
-    size_t max_index = from_inparse_to_in[std::min((int)instructions_.size() - 1, index + 2)];
-
-    if (min_index > max_index) {
-        min_index = std::max(0, from_inparse_to_in[index] - 2);
-        max_index = std::min(from_inparse_to_in[index] + 2, (int) from_in_to_inparse.size());
+    int index_in_file;
+    if (index < from_inparse_to_in.size()) {
+        index_in_file = from_inparse_to_in[index];   
+    } else {
+        index_in_file = from_inparse_to_in.size() - 1;
     }
+ 
+    size_t min_index = std::max(0, ((int)index_in_file) - 3);
+    size_t max_index = std::min((int)all_lines_in.size() - 1, index_in_file + 3);
+
     std::cout << std::endl;
 
     for (size_t i = min_index; i <= max_index; i++) {
-        if (index < from_inparse_to_in.size() && i == from_inparse_to_in[index]) {
+        if (i == index_in_file) {
             std::cout << " --> ";
         } else {
             std::cout << "     ";
