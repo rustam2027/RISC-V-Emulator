@@ -1,6 +1,8 @@
 #include "../frontend/Parser.hpp"
 #include "../exceptions/RuntimeException.hpp"
 #include "instructions.hpp"
+#include "../consts.hpp"
+#include "cassert"
 #include <string>
 #include <vector>
 
@@ -174,7 +176,7 @@ void SLL::exec(State &state) {
     return;
   }
   state.registers[dist] = state.registers[source1]
-                          << (state.registers[source2] & ((1 << 5) - 1));
+                          << (state.registers[source2] & ((1 << 7) - 1));
   // Performs logical left shift on the value in register rs1 by the shift
   // amount held in the lower 5 bits of register rs2.
 }
@@ -199,7 +201,7 @@ void SLLI::exec(State &state) {
   if (dist == zero) {
     return;
   }
-  state.registers[dist] = state.registers[source] << (immediate & ((1 << 5) - 1));
+  state.registers[dist] = (state.registers[source] << (immediate & ((1 << 7) - 1)));
 }
 
 
@@ -223,7 +225,7 @@ void SRL::exec(State &state) {
     return;
   }
   state.registers[dist] =
-      state.registers[source1] >> (state.registers[source2] & ((1 << 5) - 1));
+      state.registers[source1] >> (state.registers[source2] & ((1 << 7) - 1));
   // Description: Logical right shift on the value in register rs1 by the shift
   // amount held in the lower 5 bits of register rs2
 }
@@ -248,7 +250,7 @@ void SRLI::exec(State &state) {
   if (dist == zero) {
     return;
   }
-  state.registers[dist] = state.registers[source] >> (immediate & ((1 << 5) - 1));
+  state.registers[dist] = state.registers[source] >> (immediate & ((1 << 7) - 1));
 }
 
 
@@ -384,7 +386,7 @@ BranchEqualZero::BranchEqualZero(vector<string> args) {
   }
   Register first_ = Parser::get_register(args[0]);
 
-  label = args[2];
+  label = args[1];
   first = first_;
 }
 
@@ -497,8 +499,10 @@ Sb::Sb(vector<string> args) {
 
 
 void Sh::exec(State & state) {
-  state.stack[state.registers[dst] + offset + 1] = (std::byte) (state.registers[src] & 0xFF);
-  state.stack[state.registers[dst] + offset] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
+  state.stack[state.registers[dst] + offset + 3] = (std::byte) ((state.registers[src] >> 24) & 0xFF);
+  state.stack[state.registers[dst] + offset + 2] = (std::byte) ((state.registers[src] >> 16) & 0xFF);
+  state.stack[state.registers[dst] + offset + 1] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
+  state.stack[state.registers[dst] + offset] = (std::byte) (state.registers[src] & 0xFF);
   // The SH store 16-bit value from the low bits of register rs2 to memory.
 }
 
@@ -518,11 +522,23 @@ Sh::Sh(vector<string> args) {
 }
 
 void Sw::exec(State &state) {
-  state.stack[state.registers[dst] + offset + 3] = (std::byte) (state.registers[src] & 0xFF);
-  state.stack[state.registers[dst] + offset + 2] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
-  state.stack[state.registers[dst] + offset + 1] = (std::byte) ((state.registers[src] >> 16) & 0xFF);
-  state.stack[state.registers[dst] + offset] = (std::byte) ((state.registers[src] >> 24) & 0xFF);
-  // The SW, SH, and SB instructions store 32-bit, 16-bit, and 8-bit values from the low bits of register rs2 to memory.
+/*
+  n = 4321
+  stack s
+  s[0] = 1 < *10^0
+  s[1] = 2 < *10^1
+  s[2] = 3 < *10^2
+  s[3] = 4 < *10^3
+*/
+  state.stack[state.registers[dst] + offset + 7] = (std::byte) ((state.registers[src] >> 56) & 0xFF);
+  state.stack[state.registers[dst] + offset + 6] = (std::byte) ((state.registers[src] >> 48) & 0xFF);
+  state.stack[state.registers[dst] + offset + 5] = (std::byte) ((state.registers[src] >> 40) & 0xFF);
+  state.stack[state.registers[dst] + offset + 4] = (std::byte) ((state.registers[src] >> 32) & 0xFF);
+  state.stack[state.registers[dst] + offset + 3] = (std::byte) ((state.registers[src] >> 24) & 0xFF);
+  state.stack[state.registers[dst] + offset + 2] = (std::byte) ((state.registers[src] >> 16) & 0xFF);
+  state.stack[state.registers[dst] + offset + 1] = (std::byte) ((state.registers[src] >> 8) & 0xFF);
+  state.stack[state.registers[dst] + offset] = (std::byte) (state.registers[src] & 0xFF);
+  // The SW, SH, and SB instructions store 64-bit, 32-bit, and 16-bit values from the low bits of register rs2 to memory.
 }
 
 Sw::Sw(vector<string> args) {
@@ -541,11 +557,23 @@ Sw::Sw(vector<string> args) {
 }
 
 void Lw::exec(State &state) {
-  std::byte fourth = state.stack[state.registers[src] + offset];
-  std::byte third = state.stack[state.registers[src] + offset - 1];
-  std::byte second = state.stack[state.registers[src] + offset - 2];
-  std::byte first = state.stack[state.registers[src] + offset - 3];
-  state.registers[dst] = (long) ((((long) first) << 24) | (((long) second) << 16) | (((long) third) << 8) | (long) fourth);
+/*
+  n = 4321
+  stack s
+  s[0] = 1 < *10^0
+  s[1] = 2 < *10^1
+  s[2] = 3 < *10^2
+  s[3] = 4 < *10^3
+*/
+  std::byte eighth = state.stack[state.registers[src] + offset];
+  std::byte seventh = state.stack[state.registers[src] + offset + 1];
+  std::byte sixth = state.stack[state.registers[src] + offset + 2];
+  std::byte fifth = state.stack[state.registers[src] + offset + 3];
+  std::byte fourth = state.stack[state.registers[src] + offset + 4];
+  std::byte third = state.stack[state.registers[src] + offset + 5];
+  std::byte second = state.stack[state.registers[src] + offset + 6];
+  std::byte first = state.stack[state.registers[src] + offset + 7];
+  state.registers[dst] = (long) ((((long) first) << 56) | (((long) second) << 48) | (((long) third) << 40) | (((long) fourth) << 32) | (((long) fifth) << 24) | (((long) sixth) << 16) | (((long) seventh) << 8) | (long) eighth);
 }
 
 Lw::Lw(vector<string> args) {
@@ -564,9 +592,11 @@ Lw::Lw(vector<string> args) {
 }
 
 void Lh::exec(State &state) {
-  std::byte second = state.stack[state.registers[src] + offset];
-  std::byte first = state.stack[state.registers[src] + offset - 1];
-  state.registers[dst] = (long) ((((long) first << 8)) | (long) (second));
+  std::byte fourth = state.stack[state.registers[src] + offset];
+  std::byte third = state.stack[state.registers[src] + offset + 1];
+  std::byte second = state.stack[state.registers[src] + offset + 2];
+  std::byte first = state.stack[state.registers[src] + offset + 3];
+  state.registers[dst] = (long) ((((long) first << 24)) | (long) (second) << 16 | (long) third << 8 | (long) fourth);
 }
 
 Lh::Lh(vector<string> args) {
@@ -605,6 +635,22 @@ Lb::Lb(vector<string> args) {
   offset = offset_;
 }
 
+
+void La::exec(State &state) {
+  state.registers[dst] = state.labels[label] * INSTRUCTION_SIZE;
+}
+
+La::La(vector<string> args) {
+  int args_amount = 2;
+  if (args.size() != args_amount) {
+    throw ParserException("Load address", args_amount, args.size());
+  }
+  Register dst_ = Parser::get_register(args[0]);
+  dst = dst_;
+  label = args[1];
+}
+
+
 EBreak::EBreak(vector<string> args) {
   int args_amount = 0;
   if (args.size() != args_amount) {
@@ -612,5 +658,14 @@ EBreak::EBreak(vector<string> args) {
   }
 }
 
-void EBreak::exec(State& state) {
+void EBreak::exec(State& state) { }
+
+
+Data::Data(vector<string> args) {
+  assert(args.size() == 1);
+  content = Parser::get_immediate(args[0]);
+}
+
+void Data::exec(State& state) {
+  throw RuntimeException("Data is read-only");
 }

@@ -53,10 +53,12 @@ class Parser {
       {"lw", [](std::vector<std::string> args) { return new Lw(args); }},
       {"beqz", [](std::vector<std::string> args) { return new BranchEqualZero(args); }},
       {"srli", [](std::vector<std::string> args) { return new SRLI(args); }},
-      {"ebreak", [](std::vector<std::string> args) { return new EBreak(args); }}
+      {"ebreak", [](std::vector<std::string> args) { return new EBreak(args); }},
+      {"data", [](std::vector<std::string> args) { return new Data(args); }},
+      {"la", [](std::vector<std::string> args) { return new La(args); }}
   };
 
-  std::set<std::string> jump_instructions = {"j", "jal", "beq", "bgt", "bne", "blt", "bge"};
+  std::set<std::string> label_instructions = {"j", "jal", "beq", "bgt", "bne", "blt", "beqz", "bge", "la"};
 
   void delete_instructions(std::vector<Instruction* > instructions);
   Instruction* get_instruction(const std::string& str, std::vector<std::string> args);
@@ -69,15 +71,20 @@ class Parser {
   static bool is_binary_char(char c);
   static bool is_hex_char(char c);
 
+  std::vector<int>& from_inparse_to_in;
+
   friend Interpreter;
 
 public:
-  Parser(Lexer lexer_, std::map<std::string, int>& labels_): lexer(lexer_), labels(labels_) {}
+  Parser(Lexer lexer_, std::map<std::string, int>& labels_, std::vector<int>& inparse_to_in_): lexer(lexer_), labels(labels_), from_inparse_to_in(inparse_to_in_)  {}
   
+
   static std::map<std::string, Register> get_register_names() {
     return registers_names;
   }
-  static std::vector<std::string> check_syntax(std::vector<std::string> args_tokens);
+
+  static std::vector<std::string> check_syntax(std::vector<std::string> args_tokens, std::string& instruction_token, int line);
+
   std::vector<Instruction*> get_instructions();
   static Register get_register(const std::string& str);
   static std::vector<std::string> get_offset(const std::vector<std::string>& args);

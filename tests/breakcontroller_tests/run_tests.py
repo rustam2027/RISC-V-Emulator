@@ -35,6 +35,7 @@ for root, _, files in sorted(os.walk("./tests"), key=lambda x: x[2]):
                 passed = True
                 if len(result) != len(expected):
                     passed = False
+                    return_code = 1
                     print(res.stdout.strip())
                 else:
                     for i in range(len(result)):

@@ -1,19 +1,21 @@
 --> 0  |ebreak
      1  |jal ra, func
      2  |li a1, 12
+     3  |j end
 >
      0  |ebreak
  --> 1  |jal ra, func
      2  |li a1, 12
      3  |j end
+     4  |
 >
-     2  |li a1, 12
-     3  |j end
      4  |
      5  |
      6  |func:
  --> 7  |  li a2, 14
      8  |  ret
+     9  |
+     10 |end:
 >
      0  |ebreak
      1  |jal ra, func
@@ -21,6 +23,4 @@
      3  |j end
      4  |
      5  |
-     6  |func:
-     7  |  li a2, 14
 >

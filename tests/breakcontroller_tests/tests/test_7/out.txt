@@ -1,89 +1,60 @@
-19 |
+18 |.end_macro
+     19 |
      20 |main:
  --> 21 |  ebreak
      22 |  read_char t0
      23 |  li t1, 0x30 # '0'
+     24 |  blt t0, t1, exit
 >
+     5  |.end_macro
      6  |
      7  |.macro read_char %dst
  --> 8  |  li a0, 0
      9  |  li a7, 12  #syscall
      10 |  ecall
+     11 |  mv %dst, a0
 >
+     6  |
      7  |.macro read_char %dst
      8  |  li a0, 0
  --> 9  |  li a7, 12  #syscall
      10 |  ecall
      11 |  mv %dst, a0
+     12 |.end_macro
 >
+     7  |.macro read_char %dst
      8  |  li a0, 0
      9  |  li a7, 12  #syscall
  --> 10 |  ecall
      11 |  mv %dst, a0
      12 |.end_macro
      13 |
-     14 |.macro print_char %src
-     15 |  mv a0, %src  #print this char
-     16 |  li a7, 11    #syscall
-     17 |  ecall
-     18 |.end_macro
-     19 |
-     20 |main:
-     21 |  ebreak
-     22 |  read_char t0
-     23 |  li t1, 0x30 # '0'
 >
+     8  |  li a0, 0
      9  |  li a7, 12  #syscall
      10 |  ecall
  --> 11 |  mv %dst, a0
      12 |.end_macro
      13 |
      14 |.macro print_char %src
-     15 |  mv a0, %src  #print this char
-     16 |  li a7, 11    #syscall
-     17 |  ecall
-     18 |.end_macro
-     19 |
-     20 |main:
-     21 |  ebreak
-     22 |  read_char t0
-     23 |  li t1, 0x30 # '0'
-     24 |  blt t0, t1, exit
 > >
-     10 |  ecall
-     11 |  mv %dst, a0
-     12 |.end_macro
-     13 |
-     14 |.macro print_char %src
-     15 |  mv a0, %src  #print this char
-     16 |  li a7, 11    #syscall
-     17 |  ecall
-     18 |.end_macro
-     19 |
      20 |main:
      21 |  ebreak
      22 |  read_char t0
  --> 23 |  li t1, 0x30 # '0'
      24 |  blt t0, t1, exit
      25 |  li t1, '9'
+     26 |  ebreak
 >
-     11 |  mv %dst, a0
-     12 |.end_macro
-     13 |
-     14 |.macro print_char %src
-     15 |  mv a0, %src  #print this char
-     16 |  li a7, 11    #syscall
-     17 |  ecall
-     18 |.end_macro
-     19 |
-     20 |main:
      21 |  ebreak
      22 |  read_char t0
      23 |  li t1, 0x30 # '0'
  --> 24 |  blt t0, t1, exit
      25 |  li t1, '9'
      26 |  ebreak
+     27 |  bgt t0, t1, exit
 >
+     23 |  li t1, 0x30 # '0'
      24 |  blt t0, t1, exit
      25 |  li t1, '9'
  --> 26 |  ebreak

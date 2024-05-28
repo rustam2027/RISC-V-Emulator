@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 #include "../exceptions/PreprocessorException.hpp"
 #include "StringUtils.hpp"
 
@@ -21,6 +22,17 @@ class Preprocessor {
       std::vector<std::string> macros_lines;
       std::vector<std::string> macros_labels;
     };
+
+    // .text is a read-only section containing executable code
+    // .data is a read-write section containing global or static variables (.string and .word support)
+    // .rodata is a read-only section containing const variables
+    // .bss is a read-write section containing uninitialized data
+
+    const std::set<std::string> supported_sections = {".data", ".text", ".rodata", ".bss"};
+    bool check_section(std::string& section) {
+      return supported_sections.find(section) != supported_sections.end();
+    }
+
 
     std::map<std::string, int> labels;
     std::map<std::string, std::string> eqv;

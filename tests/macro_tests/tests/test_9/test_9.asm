@@ -1,4 +1,4 @@
-.text
+.section .text
 .macro print_char %src
   mv a0, %src
   li a7, 11
@@ -20,5 +20,3 @@ main:
   li t1, 'A'
   li t2, 'B'
   my_macro t1, t2
-
-.data

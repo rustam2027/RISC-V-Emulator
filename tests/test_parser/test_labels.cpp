@@ -15,7 +15,7 @@ void Ltest_1() {
     try {
         instructions = parser.get_instructions();
     } catch (const ParserException& e) {
-        assert(e.get_message() == "Jump to a non-existent label: j label_111");
+        assert(e.get_message() == "Using non-existent label: j label_111");
         cout << "labels test 1 passed!" << endl;
     }
 }
@@ -29,7 +29,7 @@ void Ltest_2() {
     try {
         instructions = parser.get_instructions();
     } catch (const ParserException& e) {
-        assert(e.get_message() == "Jump to a non-existent label: bgt t1 t2 label_33");
+        assert(e.get_message() == "Using non-existent label: bgt t1 t2 label_33");
         cout << "labels test 2 passed!" << endl;
     }
 }
@@ -43,7 +43,7 @@ void Ltest_3() {
     try {
         instructions = parser.get_instructions();
     } catch (const ParserException& e) {
-        assert(e.get_message() == "Jump to a non-existent label: bne a1 a2 my_label");
+        assert(e.get_message() == "Using non-existent label: bne a1 a2 my_label");
         cout << "labels test 3 passed!" << endl;
     }
 }
