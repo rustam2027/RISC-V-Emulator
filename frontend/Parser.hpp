@@ -78,7 +78,13 @@ class Parser {
 public:
   Parser(Lexer lexer_, std::map<std::string, int>& labels_, std::vector<int>& inparse_to_in_): lexer(lexer_), labels(labels_), from_inparse_to_in(inparse_to_in_)  {}
   
+
+  static std::map<std::string, Register> get_register_names() {
+    return registers_names;
+  }
+
   static std::vector<std::string> check_syntax(std::vector<std::string> args_tokens, std::string& instruction_token, int line);
+
   std::vector<Instruction*> get_instructions();
   static Register get_register(const std::string& str);
   static std::vector<std::string> get_offset(const std::vector<std::string>& args);
