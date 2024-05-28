@@ -1,6 +1,8 @@
 #include "../frontend/Parser.hpp"
 #include "../exceptions/RuntimeException.hpp"
 #include "instructions.hpp"
+#include "../consts.hpp"
+#include "cassert"
 #include <string>
 #include <vector>
 
@@ -174,7 +176,7 @@ void SLL::exec(State &state) {
     return;
   }
   state.registers[dist] = state.registers[source1]
-                          << (state.registers[source2] & ((1 << 5) - 1));
+                          << (state.registers[source2] & ((1 << 7) - 1));
   // Performs logical left shift on the value in register rs1 by the shift
   // amount held in the lower 5 bits of register rs2.
 }
@@ -199,7 +201,7 @@ void SLLI::exec(State &state) {
   if (dist == zero) {
     return;
   }
-  state.registers[dist] = state.registers[source] << (immediate & ((1 << 5) - 1));
+  state.registers[dist] = (state.registers[source] << (immediate & ((1 << 7) - 1)));
 }
 
 
@@ -223,7 +225,7 @@ void SRL::exec(State &state) {
     return;
   }
   state.registers[dist] =
-      state.registers[source1] >> (state.registers[source2] & ((1 << 5) - 1));
+      state.registers[source1] >> (state.registers[source2] & ((1 << 7) - 1));
   // Description: Logical right shift on the value in register rs1 by the shift
   // amount held in the lower 5 bits of register rs2
 }
@@ -248,7 +250,7 @@ void SRLI::exec(State &state) {
   if (dist == zero) {
     return;
   }
-  state.registers[dist] = state.registers[source] >> (immediate & ((1 << 5) - 1));
+  state.registers[dist] = state.registers[source] >> (immediate & ((1 << 7) - 1));
 }
 
 
@@ -384,7 +386,7 @@ BranchEqualZero::BranchEqualZero(vector<string> args) {
   }
   Register first_ = Parser::get_register(args[0]);
 
-  label = args[2];
+  label = args[1];
   first = first_;
 }
 
@@ -633,6 +635,22 @@ Lb::Lb(vector<string> args) {
   offset = offset_;
 }
 
+
+void La::exec(State &state) {
+  state.registers[dst] = state.labels[label] * INSTRUCTION_SIZE;
+}
+
+La::La(vector<string> args) {
+  int args_amount = 2;
+  if (args.size() != args_amount) {
+    throw ParserException("Load address", args_amount, args.size());
+  }
+  Register dst_ = Parser::get_register(args[0]);
+  dst = dst_;
+  label = args[1];
+}
+
+
 EBreak::EBreak(vector<string> args) {
   int args_amount = 0;
   if (args.size() != args_amount) {
@@ -640,5 +658,14 @@ EBreak::EBreak(vector<string> args) {
   }
 }
 
-void EBreak::exec(State& state) {
+void EBreak::exec(State& state) { }
+
+
+Data::Data(vector<string> args) {
+  assert(args.size() == 1);
+  content = Parser::get_immediate(args[0]);
+}
+
+void Data::exec(State& state) {
+  throw RuntimeException("Data is read-only");
 }

@@ -53,10 +53,12 @@ class Parser {
       {"lw", [](std::vector<std::string> args) { return new Lw(args); }},
       {"beqz", [](std::vector<std::string> args) { return new BranchEqualZero(args); }},
       {"srli", [](std::vector<std::string> args) { return new SRLI(args); }},
-      {"ebreak", [](std::vector<std::string> args) { return new EBreak(args); }}
+      {"ebreak", [](std::vector<std::string> args) { return new EBreak(args); }},
+      {"data", [](std::vector<std::string> args) { return new Data(args); }},
+      {"la", [](std::vector<std::string> args) { return new La(args); }}
   };
 
-  std::set<std::string> jump_instructions = {"j", "jal", "beq", "bgt", "bne", "blt", "bge"};
+  std::set<std::string> label_instructions = {"j", "jal", "beq", "bgt", "bne", "blt", "bge", "la"};
 
   void delete_instructions(std::vector<Instruction* > instructions);
   Instruction* get_instruction(const std::string& str, std::vector<std::string> args);

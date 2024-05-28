@@ -1,4 +1,5 @@
 #include "Preprocessor.hpp"
+#include "../consts.hpp"
 
 
 void Preprocessor::string_replace(std::string& input, const std::string& src, const std::string& dst) {
@@ -110,9 +111,11 @@ void Preprocessor::inline_macros(std::vector<std::string>& input_line, int& coun
 
 /* 
 empty line or comment                  -> -1  
-. definition (.macro .eqv .text .data) -> -2
+. definition (.macro .eqv .section)    -> -2
 label                                  -> -3
- */
+*/
+
+
 
 
 void Preprocessor::preprocess() {
@@ -135,13 +138,13 @@ void Preprocessor::preprocess() {
             }
             std::string first = buf.front();
             if (macros.find(first) != macros.end()) {
-                from_in_to_inparse.push_back(counter_in_parse);    // pointer to start of the macros
+                from_in_to_inparse.push_back(counter_in_parse);            // pointer to start of the macros
                 inline_macros(buf, counter_in_parse, true, nullptr);
                 continue;
             }
             if (first.at(0) == '.') {  
-                from_in_to_inparse.push_back(-2); 
                 if (first == ".macro") {
+                    from_in_to_inparse.push_back(-2); 
                     Macros m_data;
                     m_data.start_line = counter_in + 1;
                     std::string name = buf[1];
@@ -168,14 +171,58 @@ void Preprocessor::preprocess() {
                     }
                     macros[name] = m_data;
                 } else if (first == ".eqv") {
+                    from_in_to_inparse.push_back(-2); 
                     if (buf.size() == 3) {
                         eqv[buf[1]] = buf[2];    // name : string to replace
                     } else {
                         in.close();
                         throw PreprocessorException("invalid definition: " + StringUtils::concat(" ", buf));
                     } 
-                } else if (first == ".data" || first == ".text") {
-                    // do something 
+                } else if (first == ".section") {
+                    from_in_to_inparse.push_back(-2); 
+                    if (buf.size() < 2) {
+                        throw PreprocessorException("Section not declared");
+                    }
+                    if (! check_section(buf[1])) {
+                        throw PreprocessorException("Section " + buf[1] + " not supported");
+                    }
+                } else if (first == ".word") {
+                    if (buf.size() < 2) {
+                        throw PreprocessorException("No content in .word");
+                    }
+                    from_in_to_inparse.push_back(counter_in_parse);    // MAY BE ERROR
+                    from_inparse_to_in.push_back(counter_in);
+                    counter_in_parse++;
+                    inparse << "data " + buf[1] << std::endl;     
+                } else if (first == ".string") {
+                    buf.erase(buf.begin());
+                    if (buf.empty()) {
+                        throw PreprocessorException("No content in .string");
+                    }
+
+                    std::string content = StringUtils::concat(" ", buf);
+                    content.erase(0, 1);
+                    content.erase(content.size() - 1, 1);
+
+                    int words_amount = (content.size() / BYTE_BITS) + 1; 
+                    char* raw_content = content.data();
+                    for (int i = 0; i < words_amount; i++) {
+                        int stop_index = (i == words_amount - 1) ? (content.size() % BYTE_BITS) : BYTE_BITS;
+                        long data_word = 0;
+                        for (int j = 0; j < stop_index; j++) {
+                            data_word <<= BYTE_BITS;
+                            data_word += raw_content[i * BYTE_BITS + j]; 
+                        } 
+
+                        for (int j = stop_index; j < BYTE_BITS; j++) {
+                            data_word <<= BYTE_BITS;  // * 2^8
+                        }
+
+                        from_in_to_inparse.push_back(counter_in_parse);    // MAY BE ERROR
+                        from_inparse_to_in.push_back(counter_in);
+                        counter_in_parse++;
+                        inparse << "data " + std::to_string(data_word) << std::endl;    
+                    }
                 } else {
                     in.close();
                     throw PreprocessorException("not supported: " + first);
@@ -203,7 +250,6 @@ void Preprocessor::preprocess() {
 
 void Preprocessor::dump_inparse() {
     std::ofstream out("_in.parse");
-    // maybe need to copy
     out << inparse.str();
     out.close();
 }

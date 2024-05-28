@@ -23,7 +23,7 @@ for root, _, files in os.walk("./tests"):
             res = sp.run(cmd, shell=True, capture_output=True, text=True)
 
             if res.returncode != 0:
-                print("Problem occured with {file}: \n{res.stderr}")
+                print(f"Problem occured with {file}: \n{res.stderr}")
                 continue
 
             with open(os.path.join(root, out_file), "r") as out_bytes:

@@ -121,12 +121,27 @@ void Interpreter::show_register(std::string rg_str) {
 Interpreter::Interpreter(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
                                  std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug_flag)
     : exit(false), instructions_(instructions), global_state(new State(labels)), debug(debug_flag), all_lines_in(all_lines), from_in_to_inparse(in_to_inparse), from_inparse_to_in(inparse_to_in) {
+    bool instructions_starts = false;
+    for (auto instruction : instructions_) {
+        long to_mem = 0xDEADDEADDEADDEAD;
+        auto data = dynamic_cast<Data *>(instruction);
+        if (data != nullptr) {
+            to_mem = data->content;
+        } else if (!instructions_starts) {
+            global_state->registers[pc] = global_state->registers[sp];
+            instructions_starts = true;
+        }
+        for (int i = 0; i < 8; i++) {
+            global_state->stack[global_state->registers[sp]] = (std::byte) ((to_mem >> (i * BYTE_BITS)) & 0xFF);
+            global_state->registers[sp] += 1;
+        }
+    }
 }
 
 void Interpreter::interpret() {
     while (global_state->registers[pc] < instructions_.size() * INSTRUCTION_SIZE) {
         if (global_state->registers[pc] % INSTRUCTION_SIZE != 0) {
-            throw new RuntimeException("Wrong pc: " + std::to_string(global_state->registers[pc]));
+            throw RuntimeException("Wrong pc: " + std::to_string(global_state->registers[pc]));
         }
         size_t index = global_state->registers[pc] / INSTRUCTION_SIZE;
 
@@ -155,18 +170,20 @@ void Interpreter::interpret() {
 
 void Interpreter::show_context() {
     int index = global_state->registers[pc] / INSTRUCTION_SIZE;
-     
-    size_t min_index = from_inparse_to_in[std::max(0, ((int)index) - 2)];
-    size_t max_index = from_inparse_to_in[std::min((int)instructions_.size() - 1, index + 2)];
-
-    if (min_index > max_index) {
-        min_index = std::max(0, from_inparse_to_in[index] - 2);
-        max_index = std::min(from_inparse_to_in[index] + 2, (int) from_in_to_inparse.size());
+    int index_in_file;
+    if (index < from_inparse_to_in.size()) {
+        index_in_file = from_inparse_to_in[index];   
+    } else {
+        index_in_file = from_inparse_to_in.size() - 1;
     }
+ 
+    size_t min_index = std::max(0, ((int)index_in_file) - 3);
+    size_t max_index = std::min((int)all_lines_in.size() - 1, index_in_file + 3);
+
     std::cout << std::endl;
 
     for (size_t i = min_index; i <= max_index; i++) {
-        if (index < from_inparse_to_in.size() && i == from_inparse_to_in[index]) {
+        if (i == index_in_file) {
             std::cout << " --> ";
         } else {
             std::cout << "     ";

@@ -1,4 +1,4 @@
-.text
+.section .text
 .macro exit %ecode
   li a0, 0
   li a7, 93  
