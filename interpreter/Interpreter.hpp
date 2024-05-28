@@ -23,7 +23,7 @@ class Interpreter {
     
     void show_registers();
     void show_register(std::string rg);
-    void show_stack(size_t from, size_t to);
+    void show_memory(size_t from, size_t to);
 
     int breakpoint_set_by_label(std::string label);
     int breakpoint_set_by_number(int num);

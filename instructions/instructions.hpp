@@ -95,11 +95,11 @@ struct Xor : Instruction {
 
 struct Ecall : Instruction {
   map<int, function<void(State&)>> functions = {
-    {PRINT_INT, [](State& state) { std::cout << state.registers[a0] << std::endl; }},
+    {PRINT_INT, [](State& state) { std::cout << state.registers[a0]; }},
     {READ_INT, [](State& state) { scanf("%ld", &state.registers[a0]); }},
     {EXIT_0, [](State& state){ exit(0); }},
     {EXIT, [](State& state) { exit(state.registers[a0]); }},
-    {PRINT_CHAR, [](State& state) { std::cout << static_cast<char>(state.registers[a0]) << std::endl; }},
+    {PRINT_CHAR, [](State& state) { std::cout << static_cast<char>(state.registers[a0]); }},
     {READ_CHAR, [](State& state) { char c;
                                   scanf("%c", &c); 
                                   state.registers[a0] = (long) c; }}

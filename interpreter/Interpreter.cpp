@@ -24,13 +24,13 @@ int Interpreter::process_request(std::string request) {
         exit = true;
         stop = false;
         return 0;
-    } else if (request.rfind("show stack", 0) == 0) {
+    } else if (request.rfind("show memory", 0) == 0) {
         std::string from, to;
         std::string buffer;
         std::stringstream stream_request(request);
         stream_request >> buffer >> buffer >> from >> to;  // FIXME: Some how check that exactly two numbers were
                                                            // given
-        show_stack(Parser::get_immediate(from), Parser::get_immediate(to));
+        show_memory(Parser::get_immediate(from), Parser::get_immediate(to));
         return 0;
     } else if (request.rfind("show register", 0) == 0) {
         if (request == "show registers") {
@@ -56,7 +56,7 @@ int Interpreter::process_request(std::string request) {
             std::stringstream stream_request(request);
             stream_request >> buffer >> buffer >> from >> to;  // FIXME: Some how check that exactly two numbers were
                                                                // given
-            show_stack(from, to);
+            show_memory(from, to);
         } else if (request == "show registers" || request == "sr") {
             show_registers();
         } else {
@@ -118,14 +118,14 @@ void Interpreter::open_interface() {
     }
 }
 
-void Interpreter::show_stack(size_t from, size_t to) {
+void Interpreter::show_memory(size_t from, size_t to) {
     std::cout << "SHOWING STACK" << std::endl;
     for (int i = from; i < to; i++) {
         std::cout << "[" << i * 8 << "]: ";
         long word = 0;
         for (int j = 7; j > -1; j--) {
             word = word << 8;
-            word += (int)global_state->stack[i * 8 + j];
+            word += (int)global_state->memory[i * 8 + j];
         }
         std::cout << get_hex(word) << std::endl;
     }
@@ -161,7 +161,7 @@ Interpreter::Interpreter(std::vector<Instruction *>& instructions, std::map<std:
             instructions_starts = true;
         }
         for (int i = 0; i < 8; i++) {
-            global_state->stack[global_state->registers[sp]] = (std::byte) ((to_mem >> (i * BYTE_BITS)) & 0xFF);
+            global_state->memory[global_state->registers[sp]] = (std::byte) ((to_mem >> (i * BYTE_BITS)) & 0xFF);
             global_state->registers[sp] += 1;
         }
     }
