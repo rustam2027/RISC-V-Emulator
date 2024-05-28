@@ -667,5 +667,5 @@ Data::Data(vector<string> args) {
 }
 
 void Data::exec(State& state) {
-  throw RuntimeException("Data is read-only");
+  throw RuntimeException("DATA SECTION CANNOT BE EXECUTED");
 }

@@ -222,7 +222,8 @@ std::vector<Instruction*> Parser::get_instructions() {
             instruction = get_instruction(instruction_token, args_tokens);
         } catch (const ParserException& e) {
             delete_instructions(instruction_vector);
-            throw;
+            throw ParserException("In line " + std::to_string(current_line) + " " + 
+                                  e.get_message());
         } 
 
         if (label_instructions.find(instruction_token) != label_instructions.end()) {   // need to check label existence
