@@ -22,11 +22,11 @@ int main(int argc, char *argv[]) {
   if (argc > 1) {
     file = argv[1];
     if ((argc > 2) ) {
-      if (strcmp(argv[2], "-d") == 0) {
+      if (strcmp(argv[2], "-g") == 0) {
         debug_mode = true;
-      }
-      else if (strcmp(argv[2], "-g") == 0) {
         graph_mode = true;
+      }
+      else if (strcmp(argv[2], "-d") == 0) {
         debug_mode = true;
       }
     }

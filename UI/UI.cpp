@@ -14,17 +14,7 @@
 
 using namespace ftxui;
 
-Component Wrap(std::string name, Component component) {
-  return Renderer(component, [name, component] {
-    return hbox({
-               text(name) | size(WIDTH, EQUAL, 8),
-               separator(),
-               component->Render() | xflex,
-           }) |
-           xflex;
-  });
-}
-void UI::move_output(std::vector<std::string>& v, std::string last) {
+void UI::move_output(std::vector<std::string>& v) {
     for (int i = 0; i < 8; ++i) {
         v[i] = v[i + 1];
     }
@@ -33,7 +23,7 @@ void UI::move_output(std::vector<std::string>& v, std::string last) {
 
 
 ftxui::Element UI::render_intsructions(int line_number, Interpreter& controller) {
-    auto i = 1;
+    auto i = 0;
     Elements nums_elements, instructions_elements, output_elements;
     for(auto const& line : all_lines_in) {
         auto num = text(std::to_string(i)) | align_right;
@@ -93,7 +83,6 @@ auto UI::render_registers(State* state) {
         auto name = reg.first;
         auto value = std::to_string(state->registers[reg.second]);
         vec.push_back({name, value});
-        // std::cout << name << " " << value << std::endl;
 
 
     }
@@ -128,7 +117,6 @@ auto UI::render_stack(State* state, int from, int to) {
     table.SelectRow(0).SeparatorVertical(LIGHT);
     table.SelectRow(0).Border(DOUBLE);
  
-    // table.SelectColumn(2).DecorateCells(align_right);
 
     return table;
 
@@ -159,7 +147,7 @@ void UI::render(int line_number, State* state, int from, int to, Interpreter& co
 
 void UI::clean() {
     std::cout << reset_position;
-    n_lines = 1000;
+    n_lines = 200;
     if (n_lines) {
         std::cout << "\r" << "\x1B[2K";
         for (int i = 0; i < n_lines + 1; i ++) {
@@ -192,6 +180,8 @@ void UI::clear_string() {
 
 void UI::start() {
     Interpreter controller = Interpreter(instructions, labels, all_lines_in, in_to_inparse, inparse_to_in, debug_flag, true); 
+    std::streambuf* originalCoutBuffer = std::cout.rdbuf();
+
     while (controller.has_lines()) {
         auto line_num = controller.get_line();
         auto state = controller.get_state();
@@ -214,12 +204,18 @@ void UI::start() {
             }
             int exit_code = controller.process_request(command);
             if (exit_code) {
-                output.push_back("> UNKNOWN COMMAND: " + command);
-                if (output.size() > 7) {
-                    move_output(output, "> UNKNOWN COMMAND: " + command);
-                }
+                render_output(exit_code, command);
             }
         }
         controller.interpret();
+    }
+}
+
+void UI::render_output(int exit_code, std::string &command)
+{
+    std::string str;
+    output.push_back(error_strings[exit_code] + command);
+    if (output.size() > 7) {
+        move_output(output);
     }
 }

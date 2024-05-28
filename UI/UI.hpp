@@ -5,20 +5,35 @@
 #include <ftxui/screen/color.hpp> // for ftxui
 #include <vector>
 #include <string>
+#include <sstream>
+#include <streambuf>
+
 #include "../interpreter/Interpreter.hpp"
 using namespace ftxui;
 class UI {
 
-    std::vector<std::string> all_lines_in;
     std::string reset_position;
-    int n_lines;
-    std::vector<Instruction *>& instructions;
     std::map<std::string, int>& labels;
+    std::map<int, std::string> error_strings = {
+        {1, "> UNKNOWN COMMAND: "},
+        {2, "> UNKNOWN LABEL: "},
+        {3, "> NUMBER IS TOO BIG: "},
+        {4, "> INVALID LINE (MAYBE MACROS DONT USE THEM!!!): "}
+    };
+
+    std::vector<std::string> all_lines_in;
+    std::vector<Instruction *>& instructions;
     std::vector<int>& in_to_inparse;
     std::vector<int>& inparse_to_in;
     std::vector<std::string> output;
+
+    std::stringstream output_stream;
+
+    int n_lines;
+
     bool debug_flag;
-    void move_output(std::vector<std::string>& v, std::string last);
+    void move_output(std::vector<std::string>& v);
+    
 
     public:
     
@@ -39,6 +54,7 @@ class UI {
         void print(std::string s);
         auto render_registers(State* state);
         void start();
-        ftxui::Element render_intsructions(int line_number, Interpreter& controller);
+        void render_output(int exit_code, std::string &command);
+        ftxui::Element render_intsructions(int line_number, Interpreter &controller);
         auto render_stack(State* state, int from, int to );
 };

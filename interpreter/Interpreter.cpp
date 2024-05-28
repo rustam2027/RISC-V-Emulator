@@ -149,7 +149,8 @@ void Interpreter::show_register(std::string rg_str) {
 
 Interpreter::Interpreter(std::vector<Instruction *>& instructions, std::map<std::string, int>& labels, std::vector<std::string>& all_lines,
                                  std::vector<int>& in_to_inparse, std::vector<int>& inparse_to_in, bool debug_flag, bool graph)
-    : exit(false), instructions_(instructions), global_state(new State(labels)), debug(debug_flag), all_lines_in(all_lines), from_in_to_inparse(in_to_inparse), from_inparse_to_in(inparse_to_in), graph_flag(graph) {
+    : exit(false), instructions_(instructions), global_state(new State(labels)), debug(debug_flag), 
+    all_lines_in(all_lines), from_in_to_inparse(in_to_inparse), from_inparse_to_in(inparse_to_in), graph_flag(graph) {
 }
 
 bool Interpreter::has_lines() {
@@ -231,20 +232,30 @@ int Interpreter::breakpoint_set_by_label(std::string label) {
         set_manually[global_state->labels[label]] = 1;
         return 0;
     } else {
-        std::cout << "UNKNOWN LABEL: " << label << std::endl;
-        return 1;
+        if (!graph_flag) {
+            std::cout << "UNKNOWN LABEL: " << label << std::endl;
+        }
+        return 2;
     }
 }
 
 int Interpreter::breakpoint_set_by_number(int num) {
     if (all_lines_in.size() > num) {
-        while (from_in_to_inparse[num] == -1) {num--;}
+        while (num >= 0 && from_in_to_inparse[num] < 0) {num--;}
+        if (num < 0) {
+            if (!graph_flag) {
+                std::cout << "INVALID LINE (MAYBE MACROS DONT USE THEM!!!)" << std::endl; 
+            }
+            return 4;
+        }
         break_points[from_in_to_inparse[num]] = 1;
         set_manually[from_in_to_inparse[num]] = 1;
         return 0;
     } else {
-        std::cout << "NUMBER IS TOO BIG: "<< num << std::endl;
-        return 1;
+        if (!graph_flag) {
+            std::cout << "NUMBER IS TOO BIG: "<< num << std::endl;
+        }
+        return 3;
     }
 }
 
