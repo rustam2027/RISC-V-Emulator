@@ -104,7 +104,7 @@ auto UI::render_registers(State* state) {
 }
 
 auto UI::render_stack(State* state, int from, int to) {
-    std::vector<std::vector<std::string>> vec = {{"  Number  ","Stack"}};
+    std::vector<std::vector<std::string>> vec = {{"  Number  ","Memory"}};
     for (int i = from; i < to; i++) {
         std::string num  = std::to_string(i * 8);
         long word = 0;
