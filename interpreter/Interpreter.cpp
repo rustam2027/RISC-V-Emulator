@@ -174,7 +174,7 @@ void Interpreter::show_context() {
     if (index < from_inparse_to_in.size()) {
         index_in_file = from_inparse_to_in[index];   
     } else {
-        index_in_file = from_inparse_to_in.size() - 1;
+        index_in_file = from_inparse_to_in.size();
     }
  
     size_t min_index = std::max(0, ((int)index_in_file) - 3);
