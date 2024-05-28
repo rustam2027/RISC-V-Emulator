@@ -11,6 +11,10 @@
 #include "Interpreter.hpp"
 
 const int SHOW_REGISTER_CMD_LEN = 14;
+const int BREAKPOINT_SET_NAME = 22;
+const int BREAKPOINT_SET_LINE = 22;
+const int BREAKPOINT_DEL_NAME = 25;
+const int BREAKPOINT_DEL_LINE = 25;
 
 int Interpreter::process_request(std::string request) {
     if (request == "") {
@@ -98,10 +102,16 @@ int Interpreter::process_request(std::string request) {
         show_help();
         return 0;
     } else if (request.rfind("breakpoint set --name", 0) == 0) {
-        int exit_code = breakpoint_set_by_label(request.substr(22));
+        int exit_code = breakpoint_set_by_label(request.substr(BREAKPOINT_SET_NAME));
         return exit_code;
     } else if (request.rfind("breakpoint set --line", 0) == 0) {
-        int exit_code = breakpoint_set_by_number(Parser::get_immediate(request.substr(22)));
+        int exit_code = breakpoint_set_by_number(Parser::get_immediate(request.substr(BREAKPOINT_SET_LINE)));
+        return exit_code;
+    } else if (request.rfind("breakpoint delete --name", 0) == 0) {
+        int exit_code = breakpoint_delete_by_label(request.substr(BREAKPOINT_DEL_NAME));
+        return exit_code;
+    } else if (request.rfind("breakpoint delete --line", 0) == 0) {
+        int exit_code = breakpoint_delete_by_number(Parser::get_immediate(request.substr(BREAKPOINT_DEL_LINE)));
         return exit_code;
     } else {
         if (!graph_flag) {
@@ -297,6 +307,41 @@ int Interpreter::breakpoint_set_by_number(int num) {
         return 3;
     }
 }
+
+int Interpreter::breakpoint_delete_by_label(std::string label) {
+    if (global_state->labels.find(label) != global_state->labels.cend()) {
+        break_points[global_state->labels[label]] = 0;
+        set_manually[global_state->labels[label]] = 0;
+        return 0;
+    } else {
+        if (!graph_flag) {
+            std::cout << "UNKNOWN LABEL: " << label << std::endl;
+        }
+        return 2;
+    }
+    
+}
+
+int Interpreter::breakpoint_delete_by_number(int num) {
+    if (all_lines_in.size() > num) {
+        while (num >= 0 && from_in_to_inparse[num] < 0) {num--;}
+        if (num < 0) {
+            if (!graph_flag) {
+                std::cout << "INVALID LINE (MAYBE MACROS DONT USE THEM!!!)" << std::endl; 
+            }
+            return 4;
+        }
+        break_points[from_in_to_inparse[num]] = 0;
+        set_manually[from_in_to_inparse[num]] = 0;
+        return 0;
+    } else {
+        if (!graph_flag) {
+            std::cout << "NUMBER IS TOO BIG: "<< num << std::endl;
+        }
+        return 3;
+    }
+}
+
 
 void Interpreter::step_over() {
     size_t index = global_state->registers[pc] / INSTRUCTION_SIZE;

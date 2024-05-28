@@ -28,6 +28,9 @@ class Interpreter {
     int breakpoint_set_by_label(std::string label);
     int breakpoint_set_by_number(int num);
 
+    int breakpoint_delete_by_label(std::string label);
+    int breakpoint_delete_by_number(int num);
+
     void step_over();
     void step_in();
     void step_out();
