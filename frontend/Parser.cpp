@@ -189,8 +189,8 @@ void Parser::delete_instructions(vector<Instruction*> instructions) {
     }
 }
 
-std::vector<std::string> Parser::check_syntax(std::vector<std::string> args_tokens) {
-    std::string error_message = "syntax error, comma problem: ";
+std::vector<std::string> Parser::check_syntax(std::vector<std::string> args_tokens, std::string& instruction_token, int line) {
+    std::string error_message = "Syntax error in line ";
     if (args_tokens.size() != 0 && args_tokens[args_tokens.size() - 1] == ",") {
         throw ParserException(error_message + StringUtils::concat(" ",  args_tokens));
     }
@@ -201,7 +201,8 @@ std::vector<std::string> Parser::check_syntax(std::vector<std::string> args_toke
         } else {
             if (args_tokens[i] != ",") {
                 // can be double commma, missing comma
-                throw ParserException(error_message + StringUtils::concat(" ",  args_tokens));
+                throw ParserException(error_message + std::to_string(line) + ": " +
+                                      instruction_token + " " + StringUtils::concat(" ",  args_tokens));
             }
         }
     }
@@ -211,10 +212,12 @@ std::vector<std::string> Parser::check_syntax(std::vector<std::string> args_toke
 std::vector<Instruction*> Parser::get_instructions() {
     std::vector<Instruction*> instruction_vector;
     Instruction* instruction;
+    int line_counter = 0;
 
     std::string instruction_token = lexer.get_next_token();
     while (instruction_token != "eof") {
-        std::vector<std::string> args_tokens = check_syntax(lexer.get_tokens_until_end_line());
+        int current_line = from_inparse_to_in[line_counter] + 1;
+        std::vector<std::string> args_tokens = check_syntax(lexer.get_tokens_until_end_line(), instruction_token, current_line);
         try {
             instruction = get_instruction(instruction_token, args_tokens);
         } catch (const ParserException& e) {
@@ -225,11 +228,13 @@ std::vector<Instruction*> Parser::get_instructions() {
         if (label_instructions.find(instruction_token) != label_instructions.end()) {   // need to check label existence
             if (labels.find(args_tokens.back()) == labels.end()) {
                 delete_instructions(instruction_vector);
-                throw ParserException("Using non-existent label: " + instruction_token + " " + StringUtils::concat(" ", args_tokens));
+                throw ParserException("Using non-existent label in line " + std::to_string(current_line) +  ": " + 
+                                      args_tokens.back());
             }
         }
         instruction_vector.push_back(instruction);
         instruction_token = lexer.get_next_token();
+        line_counter++;
     }
     return instruction_vector;
 }
