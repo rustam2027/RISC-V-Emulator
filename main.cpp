@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
   Lexer lexer(preprocessor.get_inparse());
 
-  Parser parser(lexer, preprocessor.get_labels());
+  Parser parser(lexer, preprocessor.get_labels(), preprocessor.get_from_inparse_to_in());
   vector<Instruction*> instructions;
   try {
     instructions = parser.get_instructions();
