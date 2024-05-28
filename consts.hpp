@@ -20,5 +20,6 @@
 
 #define BYTE_BITS 8
 
+
 #define AMOUNT_REGISTERS 33
 #define AMOUNT_STACK 10000
