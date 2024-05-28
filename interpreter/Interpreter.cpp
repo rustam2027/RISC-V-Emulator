@@ -82,7 +82,9 @@ int Interpreter::process_request(std::string request) {
         } else if (request == "show registers" || request == "sr") {
             show_registers();
         } else {
-            std::cout << "UNKNOWN COMMAND : '" << request << "'" << std::endl;
+            if (!graph_flag) {
+                std::cout << "UNKNOWN COMMAND : '" << request << "'" << std::endl;
+            }
             return 1;
         }
         return 0;
@@ -99,7 +101,10 @@ int Interpreter::process_request(std::string request) {
         stop = false;
         return 0;
     } else if (request == "help") {
-        show_help();
+        if (!graph_flag) {
+            show_help();        
+        }
+    
         return 0;
     } else if (request.rfind("breakpoint set --name", 0) == 0) {
         int exit_code = breakpoint_set_by_label(request.substr(BREAKPOINT_SET_NAME));

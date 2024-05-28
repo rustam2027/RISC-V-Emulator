@@ -11,6 +11,9 @@
 #include <iostream>
 
 #include <stdlib.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+
 
 using namespace ftxui;
 
@@ -23,24 +26,26 @@ void UI::move_output(std::vector<std::string>& v) {
 
 
 ftxui::Element UI::render_intsructions(int line_number, Interpreter& controller) {
-    auto i = 0;
+    auto start = 0;
     Elements nums_elements, instructions_elements, output_elements;
-    for(auto const& line : all_lines_in) {
-        auto num = text(std::to_string(i)) | align_right;
-        if (controller.is_breakpoint(i)) {
-            num = bgcolor(Color::Red, text(std::to_string(i)));
+    if (line_number > 31) {
+        start = line_number - 15;
+    }
+    for (int j = start; j <= start + 31; j++) {
+        auto num = text(std::to_string(j)) | align_right;
+        if (controller.is_breakpoint(j)) {
+            num = bgcolor(Color::Red, text(std::to_string(j)));
         }
     
-        auto instruction = text(line);
+        auto instruction = text(all_lines_in[j]);
 
-        if (i == line_number) {
-            instruction = bgcolor(Color::Red, text(line));
+        if (j == line_number) {
+            instruction = bgcolor(Color::Red, text(all_lines_in[j]));
         }
         nums_elements.push_back(std::move(num));
         instructions_elements.push_back(std::move(instruction));
-        i++;
     }
-
+    
     for (auto const& line : output) {
         auto out_line = text(line);
         output_elements.push_back(std::move(out_line));
@@ -81,7 +86,7 @@ auto UI::render_registers(State* state) {
 
     for (auto const& reg : registers) {
         auto name = reg.first;
-        auto value = std::to_string(state->registers[reg.second]);
+        auto value = Interpreter::get_hex(state->registers[reg.second]);
         vec.push_back({name, value});
 
 
@@ -99,11 +104,11 @@ auto UI::render_registers(State* state) {
 }
 
 auto UI::render_stack(State* state, int from, int to) {
-    std::vector<std::vector<std::string>> vec = {{"  Number  ","Stack"}};
+    std::vector<std::vector<std::string>> vec = {{"  Number  ","Memory"}};
     for (int i = from; i < to; i++) {
         std::string num  = std::to_string(i * 8);
         long word = 0;
-        for (int j = 0; j < 8; j++) {
+        for (int j = 7; j > -1; j--) {
             word = word << 8;
             word += (int)state->memory[i * 8 + j];
         }
@@ -134,7 +139,7 @@ void UI::render(int line_number, State* state, int from, int to, Interpreter& co
                 vbox({render_stack(state, from, from + to).Render() | flex})
             }), 
             separator(),
-    }) | size(HEIGHT, EQUAL, 45);
+    }) | size(HEIGHT, EQUAL, 43);
 
     auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(document));
     Render(screen, document.get());
@@ -147,7 +152,7 @@ void UI::render(int line_number, State* state, int from, int to, Interpreter& co
 
 void UI::clean() {
     std::cout << reset_position;
-    n_lines = 200;
+    n_lines = 60;
     if (n_lines) {
         std::cout << "\r" << "\x1B[2K";
         for (int i = 0; i < n_lines + 1; i ++) {
@@ -155,7 +160,6 @@ void UI::clean() {
         }
     }
 
-    n_lines = 0;
 }
 
 void UI::print(std::string s) {
@@ -179,8 +183,7 @@ void UI::clear_string() {
 }
 
 void UI::start() {
-    Interpreter controller = Interpreter(instructions, labels, all_lines_in, in_to_inparse, inparse_to_in, debug_flag, true); 
-    std::streambuf* originalCoutBuffer = std::cout.rdbuf();
+
 
     while (controller.has_lines()) {
         auto line_num = controller.get_line();
@@ -196,11 +199,20 @@ void UI::start() {
             command = getline();
             clear_string();
             if (command.rfind("show stack", 0) == 0) {
-                    std::string to;
-                    std::string buffer;
-                    std::stringstream stream_request(command);
-                    stream_request >> buffer >> buffer >> from >> to;
-                    continue;
+                std::string to;
+                std::string buffer;
+                std::stringstream stream_request(command);
+                stream_request >> buffer >> buffer >> from >> to;
+                continue;
+            } else if ((command.rfind("show register", 0) == 0) || (command.rfind("sr", 0) == 0)) {
+                render_output(ERROR_CODE_FOR_SR, command);
+                continue;
+            } else if (command.rfind("help", 0) == 0) {
+                render_help();
+                continue;
+            } else if (command.rfind("clear", 0) == 0) {
+                output.clear();
+                continue;
             }
             int exit_code = controller.process_request(command);
             if (exit_code) {
@@ -211,11 +223,23 @@ void UI::start() {
     }
 }
 
+void UI::render_help()
+{
+    std::string empty_string = "";
+    for (int i = 6; i < 7 + 6; i++) {   
+        render_output(i, empty_string);
+    }
+}
+
 void UI::render_output(int exit_code, std::string &command)
 {
-    std::string str;
     output.push_back(error_strings[exit_code] + command);
     if (output.size() > 7) {
         move_output(output);
     }
 }
+
+void UI::clear_output() {
+    output.clear();
+}
+
