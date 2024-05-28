@@ -31,7 +31,6 @@ class UI {
 
     std::vector<std::string> all_lines_in;
     std::vector<std::string> output;
-
     std::stringstream output_stream;
 
     int n_lines;

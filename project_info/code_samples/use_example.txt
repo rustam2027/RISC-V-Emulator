@@ -1,0 +1,19 @@
+# Fix problems step by step: 
+
+
+1. Parser part
+Invalid register in line 41             a66 --> a6
+Syntax error in line 49                 double comma
+Non-existent label in line 54           my_main  --> main
+Syntax error in line 50                 missing comma 
+Invalid instruction low in line 78      low --> lw 
+
+
+2. Debugger part
+DATA SECTION CANNOT BE EXECUTED         comment/delete j hello in line 42
+Missing ret in print                    add ebreak (set breakpoint) in show_number to debug
+Show memory in view     
+Step in/step out     
+
+
+Expected: Hello world! 42

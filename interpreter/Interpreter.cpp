@@ -11,6 +11,10 @@
 #include "Interpreter.hpp"
 
 const int SHOW_REGISTER_CMD_LEN = 14;
+const int BREAKPOINT_SET_NAME = 22;
+const int BREAKPOINT_SET_LINE = 22;
+const int BREAKPOINT_DEL_NAME = 25;
+const int BREAKPOINT_DEL_LINE = 25;
 
 int Interpreter::process_request(std::string request) {
     if (request == "") {
@@ -24,13 +28,31 @@ int Interpreter::process_request(std::string request) {
         exit = true;
         stop = false;
         return 0;
-    } else if (request.rfind("show stack", 0) == 0) {
+    } else if (request.rfind("show memory", 0) == 0) {
         std::string from, to;
-        std::string buffer;
-        std::stringstream stream_request(request);
-        stream_request >> buffer >> buffer >> from >> to;  // FIXME: Some how check that exactly two numbers were
-                                                           // given
-        show_stack(Parser::get_immediate(from), Parser::get_immediate(to));
+        vector<std::string> buffer;
+        buffer = StringUtils::split(request, ' ');
+        if (buffer.size() < 3) {
+            std::cout << "NOT ENOUGH ARGUMENTS" << std::endl;
+            return 1;
+        } else if (buffer.size() == 3){
+            try {
+                int num = Parser::get_immediate(buffer[2]);
+                std::cout << num << std::endl;
+                show_memory(num, num + 1);
+            } catch (ParserException p) {
+                std::cout << p.get_message() << std::endl;
+            }
+            return 0;
+        } else if (buffer.size() > 4) {
+            std::cout << "TOO MANY ARGUMENTS" << std::endl;
+            return 1;
+        }
+            try {
+                show_memory(Parser::get_immediate(buffer[2]), Parser::get_immediate(buffer[3]));
+            } catch (ParserException p) {
+                std::cout << p.get_message() << std::endl;
+            }
         return 0;
     } else if (request.rfind("show register", 0) == 0) {
         if (request == "show registers") {
@@ -56,7 +78,7 @@ int Interpreter::process_request(std::string request) {
             std::stringstream stream_request(request);
             stream_request >> buffer >> buffer >> from >> to;  // FIXME: Some how check that exactly two numbers were
                                                                // given
-            show_stack(from, to);
+            show_memory(from, to);
         } else if (request == "show registers" || request == "sr") {
             show_registers();
         } else {
@@ -85,10 +107,16 @@ int Interpreter::process_request(std::string request) {
     
         return 0;
     } else if (request.rfind("breakpoint set --name", 0) == 0) {
-        int exit_code = breakpoint_set_by_label(request.substr(22));
+        int exit_code = breakpoint_set_by_label(request.substr(BREAKPOINT_SET_NAME));
         return exit_code;
     } else if (request.rfind("breakpoint set --line", 0) == 0) {
-        int exit_code = breakpoint_set_by_number(Parser::get_immediate(request.substr(22)));
+        int exit_code = breakpoint_set_by_number(Parser::get_immediate(request.substr(BREAKPOINT_SET_LINE)));
+        return exit_code;
+    } else if (request.rfind("breakpoint delete --name", 0) == 0) {
+        int exit_code = breakpoint_delete_by_label(request.substr(BREAKPOINT_DEL_NAME));
+        return exit_code;
+    } else if (request.rfind("breakpoint delete --line", 0) == 0) {
+        int exit_code = breakpoint_delete_by_number(Parser::get_immediate(request.substr(BREAKPOINT_DEL_LINE)));
         return exit_code;
     } else {
         if (!graph_flag) {
@@ -113,7 +141,7 @@ void Interpreter::open_interface() {
         if (request == "") {
             continue;
         }
-        if (process_request(request) == 0) {
+        if (process_request(request) != 0) {
             ++failed_requests;
         }
         if (failed_requests >= 3) {
@@ -123,14 +151,14 @@ void Interpreter::open_interface() {
     }
 }
 
-void Interpreter::show_stack(size_t from, size_t to) {
-    std::cout << "SHOWING STACK" << std::endl;
+void Interpreter::show_memory(size_t from, size_t to) {
+    std::cout << "SHOWING MEMORY" << std::endl;
     for (int i = from; i < to; i++) {
         std::cout << "[" << i * 8 << "]: ";
         long word = 0;
         for (int j = 7; j > -1; j--) {
             word = word << 8;
-            word += (int)global_state->stack[i * 8 + j];
+            word += (int)global_state->memory[i * 8 + j];
         }
         std::cout << get_hex(word) << std::endl;
     }
@@ -166,7 +194,7 @@ Interpreter::Interpreter(std::vector<Instruction *>& instructions, std::map<std:
             instructions_starts = true;
         }
         for (int i = 0; i < 8; i++) {
-            global_state->stack[global_state->registers[sp]] = (std::byte) ((to_mem >> (i * BYTE_BITS)) & 0xFF);
+            global_state->memory[global_state->registers[sp]] = (std::byte) ((to_mem >> (i * BYTE_BITS)) & 0xFF);
             global_state->registers[sp] += 1;
         }
     }
@@ -174,6 +202,10 @@ Interpreter::Interpreter(std::vector<Instruction *>& instructions, std::map<std:
 
 bool Interpreter::has_lines() {
     return global_state->registers[pc] < instructions_.size() * INSTRUCTION_SIZE && !exit;
+}
+
+bool Interpreter::is_break() {
+    return break_on_next;
 }
   
 
@@ -227,7 +259,7 @@ void Interpreter::show_context() {
     if (index < from_inparse_to_in.size()) {
         index_in_file = from_inparse_to_in[index];   
     } else {
-        index_in_file = from_inparse_to_in.size();
+        index_in_file = all_lines_in.size();
     }
  
     size_t min_index = std::max(0, ((int)index_in_file) - 3);
@@ -281,6 +313,41 @@ int Interpreter::breakpoint_set_by_number(int num) {
     }
 }
 
+int Interpreter::breakpoint_delete_by_label(std::string label) {
+    if (global_state->labels.find(label) != global_state->labels.cend()) {
+        break_points[global_state->labels[label]] = 0;
+        set_manually[global_state->labels[label]] = 0;
+        return 0;
+    } else {
+        if (!graph_flag) {
+            std::cout << "UNKNOWN LABEL: " << label << std::endl;
+        }
+        return 2;
+    }
+    
+}
+
+int Interpreter::breakpoint_delete_by_number(int num) {
+    if (all_lines_in.size() > num) {
+        while (num >= 0 && from_in_to_inparse[num] < 0) {num--;}
+        if (num < 0) {
+            if (!graph_flag) {
+                std::cout << "INVALID LINE (MAYBE MACROS DONT USE THEM!!!)" << std::endl; 
+            }
+            return 4;
+        }
+        break_points[from_in_to_inparse[num]] = 0;
+        set_manually[from_in_to_inparse[num]] = 0;
+        return 0;
+    } else {
+        if (!graph_flag) {
+            std::cout << "NUMBER IS TOO BIG: "<< num << std::endl;
+        }
+        return 3;
+    }
+}
+
+
 void Interpreter::step_over() {
     size_t index = global_state->registers[pc] / INSTRUCTION_SIZE;
 
@@ -305,7 +372,7 @@ void Interpreter::show_help() {
     std::cout << "Available commands:" << std::endl;
     std::cout << "- continue (c): Continue execution until the next breakpoint or the end of the program." << std::endl;
     std::cout << "- exit (q): Exit the debugger." << std::endl;
-    std::cout << "- show stack <from> <to>: Show the stack contents from address <from> to <to>." << std::endl;
+    std::cout << "- show memory <from> <to>: Show the stack contents from address <from> to <to>." << std::endl;
     std::cout << "- show registers (sr): Show the contents of all registers." << std::endl;
     std::cout << "- show register <name>: Show the contents of the specified register." << std::endl;
     std::cout << "- step in (s): Execute the next instruction and step into any function calls." << std::endl;

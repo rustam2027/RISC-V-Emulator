@@ -6,6 +6,14 @@
      23 |  li t1, 0x30 # '0'
      24 |  blt t0, t1, exit
 >
+     18 |.end_macro
+     19 |
+     20 |main:
+ --> 21 |  ebreak
+     22 |  read_char t0
+     23 |  li t1, 0x30 # '0'
+     24 |  blt t0, t1, exit
+>
      5  |.end_macro
      6  |
      7  |.macro read_char %dst

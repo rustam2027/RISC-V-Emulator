@@ -1,4 +1,9 @@
-6  |  sw ra, 0(sp)
+--> 0  |jal ra, func_1
+     1  |j endl
+     2  |
+     3  |
+>
+     6  |  sw ra, 0(sp)
      7  |  li a1, 12
      8  |  jal ra, func_2
  --> 9  |  ebreak
@@ -28,11 +33,7 @@
      3  |
      4  |
 >
-     7  |  li a1, 12
-     8  |  jal ra, func_2
-     9  |  ebreak
- --> 10 |  lw ra, 0(sp)
-     11 |  ret
-     12 |
-     13 |func_2:
+     15 |  ret
+     16 |
+     17 |endl:
 >

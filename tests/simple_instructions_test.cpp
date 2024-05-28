@@ -377,7 +377,7 @@ void test_sb_1() {
 
   Sb f = Sb({"a1", "4(a2)"});
   f.exec(state);
-  assert(state.stack[2 + 4] == (std::byte) 10);
+  assert(state.memory[2 + 4] == (std::byte) 10);
   printf("Test sb_1 passed!\n");
 }
 
@@ -391,8 +391,8 @@ void test_sh_1() {
 
   Sh f = Sh({"a1", "4(a2)"});
   f.exec(state);
-  assert(state.stack[2 + 4] == (std::byte) (1024 & 0xFF));
-  assert(state.stack[2 + 5] == (std::byte) ((1024 >> 8) & 0xFF));
+  assert(state.memory[2 + 4] == (std::byte) (1024 & 0xFF));
+  assert(state.memory[2 + 5] == (std::byte) ((1024 >> 8) & 0xFF));
   printf("Test sh_1 passed!\n");
 }
 
@@ -406,10 +406,10 @@ void test_sw_1() {
 
   Sw f = Sw({"a1", "4(a2)"});
   f.exec(state);
-  assert(state.stack[2 + 4 + 0] == (std::byte) (33554432 & 0xFF));
-  assert(state.stack[2 + 4 + 1] == (std::byte) ((33554432 >> 8) & 0xFF));
-  assert(state.stack[2 + 4 + 2] == (std::byte) ((33554432 >> 16) & 0xFF));
-  assert(state.stack[2 + 4 + 3] == (std::byte) ((33554432 >> 24) & 0xFF));
+  assert(state.memory[2 + 4 + 0] == (std::byte) (33554432 & 0xFF));
+  assert(state.memory[2 + 4 + 1] == (std::byte) ((33554432 >> 8) & 0xFF));
+  assert(state.memory[2 + 4 + 2] == (std::byte) ((33554432 >> 16) & 0xFF));
+  assert(state.memory[2 + 4 + 3] == (std::byte) ((33554432 >> 24) & 0xFF));
   printf("Test sw_1 passed!\n");
 }
 
@@ -421,7 +421,7 @@ void test_lb_1() {
   f1.exec(state);
   f2.exec(state);
 
-  state.stack[2 + 4] = (std::byte) 13;
+  state.memory[2 + 4] = (std::byte) 13;
   Lb f = Lb({"a3", "4(a2)"});
   f.exec(state);
   assert(state.registers[a3] == 13);
@@ -437,10 +437,10 @@ void test_lh_1() {
   f1.exec(state);
   f2.exec(state);
 
-  state.stack[2 + 4] = (std::byte) (1024 & 0xFF);
-  state.stack[2 + 4 + 1] = (std::byte) ((1024 >> 8) & 0xFF);
-  state.stack[2 + 4 + 2] = (std::byte) 0;
-  state.stack[2 + 4 + 3] = (std::byte) 0;
+  state.memory[2 + 4] = (std::byte) (1024 & 0xFF);
+  state.memory[2 + 4 + 1] = (std::byte) ((1024 >> 8) & 0xFF);
+  state.memory[2 + 4 + 2] = (std::byte) 0;
+  state.memory[2 + 4 + 3] = (std::byte) 0;
   Lh f = Lh({"a3", "4(a2)"});
   f.exec(state);
   assert(state.registers[a3] == 1024);
@@ -456,14 +456,14 @@ void test_lw_1() {
 
   long num = LONG_MAX;
 
-  state.stack[2 + 4] = (std::byte) (num & 0xFF);
-  state.stack[2 + 4 + 1] = (std::byte) ((num >> 8) & 0xFF);
-  state.stack[2 + 4 + 2] = (std::byte) ((num >> 16) & 0xFF);
-  state.stack[2 + 4 + 3] = (std::byte) ((num >> 24) & 0xFF);
-  state.stack[2 + 4 + 4] = (std::byte) ((num >> 32) & 0xFF);
-  state.stack[2 + 4 + 5] = (std::byte) ((num >> 40) & 0xFF);
-  state.stack[2 + 4 + 6] = (std::byte) ((num >> 48) & 0xFF);
-  state.stack[2 + 4 + 7] = (std::byte) ((num >> 56) & 0xFF);
+  state.memory[2 + 4] = (std::byte) (num & 0xFF);
+  state.memory[2 + 4 + 1] = (std::byte) ((num >> 8) & 0xFF);
+  state.memory[2 + 4 + 2] = (std::byte) ((num >> 16) & 0xFF);
+  state.memory[2 + 4 + 3] = (std::byte) ((num >> 24) & 0xFF);
+  state.memory[2 + 4 + 4] = (std::byte) ((num >> 32) & 0xFF);
+  state.memory[2 + 4 + 5] = (std::byte) ((num >> 40) & 0xFF);
+  state.memory[2 + 4 + 6] = (std::byte) ((num >> 48) & 0xFF);
+  state.memory[2 + 4 + 7] = (std::byte) ((num >> 56) & 0xFF);
 
   Lw f = Lw({"a3", "4(a2)"});
   f.exec(state);

@@ -3,6 +3,11 @@
      2  |j func_2
      3  |
 >
+ --> 0  |ebreak
+     1  |jal ra, func_1
+     2  |j func_2
+     3  |
+>
      0  |ebreak
  --> 1  |jal ra, func_1
      2  |j func_2

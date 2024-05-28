@@ -110,7 +110,7 @@ auto UI::render_stack(State* state, int from, int to) {
         long word = 0;
         for (int j = 7; j > -1; j--) {
             word = word << 8;
-            word += (int)state->stack[i * 8 + j];
+            word += (int)state->memory[i * 8 + j];
         }
         std::string value = Interpreter::get_hex(word);
         vec.push_back({num, value});
