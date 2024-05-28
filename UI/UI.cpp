@@ -23,24 +23,26 @@ void UI::move_output(std::vector<std::string>& v) {
 
 
 ftxui::Element UI::render_intsructions(int line_number, Interpreter& controller) {
-    auto i = 0;
+    auto start = 0;
     Elements nums_elements, instructions_elements, output_elements;
-    for(auto const& line : all_lines_in) {
-        auto num = text(std::to_string(i)) | align_right;
-        if (controller.is_breakpoint(i)) {
-            num = bgcolor(Color::Red, text(std::to_string(i)));
+    if (line_number > 31) {
+        start = line_number - 15;
+    }
+    for (int j = start; j <= start + 31; j++) {
+        auto num = text(std::to_string(j)) | align_right;
+        if (controller.is_breakpoint(j)) {
+            num = bgcolor(Color::Red, text(std::to_string(j)));
         }
     
-        auto instruction = text(line);
+        auto instruction = text(all_lines_in[j]);
 
-        if (i == line_number) {
-            instruction = bgcolor(Color::Red, text(line));
+        if (j == line_number) {
+            instruction = bgcolor(Color::Red, text(all_lines_in[j]));
         }
         nums_elements.push_back(std::move(num));
         instructions_elements.push_back(std::move(instruction));
-        i++;
     }
-
+    
     for (auto const& line : output) {
         auto out_line = text(line);
         output_elements.push_back(std::move(out_line));
@@ -134,7 +136,7 @@ void UI::render(int line_number, State* state, int from, int to, Interpreter& co
                 vbox({render_stack(state, from, from + to).Render() | flex})
             }), 
             separator(),
-    }) | size(HEIGHT, EQUAL, 45);
+    }) | size(HEIGHT, EQUAL, 43);
 
     auto screen = Screen::Create(Dimension::Full(), Dimension::Fit(document));
     Render(screen, document.get());
