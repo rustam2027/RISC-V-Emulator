@@ -2,10 +2,12 @@
 #include "../../exceptions/ParserException.hpp"
 #include <assert.h>
 
+std::string token;
+
 void Stest_0() {
     std::vector<std::string> in = {"a0", ",", "a0", ",", "1"};
     std::vector<std::string> out = {"a0", "a0", "1"};
-    assert(Parser::check_syntax(in) == out);
+    assert(Parser::check_syntax(in, token, 0) == out);
     cout << "check_sytax test 0 passed!" << endl;
    
 }
@@ -13,7 +15,7 @@ void Stest_0() {
 void Stest_1() {
     std::vector<std::string> in = {"a0", ",", ",", "a0", ",", "1"};
     try {
-        auto res = Parser::check_syntax(in);
+        auto res = Parser::check_syntax(in, token, 0);
     } catch (const ParserException& e) {
         cout << "check_sytax test 1 passed!" << endl;
     }
@@ -22,7 +24,7 @@ void Stest_1() {
 void Stest_2() {
     std::vector<std::string> in = {"a0", ",", "a0", ",", "1", ","};
     try {
-        auto res = Parser::check_syntax(in);
+        auto res = Parser::check_syntax(in, token, 0);
     } catch (const ParserException& e) {
         cout << "check_sytax test 2 passed!" << endl;
     }
@@ -31,7 +33,7 @@ void Stest_2() {
 void Stest_3() {
     std::vector<std::string> in = {"a0", ",", "a0", ",", "1", "a0"};
     try {
-        auto res = Parser::check_syntax(in);
+        auto res = Parser::check_syntax(in, token, 0);
     } catch (const ParserException& e) {
         cout << "check_sytax test 3 passed!" << endl;
     }
@@ -40,7 +42,7 @@ void Stest_3() {
 void Stest_4() {
     std::vector<std::string> in = {"a0", "a0", ",", "1", ","};
     try {
-        auto res = Parser::check_syntax(in);
+        auto res = Parser::check_syntax(in, token, 0);
     } catch (const ParserException& e) {
         cout << "check_sytax test 4 passed!" << endl;
     }

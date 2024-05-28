@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <functional>
 #include <string>
+#include <iostream>
 #include "../consts.hpp"
 
 using namespace std;
