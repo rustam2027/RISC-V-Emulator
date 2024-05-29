@@ -351,7 +351,7 @@ int Interpreter::breakpoint_delete_by_number(int num) {
 void Interpreter::step_over() {
     size_t index = global_state->registers[pc] / INSTRUCTION_SIZE;
 
-    if (index < instructions_.size() && dynamic_cast<JumpAndLink *>(instructions_[index]) != nullptr) {
+    if (index < instructions_.size() && (dynamic_cast<JumpAndLink *>(instructions_[index]) != nullptr || dynamic_cast<Call *>(instructions_[index]) != nullptr)) {
         break_points[index + 1] = 1;
         return;
     } else {
