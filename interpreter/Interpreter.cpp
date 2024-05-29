@@ -72,14 +72,7 @@ int Interpreter::process_request(std::string request) {
         }
         return 0;
     } else if (request.rfind("show", 0) == 0 || request == "sr") {
-        if (request.rfind("show stack", 0) == 0) {
-            int from, to;
-            std::string buffer;
-            std::stringstream stream_request(request);
-            stream_request >> buffer >> buffer >> from >> to;  // FIXME: Some how check that exactly two numbers were
-                                                               // given
-            show_memory(from, to);
-        } else if (request == "show registers" || request == "sr") {
+        if (request == "show registers" || request == "sr") {
             show_registers();
         } else {
             if (!graph_flag) {
