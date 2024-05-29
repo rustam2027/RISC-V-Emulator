@@ -17,6 +17,9 @@ const int BREAKPOINT_DEL_NAME = 25;
 const int BREAKPOINT_DEL_LINE = 25;
 
 int Interpreter::process_request(std::string request) {
+    while (request.ends_with(' ')) {
+        request.pop_back();
+    }
     if (request == "") {
         return 0;
     }
