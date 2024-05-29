@@ -27,20 +27,26 @@ void UI::move_output(std::vector<std::string>& v) {
 
 ftxui::Element UI::render_intsructions(int line_number, Interpreter& controller) {
     auto start = 0;
+    auto end = 0;
     Elements nums_elements, instructions_elements, output_elements;
     if (line_number > 31) {
         start = line_number - 15;
     }
-    for (int j = start; j <= start + 31; j++) {
-        auto num = text(std::to_string(j)) | align_right;
-        if (controller.is_breakpoint(j)) {
-            num = bgcolor(Color::Red, text(std::to_string(j)));
+    if (start + 31 <= all_lines_in.size()) {
+        end = start + 31;
+    } else {
+        end = all_lines_in.size();
+    }
+    for (int j = start - 1; j <= end; j++) {
+        auto num = text(std::to_string(j + 1)) | align_right;
+        if (controller.is_breakpoint(j + 1)) {
+            num = bgcolor(Color::RedLight, text(std::to_string(j + 1)));
         }
     
         auto instruction = text(all_lines_in[j]);
 
         if (j == line_number) {
-            instruction = bgcolor(Color::Red, text(all_lines_in[j]));
+            instruction = bgcolor(Color::RedLight, text(all_lines_in[j]));
         }
         nums_elements.push_back(std::move(num));
         instructions_elements.push_back(std::move(instruction));
@@ -183,8 +189,7 @@ void UI::clear_string() {
 }
 
 void UI::start() {
-
-
+    auto line_num = controller.get_line();
     while (controller.has_lines()) {
         auto line_num = controller.get_line();
         auto state = controller.get_state();
@@ -192,9 +197,9 @@ void UI::start() {
         std::string command;
         int from = 0;
         clean();
-        while (controller.get_stop()) {
+        do {
             render(line_num, state, from, from + 45, controller);
-            print("> press N to step in, S to step over, O to step out and q or exit to quit\n");
+            print("> press S to step in, N to step over, O to step out and q or exit to quit\n");
             print("> ");
             command = getline();
             clear_string();
@@ -218,7 +223,7 @@ void UI::start() {
             if (exit_code) {
                 render_output(exit_code, command);
             }
-        }
+        } while ((controller.get_stop()));
         controller.interpret();
     }
 }
