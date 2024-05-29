@@ -33,25 +33,32 @@ int Interpreter::process_request(std::string request) {
         vector<std::string> buffer;
         buffer = StringUtils::split(request, ' ');
         if (buffer.size() < 3) {
-            std::cout << "NOT ENOUGH ARGUMENTS" << std::endl;
+            if (!graph_flag) {
+                std::cout << "NOT ENOUGH ARGUMENTS" << std::endl;
+            }
             return 1;
         } else if (buffer.size() == 3){
             try {
                 int num = Parser::get_immediate(buffer[2]);
-                std::cout << num << std::endl;
                 show_memory(num, num + 1);
             } catch (ParserException p) {
-                std::cout << p.get_message() << std::endl;
+                if (!graph_flag) {
+                    std::cout << p.get_message() << std::endl;
+                }
             }
-            return 0;
+            return 1;
         } else if (buffer.size() > 4) {
-            std::cout << "TOO MANY ARGUMENTS" << std::endl;
+            if (!graph_flag) {
+                std::cout << "TOO MANY ARGUMENTS" << std::endl;
+            }
             return 1;
         }
             try {
                 show_memory(Parser::get_immediate(buffer[2]), Parser::get_immediate(buffer[3]));
             } catch (ParserException p) {
-                std::cout << p.get_message() << std::endl;
+                if (!graph_flag) {
+                    std::cout << p.get_message() << std::endl;
+                }
             }
         return 0;
     } else if (request.rfind("show register", 0) == 0) {
